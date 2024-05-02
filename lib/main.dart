@@ -62,8 +62,8 @@ class _LoginState extends State<Login> {
               child: Container(
                 padding: EdgeInsets.all(40.0),
                 //키보드가 올라올 경우 스크롤 되도록
-                child: SingleChildScrollView(
-                  child: Column(
+                child: Builder(builder:(context) {
+                  return Column(
                     children: [
                       TextField(
                         controller: controller,
@@ -222,7 +222,9 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                     ],
-                  )
+                  );
+                }
+                
                 ),
               )
               ),
@@ -272,12 +274,24 @@ class JoinPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+          Padding(padding: EdgeInsets.only(top: 180)),
           Center(
-            child: Text('회원가입'),
+            child: Image(
+              image: AssetImage('assets/logo.png'),
+              width: 250.0,
+            ),
+          ),
+            ]
           )
-      ],),
+        )
+      )
     );
   }
 }
