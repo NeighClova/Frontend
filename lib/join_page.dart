@@ -1,7 +1,9 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/main_page.dart';
 
@@ -179,16 +181,17 @@ class _JoinPageState extends State<JoinPage> {
                         //minWidth: 1000.0,
                         height: 50.0,
                         child: ElevatedButton(
-                          onPressed: (){
+                          onPressed: () async{
                             _tryValidation();
-                            ///////////////////////////////////////
                             if (_formKey.currentState!.validate()){
-                              ///////////////////////////////자동으로 로그인
-                              Navigator.push(
+                              ///////////////////////////////이메일 인증 코드 보내기
+                              final userdata = Userdata(userEmail, userPassword);
+                              final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                  MainPage())
+                                  EmailAuthPage(userdata: userdata),
+                                )
                               );
                             }
                           },
@@ -287,4 +290,10 @@ void showSnackBar(BuildContext context, Text text) {
   );
 
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+class Userdata{
+  String email;
+  String password;
+  Userdata(this.email, this.password);
 }
