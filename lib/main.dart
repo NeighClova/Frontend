@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/find_password_page.dart';
 import 'package:flutter_neighclova/join_page.dart';
 import 'package:flutter_neighclova/main_page.dart';
 
@@ -246,24 +247,4 @@ void showSnackBar(BuildContext context, Text text) {
   );
 
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-}
-
-
-
-//비밀번호 찾기 페이지
-class PasswordPage extends StatelessWidget {
-  const PasswordPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Center(
-            child: Text('비밀번호찾기'),
-          )
-      ],),
-        
-    );
-  }
 }
