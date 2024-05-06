@@ -132,7 +132,7 @@ class _PasswordPageState extends State<PasswordPage> {
                   child: ElevatedButton(
                   onPressed: () async{
                     /////////////////가입된 이메일인지 확인
-                    if (controller.text == 'ex.naver.com'){
+                    if (controller.text == 'ex@naver.com'){
                       final email = controller.text;
                       final result = await Navigator.push(
                         context,
