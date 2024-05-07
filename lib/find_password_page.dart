@@ -21,7 +21,12 @@ class _PasswordPageState extends State<PasswordPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 5,
+        shape: Border(
+          bottom: BorderSide(
+            color: Colors.grey,
+            width: 1,
+          )
+        ),
         title: Image(
           image: AssetImage('assets/logo.png'),
           width: 130.0,
@@ -186,7 +191,12 @@ class SendMailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 5,
+        shape: Border(
+          bottom: BorderSide(
+            color: Colors.grey,
+            width: 1,
+          )
+        ),
         title: Image(
           image: AssetImage('assets/logo.png'),
           width: 130.0,
