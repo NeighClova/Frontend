@@ -15,7 +15,7 @@ class _NewsPageState extends State<NewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Bottom(),
+      //bottomNavigationBar: Bottom(),
       appBar: AppBar(
         backgroundColor: Colors.white,
         shape: Border(
