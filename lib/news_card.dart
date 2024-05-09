@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NewsCard extends StatefulWidget {
 	//const NewsCard({Key? key}) : super(key: key);
@@ -72,7 +73,7 @@ class _NewsCardState extends State<NewsCard> {
                     child: OutlinedButton(
                       onPressed: (){
                         Clipboard.setData(ClipboardData(text: '내용'));
-                        print("클립보드에 복사");
+                        showToast();
                       },
                       child: const Text('복사하기',
                         style: TextStyle(color: Color(0xff03AA5A), fontSize: 12)),
@@ -101,4 +102,15 @@ class _NewsCardState extends State<NewsCard> {
       ),
 		);
 	}
+}
+
+void showToast(){
+  Fluttertoast.showToast(
+    msg: '클립보드에 복사되었습니다.',
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: Colors.black,
+    fontSize: 15,
+    textColor: Colors.white,
+    toastLength: Toast.LENGTH_SHORT,
+  );
 }
