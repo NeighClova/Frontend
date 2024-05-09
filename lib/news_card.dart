@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 
 class NewsCard extends StatefulWidget {
 	//const NewsCard({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class _NewsCardState extends State<NewsCard> {
                   height: 50,
                   width: 50,
                   alignment: Alignment.centerLeft,
-                  child: Center(child: Text('사진'),),
+                  child: Center(child: Text('사진')/*Image.network('주소https://')*/,),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     shape: BoxShape.circle,
@@ -70,7 +71,8 @@ class _NewsCardState extends State<NewsCard> {
                     alignment: Alignment.centerRight,
                     child: OutlinedButton(
                       onPressed: (){
-
+                        Clipboard.setData(ClipboardData(text: '내용'));
+                        print("클립보드에 복사");
                       },
                       child: const Text('복사하기',
                         style: TextStyle(color: Color(0xff03AA5A), fontSize: 12)),
