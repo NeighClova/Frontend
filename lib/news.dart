@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/news_card.dart';
 import 'package:flutter_neighclova/shared/bottom.dart';
 
 class NewsPage extends StatefulWidget {
@@ -15,7 +16,6 @@ class _NewsPageState extends State<NewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //bottomNavigationBar: Bottom(),
       appBar: AppBar(
         backgroundColor: Colors.white,
         shape: Border(
@@ -33,6 +33,18 @@ class _NewsPageState extends State<NewsPage> {
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
+      ),
+      backgroundColor: Color(0xffF5F5F5),
+      body: ListView.separated(
+        itemCount: 30,
+        itemBuilder: (BuildContext context, int index) {
+          return NewsCard(
+            number: index,
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return SizedBox(height: 20,);
+        },
       ),
     );
   }
