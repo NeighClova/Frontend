@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/generate_news.dart';
 import 'package:flutter_neighclova/news_card.dart';
 import 'package:flutter_neighclova/shared/bottom.dart';
 
@@ -45,6 +46,20 @@ class _NewsPageState extends State<NewsPage> {
         separatorBuilder: (BuildContext context, int index) {
           return SizedBox(height: 20,);
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) =>
+                GenerateNews())
+          );
+        },
+        child: Icon(Icons.edit),
+        backgroundColor: Color(0xff03AA5A),
+        foregroundColor: Colors.white,
+        shape: CircleBorder(),
       ),
     );
   }
