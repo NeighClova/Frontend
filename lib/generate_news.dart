@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class GenerateNews extends StatefulWidget {
 	const GenerateNews({Key? key}) : super(key: key);
@@ -10,8 +11,23 @@ class GenerateNews extends StatefulWidget {
 }
 
 class _GenerateNewsState extends State<GenerateNews> {
-  List<bool> keyword_isSelected = [false, false, false, false, false]; 
-  List<bool> type_isSelected = [false, false, false, false, false];
+  String initAmPm = "";
+  int initHour = 0;
+  String finalAmPm = "";
+  int finalHour = 0;
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('ko_KR', null);
+    initAmPm = initialTime.hour >= 12 && initialTime.hour < 24 ? "오후" : "오전";
+    initHour = initialTime.hour > 12 && initialTime.hour <= 24 ? initialTime.hour - 12 : initialTime.hour;
+      if (initHour == 0)
+        initHour = 12;
+    finalAmPm = fianlTime.hour >= 12 && fianlTime.hour < 24 ? "오후" : "오전";
+    finalHour = fianlTime.hour > 12 && fianlTime.hour <= 24 ? fianlTime.hour - 12 : fianlTime.hour;
+      if (finalHour == 0)
+        finalHour = 12;
+  }
   final List<Map<String, dynamic>> keyword = [
     {'keyword': '알림', 'isSelected': false},
     {'keyword': '임시 휴무', 'isSelected': false},
@@ -26,7 +42,10 @@ class _GenerateNewsState extends State<GenerateNews> {
     {'type': '깜짝 이벤트', 'isSelected': false},
   ];
   DateTime initialDay = DateTime.now();
+  DateTime finalDay = DateTime.now();
   var daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+  TimeOfDay initialTime = TimeOfDay.now();
+  TimeOfDay fianlTime = TimeOfDay.now();
 
   @override
 	Widget build(BuildContext context) {
@@ -164,7 +183,6 @@ class _GenerateNewsState extends State<GenerateNews> {
                         )
                       ),
                     ),
-
                     Padding(padding: EdgeInsets.only(top: 20)),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -187,29 +205,141 @@ class _GenerateNewsState extends State<GenerateNews> {
                         ]
                       ),
                     ),
+                    Padding(padding: EdgeInsets.only(top: 20)),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            textStyle: TextStyle(fontSize: 20),
+                        Container(
+                          child: Column(
+                            children: [
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  textStyle: TextStyle(fontSize: 20, color: Colors.black),
+                                ),
+                                onPressed: () async {
+                                  final DateTime? dateTime = await showDatePicker(
+                                    context: context,
+                                    initialDate: initialDay,
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(3000)
+                                  );
+                                  if (dateTime != null) {
+                                    setState(() {
+                                      initialDay = dateTime;
+                                    });
+                                  }
+                                },
+                                child: Text('${initialDay.month}월 ${initialDay.day}일 (${DateFormat('E', 'ko_KR').format(initialDay)})')
+                              ),
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
+                                ),
+                                onPressed: () async {
+                                  final TimeOfDay? timeOfDay = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay(hour: initHour, minute: initialTime.minute),
+                                  );
+                                  if (timeOfDay != null) {
+                                    setState(() {
+                                      initialTime = timeOfDay;
+                                      initAmPm = initialTime.hour >= 12 && initialTime.hour < 24 ? "오후" : "오전";
+                                      initHour = initialTime.hour > 12 && initialTime.hour <= 24 ? initialTime.hour - 12 : initialTime.hour;
+                                      if (initHour == 0)
+                                        initHour = 12;
+                                    });
+                                  }
+                                },
+                                child: Text('${initAmPm} ${initHour}:${initialTime.minute}')
+                              ),
+                            ],
                           ),
-                          onPressed: () async {
-                            final DateTime? dateTime = await showDatePicker(
-                              context: context,
-                              initialDate: initialDay,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(3000)
-                            );
-                            if (dateTime != null) {
-                              setState(() {
-                                initialDay = dateTime;
-                              });
-                            }
-                          },
-                          child: Text('${initialDay.month}월 ${initialDay.day}일')
+                        ),
+                        Padding(padding: EdgeInsets.only(right: 20)),
+                        Container(
+                          child: Icon(Icons.arrow_forward, size: 40, color: Colors.black,),
+                        ),
+                        Padding(padding: EdgeInsets.only(right: 20)),
+                        Container(
+                          child: Column(
+                            children: [
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  textStyle: TextStyle(fontSize: 20, color: Colors.black),
+                                ),
+                                onPressed: () async {
+                                  final DateTime? dateTime = await showDatePicker(
+                                    context: context,
+                                    initialDate: finalDay,
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(3000)
+                                  );
+                                  if (dateTime != null) {
+                                    setState(() {
+                                      finalDay = dateTime;
+                                    });
+                                  }
+                                },
+                                child: Text('${finalDay.month}월 ${finalDay.day}일 (${DateFormat('E', 'ko_KR').format(finalDay)})')
+                              ),
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
+                                ),
+                                onPressed: () async {
+                                  final TimeOfDay? timeOfDay = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay(hour: finalHour, minute: fianlTime.minute),
+                                  );
+                                  if (timeOfDay != null) {
+                                    setState(() {
+                                      fianlTime = timeOfDay;
+                                      finalAmPm = fianlTime.hour >= 12 && fianlTime.hour < 24 ? "오후" : "오전";
+                                      finalHour = fianlTime.hour > 12 && fianlTime.hour <= 24 ? fianlTime.hour - 12 : initialTime.hour;
+                                      if (finalHour == 0)
+                                        finalHour = 12;
+                                    });
+                                  }
+                                },
+                                child: Text('${finalAmPm} ${finalHour}:${fianlTime.minute}')
+                              ),
+                            ],
+                          ),
+                        ),
+                      ], 
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 20)),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child : Text('강조하고 싶은 내용 추가',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 10)),
+                    TextFormField(
+                      minLines: 3,
+                      maxLines: 5,
+                      style: TextStyle(fontSize: 12),
+                      decoration: InputDecoration(
+                        hintText: '추가/강조하고 싶은 내용을 작성해주세요.',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          )
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          )
                         )
-                      ],
-                    )
+                      ),
+                    ),
                   ],
                 ),
               ),
