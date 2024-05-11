@@ -67,6 +67,26 @@ class _GenerateNewsState extends State<GenerateNews> {
         ),
         centerTitle: true,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        width: MediaQuery.of(context).size.width,
+        height: 50,
+        child: FloatingActionButton.extended(
+          
+          onPressed: () {
+
+          },
+          label: Text('키워드 기반 맞춤 소식 글 생성하기',
+            style: TextStyle(
+              fontSize: 15,
+            ),),
+          backgroundColor: Color(0xff03AA5A),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 0,
+        ),
+      ),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -133,7 +153,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                         return buildKeyword(index);
                       }),
                     ),
-                    Padding(padding: EdgeInsets.only(top: 20)),
+                    Padding(padding: EdgeInsets.only(top: 30)),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Column(
@@ -183,7 +203,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                         )
                       ),
                     ),
-                    Padding(padding: EdgeInsets.only(top: 20)),
+                    Padding(padding: EdgeInsets.only(top: 30)),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Column(
@@ -214,7 +234,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                             children: [
                               TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: TextStyle(fontSize: 20, color: Colors.black),
+                                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
                                 ),
                                 onPressed: () async {
                                   final DateTime? dateTime = await showDatePicker(
@@ -233,7 +253,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                               ),
                               TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
+                                  textStyle: TextStyle(fontSize: 15, color: Colors.black),
                                 ),
                                 onPressed: () async {
                                   final TimeOfDay? timeOfDay = await showTimePicker(
@@ -257,7 +277,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                         ),
                         Padding(padding: EdgeInsets.only(right: 20)),
                         Container(
-                          child: Icon(Icons.arrow_forward, size: 40, color: Colors.black,),
+                          child: Icon(Icons.arrow_forward, size: 30, color: Colors.black,),
                         ),
                         Padding(padding: EdgeInsets.only(right: 20)),
                         Container(
@@ -265,7 +285,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                             children: [
                               TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: TextStyle(fontSize: 20, color: Colors.black),
+                                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
                                 ),
                                 onPressed: () async {
                                   final DateTime? dateTime = await showDatePicker(
@@ -284,7 +304,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                               ),
                               TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
+                                  textStyle: TextStyle(fontSize: 15, color: Colors.black),
                                 ),
                                 onPressed: () async {
                                   final TimeOfDay? timeOfDay = await showTimePicker(
@@ -308,7 +328,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                         ),
                       ], 
                     ),
-                    Padding(padding: EdgeInsets.only(top: 20)),
+                    Padding(padding: EdgeInsets.only(top: 30)),
                     Align(
                       alignment: Alignment.centerLeft,
                       child : Text('강조하고 싶은 내용 추가',
@@ -340,6 +360,9 @@ class _GenerateNewsState extends State<GenerateNews> {
                         )
                       ),
                     ),
+                    Padding(padding: EdgeInsets.only(top: 30)),
+                    caution(),
+                    Padding(padding: EdgeInsets.only(top: 60)),
                   ],
                 ),
               ),
@@ -440,6 +463,48 @@ class _GenerateNewsState extends State<GenerateNews> {
           });
         },
         elevation: 10,
+      ),
+    );
+  }
+
+  Widget caution() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('소식글 생성 시 주의 사항',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text('- 할인율, 이벤트 날짜, 위치 등 구체적인 정보를 제공해 주세요.',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+          Text('- 추가/강조하고 싶은 내용을 작성해 주시면 가게에 더욱 맞춤화된 글을 작성해드릴 수 있어요!',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+          Text('- NeighClova는 광고 및 마케팅과 관련된 법률을 준수합니다. 허위 사실 또는 과장 광고는 피해주세요.',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+          Text('- AI가 생성한 내용을 항상 먼저 검토하고 필요에 따라 수정하세요!',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+        ],
       ),
     );
   }
