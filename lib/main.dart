@@ -21,12 +21,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Login',
       home: Login(),
-
-      /*routes: {
-        '/': (context) => MainPage(),
-        '/news': (context) => NewsPage(),
-      },
-      initialRoute: '/',*/
+      theme: ThemeData(
+        primaryColor: Colors.white,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      
     );
   }
 }

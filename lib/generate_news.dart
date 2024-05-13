@@ -71,8 +71,130 @@ class _GenerateNewsState extends State<GenerateNews> {
         ),
         centerTitle: true,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
+      bottomNavigationBar: Container(
+        height: 60,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+          child: ElevatedButton(
+            onPressed: () {
+              //////////////////////////데이터 전달
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(builder: (BuildContext context, StateSetter bottomState) {
+                    return Container(
+                      height: 600,
+                      decoration: BoxDecoration(
+                        color: Colors.white, // 배경색 지정
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(padding: EdgeInsets.only(top: 15)),
+                          Container(
+                            width: 40,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 15)),
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Text('선택된 키워드를 기반으로\n소식글을 생성했어요!',
+                              style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold,),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Container(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                              child: Container(
+                                width: double.infinity,
+                                height: 270,
+                                child: SingleChildScrollView(
+                                  padding: EdgeInsets.fromLTRB(10, 30, 10, 20),
+                                  child: Text(_generatedText,
+                                    style: TextStyle(fontSize: 15, color: Colors.black),
+                                  ),
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xffF2F2F2),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  print('재생성버튼 클릭');
+                                  bottomState(() {
+                                    setState(() {
+                                      _generatedText = '재생성된 소식글';
+                                    });
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xffF2F2F2),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  minimumSize: Size(130, 50),
+                                ),
+                                child: Text('재생성',
+                                  style: TextStyle(fontSize: 17, color: Colors.black),
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.only(right: 10)),
+                              ElevatedButton(
+                                onPressed: () {
+                                  //////////////////////////DB 저장
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xff03AA5A),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  minimumSize: Size(230, 50),
+                                ),
+                                child: Text('적용하기',
+                                  style: TextStyle(fontSize: 17, color: Colors.white),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  });
+                }
+              );
+            },
+            child: Text('키워드 기반 맞춤 소식 글 생성하기',
+              style: TextStyle(fontSize: 17, color: Colors.white),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xff03AA5A),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              )
+            ),
+          ),
+        ),
+      ),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      /*floatingActionButton: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),
         width: MediaQuery.of(context).size.width,
         height: 50,
@@ -192,7 +314,7 @@ class _GenerateNewsState extends State<GenerateNews> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           elevation: 0,
         ),
-      ),
+      ),*/
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -348,7 +470,23 @@ class _GenerateNewsState extends State<GenerateNews> {
                                     context: context,
                                     initialDate: initialDay,
                                     firstDate: DateTime(2000),
-                                    lastDate: DateTime(3000)
+                                    lastDate: DateTime(3000),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: ThemeData.light().copyWith(
+                                          colorScheme: ColorScheme.light(
+                                            primary: Colors.black,
+                                            onSurface: Colors.black,
+                                          ),
+                                          buttonTheme: ButtonThemeData(
+                                            colorScheme: ColorScheme.light(
+                                              primary: Colors.black,
+                                            )
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
                                   );
                                   if (dateTime != null) {
                                     setState(() {
@@ -366,6 +504,22 @@ class _GenerateNewsState extends State<GenerateNews> {
                                   final TimeOfDay? timeOfDay = await showTimePicker(
                                     context: context,
                                     initialTime: TimeOfDay(hour: initHour, minute: initialTime.minute),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: ThemeData.light().copyWith(
+                                          colorScheme: ColorScheme.light(
+                                            primary: Colors.black,
+                                            onSurface: Colors.black,
+                                          ),
+                                          buttonTheme: ButtonThemeData(
+                                            colorScheme: ColorScheme.light(
+                                              primary: Colors.black,
+                                            )
+                                          )
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
                                   );
                                   if (timeOfDay != null) {
                                     setState(() {
@@ -399,7 +553,23 @@ class _GenerateNewsState extends State<GenerateNews> {
                                     context: context,
                                     initialDate: finalDay,
                                     firstDate: DateTime(2000),
-                                    lastDate: DateTime(3000)
+                                    lastDate: DateTime(3000),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: ThemeData.light().copyWith(
+                                          colorScheme: ColorScheme.light(
+                                            primary: Colors.black,
+                                            onSurface: Colors.black,
+                                          ),
+                                          buttonTheme: ButtonThemeData(
+                                            colorScheme: ColorScheme.light(
+                                              primary: Colors.black,
+                                            )
+                                          )
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
                                   );
                                   if (dateTime != null) {
                                     setState(() {
@@ -417,6 +587,22 @@ class _GenerateNewsState extends State<GenerateNews> {
                                   final TimeOfDay? timeOfDay = await showTimePicker(
                                     context: context,
                                     initialTime: TimeOfDay(hour: finalHour, minute: fianlTime.minute),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: ThemeData.light().copyWith(
+                                          colorScheme: ColorScheme.light(
+                                            primary: Colors.black,
+                                            onSurface: Colors.black,
+                                          ),
+                                          buttonTheme: ButtonThemeData(
+                                            colorScheme: ColorScheme.light(
+                                              primary: Colors.black,
+                                            )
+                                          )
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
                                   );
                                   if (timeOfDay != null) {
                                     setState(() {
@@ -470,7 +656,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                     ),
                     Padding(padding: EdgeInsets.only(top: 30)),
                     caution(),
-                    Padding(padding: EdgeInsets.only(top: 60)),
+                    Padding(padding: EdgeInsets.only(top: 40)),
                   ],
                 ),
               ),
