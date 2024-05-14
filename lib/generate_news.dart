@@ -193,128 +193,6 @@ class _GenerateNewsState extends State<GenerateNews> {
           ),
         ),
       ),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      /*floatingActionButton: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        width: MediaQuery.of(context).size.width,
-        height: 50,
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            //////////////////////////데이터 전달
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return StatefulBuilder(builder: (BuildContext context, StateSetter bottomState) {
-                  return Container(
-                    height: 600,
-                    decoration: BoxDecoration(
-                      color: Colors.white, // 배경색 지정
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(padding: EdgeInsets.only(top: 15)),
-                        Container(
-                          width: 40,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[400],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        Padding(padding: EdgeInsets.only(top: 15)),
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Text('선택된 키워드를 기반으로\n소식글을 생성했어요!',
-                            style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold,),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        //Padding(padding: EdgeInsets.only(top: 18)),
-                        Container(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-                            child: Container(
-                              width: double.infinity,
-                              height: 270,
-                              child: SingleChildScrollView(
-                                padding: EdgeInsets.fromLTRB(10, 30, 10, 20),
-                                child: Text(_generatedText,
-                                  style: TextStyle(fontSize: 15, color: Colors.black),
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color(0xffF2F2F2),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                  )
-                                ],
-                              ),
-                            )
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                print('재생성버튼 클릭');
-                                bottomState(() {
-                                  setState(() {
-                                    _generatedText = '재생성된 소식글';
-                                  });
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xffF2F2F2),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                minimumSize: Size(130, 50),
-                              ),
-                              child: Text('재생성',
-                                style: TextStyle(fontSize: 17, color: Colors.black),
-                              ),
-                            ),
-                            Padding(padding: EdgeInsets.only(right: 10)),
-                            ElevatedButton(
-                              onPressed: () {
-                                //////////////////////////DB 저장
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xff03AA5A),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                minimumSize: Size(230, 50),
-                              ),
-                              child: Text('적용하기',
-                                style: TextStyle(fontSize: 17, color: Colors.white),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                });
-              }
-            );
-          },
-          label: Text('키워드 기반 맞춤 소식 글 생성하기',
-            style: TextStyle(
-              fontSize: 15,
-            ),),
-          backgroundColor: Color(0xff03AA5A),
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          elevation: 0,
-        ),
-      ),*/
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -322,7 +200,6 @@ class _GenerateNewsState extends State<GenerateNews> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              //Padding(padding: EdgeInsets.only(top: 10)),
               Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -463,7 +340,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                             children: [
                               TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
+                                  textStyle: TextStyle(fontSize: 18),
+                                  foregroundColor: Colors.black,
                                 ),
                                 onPressed: () async {
                                   final DateTime? dateTime = await showDatePicker(
@@ -498,7 +376,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                               ),
                               TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: TextStyle(fontSize: 15, color: Colors.black),
+                                  textStyle: TextStyle(fontSize: 15),
+                                  foregroundColor: Colors.black,
                                 ),
                                 onPressed: () async {
                                   final TimeOfDay? timeOfDay = await showTimePicker(
@@ -547,6 +426,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                               TextButton(
                                 style: TextButton.styleFrom(
                                   textStyle: TextStyle(fontSize: 18, color: Colors.black),
+                                  foregroundColor: Colors.black,
                                 ),
                                 onPressed: () async {
                                   final DateTime? dateTime = await showDatePicker(
@@ -581,7 +461,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                               ),
                               TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: TextStyle(fontSize: 15, color: Colors.black),
+                                  textStyle: TextStyle(fontSize: 15),
+                                  foregroundColor: Colors.black,
                                 ),
                                 onPressed: () async {
                                   final TimeOfDay? timeOfDay = await showTimePicker(
