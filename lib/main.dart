@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/find_password_page.dart';
 import 'package:flutter_neighclova/join_page.dart';
 import 'package:flutter_neighclova/main_page.dart';
+import 'package:flutter_neighclova/news.dart';
+import 'package:flutter_neighclova/tabview.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +21,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Login',
       home: Login(),
+      theme: ThemeData(
+        primaryColor: Colors.white,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      
     );
   }
 }
@@ -134,7 +141,7 @@ class _LoginState extends State<Login> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                  MainPage())
+                                  TabView())
                               );
                             }
                             else {
