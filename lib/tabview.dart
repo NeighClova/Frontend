@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/main_page.dart';
+import 'package:flutter_neighclova/mypage.dart';
 import 'package:flutter_neighclova/news.dart';
-import 'package:flutter_neighclova/shared/bottom.dart';
 
 class TabView extends StatefulWidget {
   const TabView({super.key});
@@ -69,7 +69,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
           Center(child: Text('리뷰분석')),
           Center(child: Text('소개생성')),
           NewsPage(),
-          Center(child: Text('My')),
+          MyPage(),
         ],
       ),
     );

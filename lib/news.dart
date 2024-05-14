@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/generate_news.dart';
 import 'package:flutter_neighclova/news_card.dart';
-import 'package:flutter_neighclova/shared/bottom.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);
