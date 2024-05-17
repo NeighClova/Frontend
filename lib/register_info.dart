@@ -66,7 +66,7 @@ class _RegisterInfo extends State<RegisterInfo> {
               else
               {
                 //데이터 저장
-
+                //등록 여부 저장하기
                 //메인페이지로 이동
                 Navigator.pushAndRemoveUntil(
                   context,

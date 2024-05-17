@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/change_password.dart';
 import 'package:flutter_neighclova/edit_info.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:image_picker/image_picker.dart';
@@ -282,7 +283,12 @@ class _MyPageState extends State<MyPage> {
                           height: 55,
                           child: TextButton(
                               onPressed: () {
-                                print('비밀번호 변경 페이지로 이동');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                    ChangePassword())
+                                );
                               },
                               style: ButtonStyle(
                                 foregroundColor: MaterialStateProperty.all(Colors.black),

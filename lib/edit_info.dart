@@ -106,7 +106,7 @@ class _EditInfoState extends State<EditInfo> {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center, // 추가됨
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('매장명',
