@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/change_password.dart';
 import 'package:flutter_neighclova/edit_info.dart';
+import 'package:flutter_neighclova/license.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -534,24 +535,30 @@ class _MyPageState extends State<MyPage> {
                           alignment: Alignment.centerLeft,
                           height: 55,
                           child: TextButton(
-                              onPressed: () {
-                                print('오픈소스 라이선스 페이지로 이동');
-                              },
-                              style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all(Colors.black),
-                                shadowColor: MaterialStateProperty.all(Colors.transparent),
-                                overlayColor: MaterialStateProperty.all(Colors.transparent),
-                                minimumSize: MaterialStateProperty.all(Size.fromHeight(70)),
-                                padding: MaterialStateProperty.all(EdgeInsets.only(left: 0)),
-                                alignment: Alignment.centerLeft,
-                                textStyle: MaterialStateProperty.all(
-                                  TextStyle(
-                                    fontSize: 16,
-                                  ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                  License()
+                                )
+                              );
+                            },
+                            style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.all(Colors.black),
+                              shadowColor: MaterialStateProperty.all(Colors.transparent),
+                              overlayColor: MaterialStateProperty.all(Colors.transparent),
+                              minimumSize: MaterialStateProperty.all(Size.fromHeight(70)),
+                              padding: MaterialStateProperty.all(EdgeInsets.only(left: 0)),
+                              alignment: Alignment.centerLeft,
+                              textStyle: MaterialStateProperty.all(
+                                TextStyle(
+                                  fontSize: 16,
                                 ),
                               ),
-                              child: Text('오픈소스 라이선스'),
                             ),
+                            child: Text('오픈소스 라이선스'),
+                          ),
                         ),
                       ),
                     ],
