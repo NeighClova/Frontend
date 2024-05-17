@@ -8,6 +8,7 @@ import 'package:flutter_neighclova/edit_info.dart';
 import 'package:flutter_neighclova/license.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyPage extends StatefulWidget {
 	const MyPage({Key? key}) : super(key: key);
@@ -582,6 +583,7 @@ class _MyPageState extends State<MyPage> {
                           child: TextButton(
                               onPressed: () {
                                 print('개인정보 처리방침 및 이용약관 링크 이동');
+                                launchUrl(Uri.parse('https://circular-hamster-14b.notion.site/f0af9a0c85fc4c87b7b5301bbbe41e75?pvs=4'));
                               },
                               style: ButtonStyle(
                                 foregroundColor: MaterialStateProperty.all(Colors.black),
