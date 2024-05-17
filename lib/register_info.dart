@@ -1,37 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/main_page.dart';
 
-class EditInfo extends StatefulWidget {
-	const EditInfo({Key? key}) : super(key: key);
+class RegisterInfo extends StatefulWidget {
+	const RegisterInfo({Key? key}) : super(key: key);
 
   @override
-  State<EditInfo> createState() => _EditInfoState();
+  State<RegisterInfo> createState() => _RegisterInfo();
 }
 
-class _EditInfoState extends State<EditInfo> {
-  
-  @override
-  void initState() {
-    super.initState();
-    ////////기존 데이터 세팅
-    for (int i = 0; i < ages.length; i++)
-    {
-      //기존 정보 받아와서 age[i]에 세팅
-      age[i] = false;
-      ages[i]['isSelected'] = age[i];
-    }
-    for (int i = 0; i < targets.length; i++)
-    {
-      target[i] = false;
-      targets[i]['isSelected'] = target[i];
-    }
-  }
+class _RegisterInfo extends State<RegisterInfo> {
 
   TextEditingController controller = TextEditingController();
   TextEditingController controller2 = TextEditingController();
   TextEditingController controller3 = TextEditingController();
-  List<bool> age = [false, false, false, false, false, false];
-  List<bool> target = [false, false, false, false, false, false, false];
 
   final List<Map<String, dynamic>> ages = [
     {'age': '10대', 'isSelected': false},
@@ -62,7 +44,7 @@ class _EditInfoState extends State<EditInfo> {
             width: 1,
           )
         ),
-        title: Text('업체 정보 수정',
+        title: Text('업체 정보 등록',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -77,8 +59,24 @@ class _EditInfoState extends State<EditInfo> {
           padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
           child: ElevatedButton(
             onPressed: () {
-              //////////데이터 전달
-              print('수정된 업체정보 데이터 전달');
+              if (controller3.text == '')
+              {
+                showSnackBar(context, Text('필수 정보를 입력해주세요.'));
+              }
+              else
+              {
+                //데이터 저장
+
+                //메인페이지로 이동
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                    MainPage(),
+                  ), (route) => false
+                );
+              }
+              print('업체정보 데이터 전달');
             },
             child: Text('저장',
               style: TextStyle(fontSize: 17, color: Colors.white),
@@ -245,7 +243,7 @@ class _EditInfoState extends State<EditInfo> {
                     mainAxisAlignment: MainAxisAlignment.center, // 추가됨
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('스마트 플레이스 주소',
+                      Text('스마트 플레이스 주소 *',
                         style: TextStyle(
                           color: Color(0xff717171),
                           fontSize: 16
@@ -351,4 +349,13 @@ class _EditInfoState extends State<EditInfo> {
       ),
     );
   }
+}
+
+void showSnackBar(BuildContext context, Text text) {
+  final snackBar = SnackBar(
+    content: text,
+    backgroundColor: Color(0xff03C75A),
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }

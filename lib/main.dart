@@ -188,11 +188,11 @@ class _LoginState extends State<Login> {
                       TextButton(
                         onPressed: (){
                           Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                  JoinPage())
-                              );
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              JoinPage())
+                          );
                         },
                         child: Text('회원가입', style: TextStyle(color:Colors.black)),
                       ),
