@@ -330,56 +330,68 @@ class _MyPageState extends State<MyPage> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
+                                  barrierDismissible: false,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
+                                      insetPadding: EdgeInsets.all(0),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10)
                                       ),
                                       backgroundColor: Colors.white,
-                                      title: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          new Text('로그아웃'),
-                                        ],
-                                      ),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          new Text('로그아웃 하시겠어요?'),
-                                        ],
-                                      ),
-                                      actions: <Widget>[
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      title: Text('로그아웃', textAlign: TextAlign.center,),
+                                      content: Text('로그아웃 하시겠어요?', textAlign: TextAlign.center,),
+                                      actions: [
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            new TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.black,
-                                              ),
-                                              child: Text('    취소')
+                                            Container(
+                                              width: double.infinity,
+                                              child: Divider(height: 1, color: Colors.grey),
                                             ),
-                                            new TextButton(
-                                              onPressed: () {
-                                                print('로그아웃');
-                                                Navigator.pushAndRemoveUntil(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (BuildContext context) =>
-                                                    Login(),
-                                                  ), (route) => false
-                                                );
-                                              },
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.red,
-                                              ),
-                                              child: Text('로그아웃')
-                                            ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Center(
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      style: TextButton.styleFrom(
+                                                        foregroundColor: Colors.black,
+                                                      ),
+                                                      child: Text('취소', textAlign: TextAlign.center,)
+                                                    ),
+                                                  )
+                                                ),
+                                                Container(
+                                                  height: 47,
+                                                  width: 1,
+                                                  color: Colors.grey,
+                                                ),
+                                                Expanded(
+                                                  child: Center(
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        print('로그아웃');
+                                                        Navigator.pushAndRemoveUntil(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (BuildContext context) =>
+                                                            Login(),
+                                                          ), (route) => false
+                                                        );
+                                                      },
+                                                      style: TextButton.styleFrom(
+                                                        foregroundColor: Colors.red,
+                                                      ),
+                                                      child: Text('로그아웃', textAlign: TextAlign.center,)
+                                                    ),
+                                                  )
+                                                )
+                                              ],
+                                            )
                                           ],
-                                        )
-                                        
+                                        ),
                                       ],
                                     );
                                   }
@@ -423,19 +435,16 @@ class _MyPageState extends State<MyPage> {
                           child: TextButton(
                               onPressed: () {
                                 showDialog(
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
+                                      insetPadding: EdgeInsets.all(0),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10)
                                       ),
                                       backgroundColor: Colors.white,
-                                      title: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          new Text('회원 탈퇴'),
-                                        ],
-                                      ),
+                                      title: Text('회원 탈퇴', textAlign: TextAlign.center,),
                                       content: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [RichText(
@@ -451,39 +460,61 @@ class _MyPageState extends State<MyPage> {
                                               TextSpan(text: '합니다.\n정말로 탈퇴하시겠어요?'),
                                             ],
                                           ),
-                                        ),]
+                                        ),
+                                        ]
                                       ),
-                                      actions: <Widget>[
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      actions: [
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            new TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.black,
-                                              ),
-                                              child: Text('    취소')
+                                            Container(
+                                              width: double.infinity,
+                                              child: Divider(height: 1, color: Colors.grey),
                                             ),
-                                            new TextButton(
-                                              onPressed: () {
-                                                print('회원 탈퇴');
-                                                Navigator.pushAndRemoveUntil(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (BuildContext context) =>
-                                                    Login(),
-                                                  ), (route) => false
-                                                );
-                                              },
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.red,
-                                              ),
-                                              child: Text('탈퇴하기')
-                                            ),
-                                          ],
-                                        )
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Center(
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      style: TextButton.styleFrom(
+                                                        foregroundColor: Colors.black,
+                                                      ),
+                                                      child: Text('취소', textAlign: TextAlign.center,)
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  height: 47, // 버튼 높이에 맞춰서 설정
+                                                  width: 1,
+                                                  color: Colors.grey,
+                                                ),
+                                                Expanded(
+                                                  child: Center(
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        print('회원 탈퇴');
+                                                        Navigator.pushAndRemoveUntil(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (BuildContext context) =>
+                                                            Login(),
+                                                          ), (route) => false
+                                                        );
+                                                      },
+                                                      style: TextButton.styleFrom(
+                                                        foregroundColor: Colors.red,
+                                                      ),
+                                                      child: Text('탈퇴하기', textAlign: TextAlign.center,)
+                                                    ),
+                                                  )
+                                                ),
+                                              ],
+                                            )
+                                          ]
+                                        ),
                                       ],
                                     );
                                   }
@@ -616,6 +647,9 @@ class _MyPageState extends State<MyPage> {
   _showBottomSheet() {
     return showModalBottomSheet(
       context: context,
+      /*shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),*/
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(25),
