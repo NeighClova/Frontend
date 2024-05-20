@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/mypage.dart';
 
 class EditInfo extends StatefulWidget {
 	const EditInfo({Key? key}) : super(key: key);
@@ -77,8 +78,22 @@ class _EditInfoState extends State<EditInfo> {
           padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
           child: ElevatedButton(
             onPressed: () {
-              //////////데이터 전달
-              print('수정된 업체정보 데이터 전달');
+              if (controller3.text == '')
+              {
+                showSnackBar(context, Text('필수 정보를 입력해주세요.'));
+              }
+              else
+              {
+                //데이터 저장
+                //마이페이지로 이동
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                    MyPage(),
+                  ), (route) => false
+                );
+              }
             },
             child: Text('저장',
               style: TextStyle(fontSize: 17, color: Colors.white),
@@ -245,7 +260,7 @@ class _EditInfoState extends State<EditInfo> {
                     mainAxisAlignment: MainAxisAlignment.center, // 추가됨
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('스마트 플레이스 주소',
+                      Text('스마트 플레이스 주소 *',
                         style: TextStyle(
                           color: Color(0xff717171),
                           fontSize: 16
@@ -351,4 +366,13 @@ class _EditInfoState extends State<EditInfo> {
       ),
     );
   }
+}
+
+void showSnackBar(BuildContext context, Text text) {
+  final snackBar = SnackBar(
+    content: text,
+    backgroundColor: Color(0xff03C75A),
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
