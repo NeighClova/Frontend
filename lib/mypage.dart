@@ -37,7 +37,7 @@ class _MyPageState extends State<MyPage> {
         title: Text('마이페이지',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Color(0xff404040),
             fontSize: 20,
           )
         ),
@@ -153,7 +153,7 @@ class _MyPageState extends State<MyPage> {
                                 Text(
                                   '식당 이름',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Color(0xff404040),
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -241,7 +241,7 @@ class _MyPageState extends State<MyPage> {
                           children: [
                             Icon(
                               Icons.person_outline,
-                              color: Colors.black,
+                              color: Color(0xff404040),
                               size: 30,
                             ),
                             Padding(padding: EdgeInsets.only(right: 15)),
@@ -275,7 +275,7 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       Icon(
                         Icons.key,
-                        color: Colors.black,
+                        color: Color(0xff404040),
                         size: 30,
                       ),
                       Padding(padding: EdgeInsets.only(right: 15)),
@@ -293,7 +293,7 @@ class _MyPageState extends State<MyPage> {
                                 );
                               },
                               style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all(Colors.black),
+                                foregroundColor: MaterialStateProperty.all(Color(0xff404040)),
                                 shadowColor: MaterialStateProperty.all(Colors.transparent),
                                 overlayColor: MaterialStateProperty.all(Colors.transparent),
                                 minimumSize: MaterialStateProperty.all(Size.fromHeight(70)),
@@ -318,7 +318,7 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       Icon(
                         Icons.logout,
-                        color: Colors.black,
+                        color: Color(0xff404040),
                         size: 30,
                       ),
                       Padding(padding: EdgeInsets.only(right: 15)),
@@ -357,7 +357,7 @@ class _MyPageState extends State<MyPage> {
                                                         Navigator.pop(context);
                                                       },
                                                       style: TextButton.styleFrom(
-                                                        foregroundColor: Colors.black,
+                                                        foregroundColor: Color(0xff404040),
                                                       ),
                                                       child: Text('취소', textAlign: TextAlign.center,)
                                                     ),
@@ -398,7 +398,7 @@ class _MyPageState extends State<MyPage> {
                                 );
                               },
                               style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all(Colors.black),
+                                foregroundColor: MaterialStateProperty.all(Color(0xff404040)),
                                 shadowColor: MaterialStateProperty.all(Colors.transparent),
                                 overlayColor: MaterialStateProperty.all(Colors.transparent),
                                 minimumSize: MaterialStateProperty.all(Size.fromHeight(70)),
@@ -424,7 +424,7 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       Icon(
                         Icons.person_remove_outlined,
-                        color: Colors.black,
+                        color: Color(0xff404040),
                         size: 30,
                       ),
                       Padding(padding: EdgeInsets.only(right: 15)),
@@ -450,7 +450,7 @@ class _MyPageState extends State<MyPage> {
                                         children: [RichText(
                                           textAlign: TextAlign.center,
                                           text: TextSpan(
-                                            style: TextStyle(color: Colors.black),
+                                            style: TextStyle(color: Color(0xff404040)),
                                             children: [
                                               TextSpan(text: '계정이 삭제된 후에는 복구가 '),
                                               TextSpan(
@@ -480,7 +480,7 @@ class _MyPageState extends State<MyPage> {
                                                         Navigator.pop(context);
                                                       },
                                                       style: TextButton.styleFrom(
-                                                        foregroundColor: Colors.black,
+                                                        foregroundColor: Color(0xff404040),
                                                       ),
                                                       child: Text('취소', textAlign: TextAlign.center,)
                                                     ),
@@ -521,7 +521,7 @@ class _MyPageState extends State<MyPage> {
                                 );
                               },
                               style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all(Colors.black),
+                                foregroundColor: MaterialStateProperty.all(Color(0xff404040)),
                                 shadowColor: MaterialStateProperty.all(Colors.transparent),
                                 overlayColor: MaterialStateProperty.all(Colors.transparent),
                                 minimumSize: MaterialStateProperty.all(Size.fromHeight(70)),
@@ -577,7 +577,7 @@ class _MyPageState extends State<MyPage> {
                               );
                             },
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all(Colors.black),
+                              foregroundColor: MaterialStateProperty.all(Color(0xff404040)),
                               shadowColor: MaterialStateProperty.all(Colors.transparent),
                               overlayColor: MaterialStateProperty.all(Colors.transparent),
                               minimumSize: MaterialStateProperty.all(Size.fromHeight(70)),
@@ -603,7 +603,7 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       Icon(
                         Icons.info_outline,
-                        color: Colors.black,
+                        color: Color(0xff404040),
                         size: 30,
                       ),
                       Padding(padding: EdgeInsets.only(right: 15)),
@@ -617,7 +617,7 @@ class _MyPageState extends State<MyPage> {
                                 launchUrl(Uri.parse('https://circular-hamster-14b.notion.site/f0af9a0c85fc4c87b7b5301bbbe41e75?pvs=4'));
                               },
                               style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all(Colors.black),
+                                foregroundColor: MaterialStateProperty.all(Color(0xff404040)),
                                 shadowColor: MaterialStateProperty.all(Colors.transparent),
                                 overlayColor: MaterialStateProperty.all(Colors.transparent),
                                 minimumSize: MaterialStateProperty.all(Size.fromHeight(70)),
@@ -671,7 +671,7 @@ class _MyPageState extends State<MyPage> {
                 Navigator.pop(context);
               },
               style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(Colors.black),
+                foregroundColor: MaterialStateProperty.all(Color(0xff404040)),
                 shadowColor: MaterialStateProperty.all(Colors.transparent),
                 overlayColor: MaterialStateProperty.all(Colors.transparent),
                 alignment: Alignment.center,
@@ -696,7 +696,7 @@ class _MyPageState extends State<MyPage> {
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(Colors.black),
+                  foregroundColor: MaterialStateProperty.all(Color(0xff404040)),
                   shadowColor: MaterialStateProperty.all(Colors.transparent),
                   overlayColor: MaterialStateProperty.all(Colors.transparent),
                   alignment: Alignment.center,

@@ -62,7 +62,7 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                   child: Text('코드를 보내드렸습니다',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color:Colors.black,
+                      color:Color(0xff404040),
                       fontSize: 25,
                     )
                   ),
@@ -80,7 +80,7 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
               Center(
                 child: Text('인증을 위해 아래에 코드를 입력해주세요.',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Color(0xff404040),
                     fontSize: 17,
                   ),
                 ),

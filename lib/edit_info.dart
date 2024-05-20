@@ -66,7 +66,7 @@ class _EditInfoState extends State<EditInfo> {
         title: Text('업체 정보 수정',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Color(0xff404040),
             fontSize: 20,
           )
         ),

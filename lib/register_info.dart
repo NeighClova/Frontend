@@ -47,7 +47,7 @@ class _RegisterInfo extends State<RegisterInfo> {
         title: Text('업체 정보 등록',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Color(0xff404040),
             fontSize: 20,
           )
         ),
@@ -329,7 +329,7 @@ class _RegisterInfo extends State<RegisterInfo> {
             child: Text(
               targets[index]['target'],
               style: TextStyle(
-              color: targets[index]['isSelected'] ? Colors.white : Colors.black,
+              color: targets[index]['isSelected'] ? Colors.white : Color(0xff404040),
               fontSize: 12,
               )
             ),

@@ -23,7 +23,7 @@ class License extends StatelessWidget {
         title: Text('오픈소스 라이선스',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Color(0xff404040),
             fontSize: 20,
           )
         ),

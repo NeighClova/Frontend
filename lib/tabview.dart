@@ -39,7 +39,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.black,
+        selectedItemColor: Color(0xff404040),
         unselectedItemColor: Colors.grey,
         selectedLabelStyle: const TextStyle(
           fontSize: 10,

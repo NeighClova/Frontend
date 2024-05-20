@@ -27,7 +27,7 @@ class _NewsPageState extends State<NewsPage> {
         title: Text('소식 생성',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Color(0xff404040),
             fontSize: 20,
           )
         ),

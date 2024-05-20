@@ -49,14 +49,14 @@ class _NewsCardState extends State<NewsCard> {
                       children: [
                         Text('식당 이름',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Color(0xff404040),
                           fontSize: 15,
                         ),
                         textAlign: TextAlign.left,
                         ),
                         Text('날짜',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Color(0xff404040),
                           fontSize: 10,
                         ),
                         textAlign: TextAlign.left,
@@ -108,7 +108,7 @@ void showToast(){
   Fluttertoast.showToast(
     msg: '클립보드에 복사되었습니다.',
     gravity: ToastGravity.BOTTOM,
-    backgroundColor: Colors.black,
+    backgroundColor: Color(0xff404040),
     fontSize: 15,
     textColor: Colors.white,
     toastLength: Toast.LENGTH_SHORT,

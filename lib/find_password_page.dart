@@ -57,20 +57,20 @@ class _PasswordPageState extends State<PasswordPage> {
                       Text('비밀번호 찾기',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color:Colors.black,
+                          color:Color(0xff404040),
                           fontSize: 25,
                         )
                       ),
                       Padding(padding: EdgeInsets.only(top: 25)),
                       Text('회원가입 시 기입했던 이메일을 입력해주세요.',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Color(0xff404040),
                           fontSize: 15,
                         ),
                       ),
                       Text('비밀번호 재설정 메일을 보내드립니다.',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Color(0xff404040),
                           fontSize: 15,
                         ),
                       ),
@@ -220,7 +220,7 @@ class SendMailPage extends StatelessWidget {
               child: Text('비밀번호 찾기',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color:Colors.black,
+                  color:Color(0xff404040),
                   fontSize: 25,
                 )
               ),
@@ -243,7 +243,7 @@ class SendMailPage extends StatelessWidget {
                 Padding(padding: EdgeInsets.only(top: 10)),
                 Text('비밀번호 재설정 메일이 발송되었습니다.',
                   style: TextStyle(
-                    color:Colors.black,
+                    color:Color(0xff404040),
                     fontSize: 17,
                   )
                 ),

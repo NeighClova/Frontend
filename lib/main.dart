@@ -26,6 +26,12 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.white, // 원하는 배경색 설정
+        ),
+        primaryTextTheme: TextTheme(
+          bodyLarge: TextStyle(color: Color(0xff404040)),
+        ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color:Color(0xff404040)),
         )
       ),
       
@@ -177,7 +183,7 @@ class _LoginState extends State<Login> {
                                   PasswordPage())
                               );
                         },
-                        child: Text('비밀번호 찾기', style: TextStyle(color:Colors.black)),
+                        child: Text('비밀번호 찾기', style: TextStyle(color:Color(0xff404040))),
                       ),
                       Padding(padding: EdgeInsets.fromLTRB(0, 0, 30, 0)),
                       Container(
@@ -196,7 +202,7 @@ class _LoginState extends State<Login> {
                               JoinPage())
                           );
                         },
-                        child: Text('회원가입', style: TextStyle(color:Colors.black)),
+                        child: Text('회원가입', style: TextStyle(color:Color(0xff404040))),
                       ),
                       ],),
                       Padding(padding: EdgeInsets.only(top: 100.0)),
@@ -213,7 +219,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         SizedBox(width: 10.0),
-                        Text('네이버로 간편하게 로그인하기', style: TextStyle(color: Colors.black)),
+                        Text('네이버로 간편하게 로그인하기', style: TextStyle(color: Color(0xff404040))),
                         SizedBox(width: 10.0),
                           Expanded(
                             child: Container(

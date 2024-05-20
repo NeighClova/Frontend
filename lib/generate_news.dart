@@ -65,7 +65,7 @@ class _GenerateNewsState extends State<GenerateNews> {
         title: Text('소식 생성',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Color(0xff404040),
             fontSize: 20,
           )
         ),
@@ -103,7 +103,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                           Align(
                             alignment: Alignment.topCenter,
                             child: Text('선택된 키워드를 기반으로\n소식글을 생성했어요!',
-                              style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold,),
+                              style: TextStyle(fontSize: 18, color: Color(0xff404040), fontWeight: FontWeight.bold,),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -116,7 +116,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                                 child: SingleChildScrollView(
                                   padding: EdgeInsets.fromLTRB(10, 30, 10, 20),
                                   child: Text(_generatedText,
-                                    style: TextStyle(fontSize: 15, color: Colors.black),
+                                    style: TextStyle(fontSize: 15, color: Color(0xff404040)),
                                   ),
                                 ),
                                 decoration: BoxDecoration(
@@ -151,7 +151,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                                   minimumSize: Size(130, 50),
                                 ),
                                 child: Text('재생성',
-                                  style: TextStyle(fontSize: 17, color: Colors.black),
+                                  style: TextStyle(fontSize: 17, color: Color(0xff404040)),
                                 ),
                               ),
                               Padding(padding: EdgeInsets.only(right: 10)),
@@ -215,7 +215,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                             Text('가게 소식 키워드',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color:Colors.black,
+                                color:Color(0xff404040),
                                 fontSize: 20,
                               )
                             ),
@@ -238,7 +238,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                                     '- 활용 전 사실 점검을 권장드려요.\n'
                                     '- 구체적으로 지시할수록 더 좋은 답변을 얻을 수 있어요.',
                           padding: EdgeInsets.all(20),
-                          textStyle: TextStyle(color: Colors.black),
+                          textStyle: TextStyle(color: Color(0xff404040)),
                           preferBelow: false,
                           verticalOffset: 15,
                           triggerMode: TooltipTriggerMode.tap,
@@ -267,7 +267,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                           Text('소식 유형',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: Color(0xff404040),
                               fontSize: 20,
                             ),
                           ),
@@ -319,7 +319,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                           Text('기간',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: Color(0xff404040),
                               fontSize: 20,
                             ),
                           ),
@@ -342,7 +342,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                               TextButton(
                                 style: TextButton.styleFrom(
                                   textStyle: TextStyle(fontSize: 18),
-                                  foregroundColor: Colors.black,
+                                  foregroundColor: Color(0xff404040),
                                 ),
                                 onPressed: () async {
                                   final DateTime? dateTime = await showDatePicker(
@@ -354,12 +354,12 @@ class _GenerateNewsState extends State<GenerateNews> {
                                       return Theme(
                                         data: ThemeData.light().copyWith(
                                           colorScheme: ColorScheme.light(
-                                            primary: Colors.black,
-                                            onSurface: Colors.black,
+                                            primary: Color(0xff404040),
+                                            onSurface: Color(0xff404040),
                                           ),
                                           buttonTheme: ButtonThemeData(
                                             colorScheme: ColorScheme.light(
-                                              primary: Colors.black,
+                                              primary: Color(0xff404040),
                                             )
                                           ),
                                         ),
@@ -378,7 +378,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                               TextButton(
                                 style: TextButton.styleFrom(
                                   textStyle: TextStyle(fontSize: 15),
-                                  foregroundColor: Colors.black,
+                                  foregroundColor: Color(0xff404040),
                                 ),
                                 onPressed: () async {
                                   final TimeOfDay? timeOfDay = await showTimePicker(
@@ -388,12 +388,12 @@ class _GenerateNewsState extends State<GenerateNews> {
                                       return Theme(
                                         data: ThemeData.light().copyWith(
                                           colorScheme: ColorScheme.light(
-                                            primary: Colors.black,
-                                            onSurface: Colors.black,
+                                            primary: Color(0xff404040),
+                                            onSurface: Color(0xff404040),
                                           ),
                                           buttonTheme: ButtonThemeData(
                                             colorScheme: ColorScheme.light(
-                                              primary: Colors.black,
+                                              primary: Color(0xff404040),
                                             )
                                           )
                                         ),
@@ -418,7 +418,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                         ),
                         Padding(padding: EdgeInsets.only(right: 20)),
                         Container(
-                          child: Icon(Icons.arrow_forward, size: 30, color: Colors.black,),
+                          child: Icon(Icons.arrow_forward, size: 30, color: Color(0xff404040),),
                         ),
                         Padding(padding: EdgeInsets.only(right: 20)),
                         Container(
@@ -426,8 +426,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                             children: [
                               TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                                  foregroundColor: Colors.black,
+                                  textStyle: TextStyle(fontSize: 18, color: Color(0xff404040)),
+                                  foregroundColor: Color(0xff404040),
                                 ),
                                 onPressed: () async {
                                   final DateTime? dateTime = await showDatePicker(
@@ -439,12 +439,12 @@ class _GenerateNewsState extends State<GenerateNews> {
                                       return Theme(
                                         data: ThemeData.light().copyWith(
                                           colorScheme: ColorScheme.light(
-                                            primary: Colors.black,
-                                            onSurface: Colors.black,
+                                            primary: Color(0xff404040),
+                                            onSurface: Color(0xff404040),
                                           ),
                                           buttonTheme: ButtonThemeData(
                                             colorScheme: ColorScheme.light(
-                                              primary: Colors.black,
+                                              primary: Color(0xff404040),
                                             )
                                           )
                                         ),
@@ -463,7 +463,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                               TextButton(
                                 style: TextButton.styleFrom(
                                   textStyle: TextStyle(fontSize: 15),
-                                  foregroundColor: Colors.black,
+                                  foregroundColor: Color(0xff404040),
                                 ),
                                 onPressed: () async {
                                   final TimeOfDay? timeOfDay = await showTimePicker(
@@ -473,12 +473,12 @@ class _GenerateNewsState extends State<GenerateNews> {
                                       return Theme(
                                         data: ThemeData.light().copyWith(
                                           colorScheme: ColorScheme.light(
-                                            primary: Colors.black,
-                                            onSurface: Colors.black,
+                                            primary: Color(0xff404040),
+                                            onSurface: Color(0xff404040),
                                           ),
                                           buttonTheme: ButtonThemeData(
                                             colorScheme: ColorScheme.light(
-                                              primary: Colors.black,
+                                              primary: Color(0xff404040),
                                             )
                                           )
                                         ),
@@ -509,7 +509,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                       child : Text('강조하고 싶은 내용 추가',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Color(0xff404040),
                           fontSize: 20,
                         ),
                       ),
@@ -563,7 +563,7 @@ class _GenerateNewsState extends State<GenerateNews> {
             child: Text(
               keyword[index]['keyword'],
               style: TextStyle(
-              color: keyword[index]['isSelected'] ? Colors.white : Colors.black,
+              color: keyword[index]['isSelected'] ? Colors.white : Color(0xff404040),
               fontSize: 11,
               )
             ),
@@ -610,7 +610,7 @@ class _GenerateNewsState extends State<GenerateNews> {
             child: Text(
               type[index]['type'],
               style: TextStyle(
-              color: type[index]['isSelected'] ? Colors.white : Colors.black,
+              color: type[index]['isSelected'] ? Colors.white : Color(0xff404040),
               fontSize: 10,
               )
             ),

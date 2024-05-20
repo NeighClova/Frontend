@@ -49,7 +49,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         title: Text('비밀번호 변경',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Color(0xff404040),
             fontSize: 20,
           )
         ),
@@ -345,7 +345,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     );
                   },
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(Colors.black),
+                    foregroundColor: MaterialStateProperty.all(Color(0xff404040)),
                     shadowColor: MaterialStateProperty.all(Colors.transparent),
                     overlayColor: MaterialStateProperty.all(Colors.transparent),
                     alignment: Alignment.center,

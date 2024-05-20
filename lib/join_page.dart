@@ -230,7 +230,7 @@ class _JoinPageState extends State<JoinPage> {
                             child: Text('로그인',
                               style: TextStyle(
                                 decoration: TextDecoration.underline,
-                                color: Colors.black,
+                                color: Color(0xff404040),
                                 fontSize: 12,
                               ),),
                           )
@@ -250,7 +250,7 @@ class _JoinPageState extends State<JoinPage> {
                           ),
                         ),
                         SizedBox(width: 10.0),
-                        Text('네이버로 간편하게 로그인하기', style: TextStyle(color: Colors.black)),
+                        Text('네이버로 간편하게 로그인하기', style: TextStyle(color: Color(0xff404040))),
                         SizedBox(width: 10.0),
                           Expanded(
                             child: Container(
