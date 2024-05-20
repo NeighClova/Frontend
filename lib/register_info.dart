@@ -99,7 +99,7 @@ class _RegisterInfo extends State<RegisterInfo> {
             children: [
               //매장명
               Container(
-                height: 120,
+                height: 110,
                 width: double.infinity,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -117,6 +117,7 @@ class _RegisterInfo extends State<RegisterInfo> {
                       TextField(
                         controller: controller,
                         decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
                           isDense: true,
                           enabledBorder: OutlineInputBorder(
                             borderSide:BorderSide(
@@ -138,7 +139,7 @@ class _RegisterInfo extends State<RegisterInfo> {
               ),
               //업종
               Container(
-                height: 120,
+                height: 110,
                 width: double.infinity,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -156,6 +157,7 @@ class _RegisterInfo extends State<RegisterInfo> {
                       TextField(
                         controller: controller2,
                         decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
                           isDense: true,
                           enabledBorder: OutlineInputBorder(
                             borderSide:BorderSide(
@@ -237,7 +239,7 @@ class _RegisterInfo extends State<RegisterInfo> {
               ),
               //스마트 플레이스 주소
               Container(
-                height: 120,
+                height: 110,
                 width: double.infinity,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -255,6 +257,7 @@ class _RegisterInfo extends State<RegisterInfo> {
                       TextField(
                         controller: controller3,
                         decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
                           isDense: true,
                           enabledBorder: OutlineInputBorder(
                             borderSide:BorderSide(

@@ -91,6 +91,8 @@ class _PasswordPageState extends State<PasswordPage> {
                           TextField(
                             controller: controller,
                             decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              isDense: true,
                               labelText: '이메일',
                               hintText: 'example@company.com',
                               enabledBorder: OutlineInputBorder(

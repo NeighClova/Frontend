@@ -138,6 +138,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             },
                               controller: controller,
                               decoration: InputDecoration(
+                                contentPadding: EdgeInsets.all(10),
                                 isDense: true,
                                 hintText: '비밀번호 입력',
                                 enabledBorder: OutlineInputBorder(
@@ -219,6 +220,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               },
                               controller: controller2,
                               decoration: InputDecoration(
+                                contentPadding: EdgeInsets.all(10),
                                 isDense: true,
                                 hintText: '비밀번호 입력',
                                 enabledBorder: OutlineInputBorder(
@@ -284,6 +286,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               },
                               controller: controller3,
                               decoration: InputDecoration(
+                                contentPadding: EdgeInsets.all(10),
                                 isDense: true,
                                 hintText: '비밀번호 입력',
                                 enabledBorder: OutlineInputBorder(

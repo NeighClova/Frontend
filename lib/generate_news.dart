@@ -294,6 +294,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                       maxLines: 5,
                       style: TextStyle(fontSize: 12),
                       decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(10),
                         isDense: true,
                         hintText: '추가로 원하는 소식의 유형을 작성해주세요.',
                         enabledBorder: OutlineInputBorder(
@@ -521,6 +522,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                       maxLines: 5,
                       style: TextStyle(fontSize: 12),
                       decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(10),
                         isDense: true,
                         hintText: '추가/강조하고 싶은 내용을 작성해주세요.',
                         enabledBorder: OutlineInputBorder(
