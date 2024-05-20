@@ -92,7 +92,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         },
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(25),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +109,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     fontSize: 12
                   ),
                 ),
-                Padding(padding: EdgeInsets.only(top: 40)),
+                Padding(padding: EdgeInsets.only(top: 30)),
                 Form(
                   key: _formKey,
                   child: Container(
@@ -138,6 +138,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             },
                               controller: controller,
                               decoration: InputDecoration(
+                                isDense: true,
                                 hintText: '비밀번호 입력',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:BorderSide(
@@ -218,6 +219,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               },
                               controller: controller2,
                               decoration: InputDecoration(
+                                isDense: true,
                                 hintText: '비밀번호 입력',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:BorderSide(
@@ -282,6 +284,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               },
                               controller: controller3,
                               decoration: InputDecoration(
+                                isDense: true,
                                 hintText: '비밀번호 입력',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:BorderSide(
@@ -331,7 +334,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     )
                   )
                 ),
-                Padding(padding: EdgeInsets.only(top: 40)),
+                Padding(padding: EdgeInsets.only(top: 30)),
                 TextButton(
                   onPressed: (){
                     Navigator.push(

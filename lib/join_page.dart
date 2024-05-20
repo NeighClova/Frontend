@@ -76,6 +76,7 @@ class _JoinPageState extends State<JoinPage> {
                       },
                         controller: controller,
                         decoration: InputDecoration(
+                          isDense: true,
                           labelText: '이메일',
                           hintText: 'example@company.com',
                           enabledBorder: OutlineInputBorder(
@@ -132,6 +133,7 @@ class _JoinPageState extends State<JoinPage> {
                       },
                         controller: controller2,
                         decoration: InputDecoration(
+                          isDense: true,
                           labelText: '비밀번호',
                           hintText: '비밀번호 입력',
                           enabledBorder: OutlineInputBorder(

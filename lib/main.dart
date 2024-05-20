@@ -80,6 +80,7 @@ class _LoginState extends State<Login> {
                       TextField(
                         controller: controller,
                         decoration: InputDecoration(
+                          isDense: true,
                           hintText: '이메일 입력',
                           enabledBorder: OutlineInputBorder(
                             borderSide:BorderSide(
@@ -101,6 +102,7 @@ class _LoginState extends State<Login> {
                       TextField(
                         controller: controller2,
                         decoration: InputDecoration(
+                          isDense: true,
                           hintText: '비밀번호 입력',
                           enabledBorder: OutlineInputBorder(
                             borderSide:BorderSide(

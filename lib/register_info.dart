@@ -99,7 +99,7 @@ class _RegisterInfo extends State<RegisterInfo> {
             children: [
               //매장명
               Container(
-                height: 130,
+                height: 120,
                 width: double.infinity,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -117,11 +117,12 @@ class _RegisterInfo extends State<RegisterInfo> {
                       TextField(
                         controller: controller,
                         decoration: InputDecoration(
+                          isDense: true,
                           enabledBorder: OutlineInputBorder(
                             borderSide:BorderSide(
                               color: Colors.grey,
                               width: 1.0,
-                            )
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:BorderSide(
@@ -137,7 +138,7 @@ class _RegisterInfo extends State<RegisterInfo> {
               ),
               //업종
               Container(
-                height: 130,
+                height: 120,
                 width: double.infinity,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -155,6 +156,7 @@ class _RegisterInfo extends State<RegisterInfo> {
                       TextField(
                         controller: controller2,
                         decoration: InputDecoration(
+                          isDense: true,
                           enabledBorder: OutlineInputBorder(
                             borderSide:BorderSide(
                               color: Colors.grey,
@@ -213,7 +215,7 @@ class _RegisterInfo extends State<RegisterInfo> {
                     mainAxisAlignment: MainAxisAlignment.center, // 추가됨
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('타겟 연령대',
+                      Text('타겟 대상',
                         style: TextStyle(
                           color: Color(0xff717171),
                           fontSize: 16
@@ -235,7 +237,7 @@ class _RegisterInfo extends State<RegisterInfo> {
               ),
               //스마트 플레이스 주소
               Container(
-                height: 130,
+                height: 120,
                 width: double.infinity,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -253,6 +255,7 @@ class _RegisterInfo extends State<RegisterInfo> {
                       TextField(
                         controller: controller3,
                         decoration: InputDecoration(
+                          isDense: true,
                           enabledBorder: OutlineInputBorder(
                             borderSide:BorderSide(
                               color: Colors.grey,
