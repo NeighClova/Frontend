@@ -137,11 +137,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                               ElevatedButton(
                                 onPressed: () {
                                   print('재생성버튼 클릭');
-                                  bottomState(() {
-                                    setState(() {
-                                      _generatedText = '재생성된 소식글';
-                                    });
-                                  });
+                                  Navigator.pop(context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xffF2F2F2),
@@ -179,7 +175,16 @@ class _GenerateNewsState extends State<GenerateNews> {
                     );
                   });
                 }
-              );
+              ).then((_){
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) => GenerateNews(),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+              });
             },
             child: Text('키워드 기반 맞춤 소식 글 생성하기',
               style: TextStyle(fontSize: 17, color: Colors.white),
