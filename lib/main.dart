@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: Color(0xff404040)),
         ),
+        fontFamily: 'Pretendard'
       ),
     );
   }
@@ -195,7 +196,7 @@ class _LoginState extends State<Login> {
                                       ),
                                     );
                                   },
-                                  child: Text('회원가입', style: TextStyle(color: Color(0xff404040))),
+                                  child: Text('   회원가입    ', style: TextStyle(color: Color(0xff404040))),
                                 ),
                               ],
                             ),
