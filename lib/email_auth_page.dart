@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/join_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/main_page.dart';
+import 'package:flutter_neighclova/register_info.dart';
 
 class EmailAuthPage extends StatefulWidget {
   final Userdata userdata;
@@ -61,7 +62,7 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                   child: Text('코드를 보내드렸습니다',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color:Colors.black,
+                      color:Color(0xff404040),
                       fontSize: 25,
                     )
                   ),
@@ -79,7 +80,7 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
               Center(
                 child: Text('인증을 위해 아래에 코드를 입력해주세요.',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Color(0xff404040),
                     fontSize: 17,
                   ),
                 ),
@@ -214,13 +215,13 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                             String code = controller.text + controller2.text + controller3.text + controller4.text + controller5.text + controller6.text;
                             print(code);
                             if (code == '123456'){
-                              Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                MainPage(),
-                              )
-                            );
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                  MainPage(),
+                                ), (route) => false
+                              );
                             }
                             else{
                               showSnackBar(context, Text('코드가 일치하지 않습니다.'));
