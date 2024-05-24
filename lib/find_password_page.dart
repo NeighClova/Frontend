@@ -21,11 +21,13 @@ class _PasswordPageState extends State<PasswordPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        elevation: 0,
         shape: Border(
           bottom: BorderSide(
-            color: Colors.grey,
-            width: 1,
-          )
+            color: Colors.grey.withOpacity(0.1),
+            width: 3,
+          ),
         ),
         title: Image(
           image: AssetImage('assets/logo.png'),

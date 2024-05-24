@@ -28,11 +28,13 @@ class _MyPageState extends State<MyPage> {
 		return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        elevation: 0,
         shape: Border(
           bottom: BorderSide(
-            color: Colors.grey,
-            width: 1,
-          )
+            color: Colors.grey.withOpacity(0.1),
+            width: 3,
+          ),
         ),
         title: Text('마이페이지',
           style: TextStyle(
