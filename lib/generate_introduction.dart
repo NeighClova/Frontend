@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/introduction.dart';
 
 class GenerateIntroduction extends StatefulWidget {
 	const GenerateIntroduction({Key? key}) : super(key: key);
@@ -44,7 +45,6 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
     {'keyword': '이국적인', 'isSelected': false},
     {'keyword': '편한좌석', 'isSelected': false},
   ];
-  
 
   @override
 	Widget build(BuildContext context) {
@@ -135,6 +135,12 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
                                 onPressed: () {
                                   print('재생성버튼 클릭');
                                   Navigator.pop(context);
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => GenerateIntroduction()
+                                    ),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xffF2F2F2),
@@ -152,7 +158,12 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
                                 onPressed: () {
                                   //////////////////////////DB 저장
                                   Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Introduction()
+                                    ),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xff03AA5A),
@@ -172,16 +183,7 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
                     );
                   });
                 }
-              ).then((_){
-                Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) => GenerateIntroduction(),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
-                  ),
-                );
-              });
+              );
             },
             child: Text('키워드 기반 맞춤 소개 글 생성하기',
               style: TextStyle(fontSize: 17, color: Colors.white),
