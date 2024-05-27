@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/introduction.dart';
 import 'package:flutter_neighclova/main_page.dart';
 import 'package:flutter_neighclova/mypage.dart';
 import 'package:flutter_neighclova/news.dart';
@@ -39,6 +40,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         selectedItemColor: Color(0xff404040),
         unselectedItemColor: Colors.grey,
         selectedLabelStyle: const TextStyle(
@@ -67,7 +69,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
         children: const [
           MainPage(),
           Center(child: Text('리뷰분석')),
-          Center(child: Text('소개생성')),
+          Introduction(),
           NewsPage(),
           MyPage(),
         ],

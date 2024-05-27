@@ -57,11 +57,13 @@ class _EditInfoState extends State<EditInfo> {
 		return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffFFFFFF),
+        scrolledUnderElevation: 0,
+        elevation: 0,
         shape: Border(
           bottom: BorderSide(
-            color: Colors.grey,
-            width: 1,
-          )
+            color: Colors.grey.withOpacity(0.1),
+            width: 3,
+          ),
         ),
         title: Text('업체 정보 수정',
           style: TextStyle(

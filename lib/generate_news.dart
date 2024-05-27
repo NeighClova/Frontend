@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/news.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -56,11 +57,13 @@ class _GenerateNewsState extends State<GenerateNews> {
 		return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffFFFFFF),
+        scrolledUnderElevation: 0,
+        elevation: 0,
         shape: Border(
           bottom: BorderSide(
-            color: Colors.grey,
-            width: 1,
-          )
+            color: Colors.grey.withOpacity(0.1),
+            width: 3,
+          ),
         ),
         title: Text('소식 생성',
           style: TextStyle(
@@ -138,6 +141,12 @@ class _GenerateNewsState extends State<GenerateNews> {
                                 onPressed: () {
                                   print('재생성버튼 클릭');
                                   Navigator.pop(context);
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => GenerateNews()
+                                    ),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xffF2F2F2),
@@ -155,7 +164,12 @@ class _GenerateNewsState extends State<GenerateNews> {
                                 onPressed: () {
                                   //////////////////////////DB 저장
                                   Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => NewsPage()
+                                    ),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xff03AA5A),
@@ -175,16 +189,7 @@ class _GenerateNewsState extends State<GenerateNews> {
                     );
                   });
                 }
-              ).then((_){
-                Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) => GenerateNews(),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
-                  ),
-                );
-              });
+              );
             },
             child: Text('키워드 기반 맞춤 소식 글 생성하기',
               style: TextStyle(fontSize: 17, color: Colors.white),
