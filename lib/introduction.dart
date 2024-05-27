@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/generate_introduction.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/services.dart';
 
 class Introduction extends StatefulWidget {
 	const Introduction({Key? key}) : super(key: key);
@@ -101,7 +103,7 @@ class _IntroductionState extends State<Introduction> {
             ),
             Container(
               width: double.infinity,
-              height: 474,
+              height: 501,
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -141,7 +143,7 @@ class _IntroductionState extends State<Introduction> {
                       children: [
                         Container(
                           width: double.infinity,
-                          height: 243,
+                          height: 270,
                           decoration: BoxDecoration(
                             color: Color(0xffF2F2F2),
                             borderRadius: BorderRadius.circular(20),
@@ -154,39 +156,70 @@ class _IntroductionState extends State<Introduction> {
                               ),
                             ],
                           ),
-                          child: PageView.builder(
-                            scrollDirection: Axis.horizontal,
-                            controller: pageController,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: texts.length,
-                            itemBuilder: (context, index) {
-                              return SingleChildScrollView(
-                                padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
-                                child: Text(
-                                  texts[index],
-                                  style: TextStyle(fontSize: 15, color: Color(0xff404040)),
-                                ),
-                              );
-                            },
-                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 45),
+                            child: PageView.builder(
+                              scrollDirection: Axis.horizontal,
+                              controller: pageController,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: texts.length,
+                              itemBuilder: (context, index) {
+                                return SingleChildScrollView(
+                                  padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                                  child: Text(
+                                    texts[index],
+                                    style: TextStyle(fontSize: 15, color: Color(0xff404040)),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
                         ),
                         Positioned(
-                          top: 10,
-                          right: 10,
-                          child: SmoothPageIndicator(
-                            controller: pageController,
-                            count: texts.length,
-                            effect: ScrollingDotsEffect(
-                              activeDotColor: Color(0xff03AA5A),
-                              activeStrokeWidth: 10,
-                              activeDotScale: 1.7,
-                              maxVisibleDots: 5,
-                              radius: 8,
-                              spacing: 10,
-                              dotHeight: 5,
-                              dotWidth: 5,
+                          bottom: 20,
+                          left: 0,
+                          right: 0,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: SmoothPageIndicator(
+                              controller: pageController,
+                              count: texts.length,
+                              effect: ScrollingDotsEffect(
+                                activeDotColor: Color(0xff03AA5A),
+                                activeStrokeWidth: 10,
+                                activeDotScale: 1.7,
+                                maxVisibleDots: 5,
+                                radius: 8,
+                                spacing: 10,
+                                dotHeight: 5,
+                                dotWidth: 5,
+                              ),
                             ),
+                          )
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: IconButton(
+                            onPressed: (){
+                              int currentPage = pageController.page?.round() ?? 0;
+                              String currentText = texts[currentPage];
+                              Clipboard.setData(ClipboardData(text: currentText));
+                              showToast();
+                            },
+                            icon: Icon(Icons.content_copy_outlined),
+                            color: Color(0xffB0B0B0),
+                            iconSize: 15,
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
                           ),
+                          /*child: SizedBox(
+                            width: 55,
+                            child: Container(
+                              alignment: Alignment.centerRight,
+                              child: 
+                            ),
+                          ),*/
                         ),
                       ],
                     ),
@@ -220,4 +253,15 @@ class _IntroductionState extends State<Introduction> {
       )
 		);
 	}
+}
+
+void showToast(){
+  Fluttertoast.showToast(
+    msg: '클립보드에 복사되었습니다.',
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: Color(0xff404040),
+    fontSize: 15,
+    textColor: Colors.white,
+    toastLength: Toast.LENGTH_SHORT,
+  );
 }
