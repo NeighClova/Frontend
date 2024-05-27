@@ -279,7 +279,11 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         isDense: true,
-                        hintText: '추천 메뉴나 맛 설명 등 추가/강조하고 싶은 내용을 작성해주세요.\n예)인기 메뉴 마라 쌀국수, 과하지 않은 향신료로 이국적이면서도 부담스럽지 않은 맛',
+                        hintText: '추천 메뉴나 맛 설명 등 추가/강조하고 싶은 내용을 작성해주세요.\n예) 인기 메뉴 마라 쌀국수, 당일 예약 가능, 이국적인 맛',
+                        hintStyle: TextStyle(
+                          color: Color(0xffA1A1A1),
+                          fontSize: 12,
+                        ),
                         enabledBorder: OutlineInputBorder(
                           borderSide:BorderSide(
                             color: Colors.grey,
