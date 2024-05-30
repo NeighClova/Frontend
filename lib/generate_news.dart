@@ -128,6 +128,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey.withOpacity(0.5),
+                                      blurRadius: 24,
+                                      offset: Offset(0, 8),
                                     )
                                   ],
                                 ),

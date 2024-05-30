@@ -9,21 +9,35 @@ class Review extends StatefulWidget {
 }
 
 class _ReviewState extends State<Review> {
+  //리뷰 분석 날짜
   int daysNum = 0;
   String day = '';
-  List<Map<String, dynamic>> keywords = [
-    {'keyword': '키워드1', 'ratio': 0.5},
-    {'keyword': '키워드2', 'ratio': 0.02},
-    {'keyword': '키워드3', 'ratio': 0.05},
-    {'keyword': '키워드4', 'ratio': 0.23},
-    {'keyword': '키워드5', 'ratio': 0.2},
-  ];
+
+  //대표 키워드
+  List<Map<String, dynamic>> keywords = [];
+
   bool _visible = false;
+
+  //피드백
+  List<String> good = [];
+  String good_feedback = '칭찬 피드백111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+  List<String> bad = [];
+  String bad_feedback = '부정 피드백';
+  final GlobalKey _goodColumnKey = GlobalKey();
+  final GlobalKey _badColumnKey = GlobalKey();
+  final GlobalKey _goodFeedbackTextKey = GlobalKey();
+  final GlobalKey _badFeedbackTextKey = GlobalKey();
+  double _goodContainerHeight = 0;
+  double _badContainerHeight = 0;
+  double _goodFeedbackContainerHeight = 0;
+  double _badFeedbackContainerHeight = 0;
+
+  //첫 리뷰 분석 완료 여부
+  bool done = false;
 
   @override
   void initState() {
     super.initState();
-    ////요일, 키워드, 피드백 세팅
     switch(daysNum) {
       case 0:
         day = '월요일';
@@ -52,7 +66,66 @@ class _ReviewState extends State<Review> {
         _visible = true;
       });
     });
+    //키워드 세팅
+    keywords.addAll([{'keyword': '키워드1', 'ratio': 0.5},
+    {'keyword': '키워드2', 'ratio': 0.02},
+    {'keyword': '키워드3', 'ratio': 0.05},
+    {'keyword': '키워드4', 'ratio': 0.23},
+    {'keyword': '키워드5', 'ratio': 0.2},]);
+
+    //칭찬 세팅
+    good.addAll(['칭찬1', '칭찬2', '칭찬3', '칭찬4']);
+    good_feedback = '✏️ ' + good_feedback;
+
+    //아쉬운점 세팅
+    bad.addAll(['아쉬운점1', '아쉬운점2', '아쉬운점3']);
+    bad_feedback = '✏️ ' + bad_feedback;
+
+    //칭찬, 아쉬움 컨테이너 크기
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateGoodHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateBadHeight());
+
+    //상세 피드백 컨테이너 크기
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateGoodFeedbackHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateBadFeedbackHeight());
   }
+
+  void _updateGoodHeight() {
+    final RenderBox? renderBox = _goodColumnKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      setState(() {
+        _goodContainerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  void _updateBadHeight() {
+    final RenderBox? renderBox = _badColumnKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      setState(() {
+        _badContainerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  void _updateGoodFeedbackHeight() {
+    final RenderBox? renderBox = _goodFeedbackTextKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      setState(() {
+        _goodFeedbackContainerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  void _updateBadFeedbackHeight() {
+    final RenderBox? renderBox = _badFeedbackTextKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      setState(() {
+        _badFeedbackContainerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
 	Widget build(BuildContext context) {
 		return Scaffold(
@@ -88,7 +161,7 @@ class _ReviewState extends State<Review> {
                   padding: EdgeInsets.only(left: 11),
                   child: RichText(
                     text: TextSpan(
-                      text: '회원님의 확인 가능한 날짜는\n',
+                      text: '회원님의 리뷰 분석 날짜는\n',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -172,12 +245,12 @@ class _ReviewState extends State<Review> {
                       Expanded(
                         child: Stack(
                           children: keywords
-                              .asMap() // 변경된 부분: asMap 사용
+                              .asMap()
                               .map((index, keyword) => MapEntry(
                                     index,
                                     _buildKeywordBubble(
                                       text: keyword['keyword'],
-                                      ratio: keyword['ratio'].toDouble(), // 변경된 부분: ratio를 double로 변환
+                                      ratio: keyword['ratio'].toDouble(),
                                       position: _getPositionForKeyword(index),
                                     ),
                                   ))
@@ -188,7 +261,184 @@ class _ReviewState extends State<Review> {
                     ],
                   ),
                 ),
-              )
+              ),
+              Padding(padding: EdgeInsets.only(top: 21)),
+              Container(
+                width: double.infinity,
+                height: 283 + (_goodContainerHeight + _badContainerHeight + _goodFeedbackContainerHeight + _badFeedbackContainerHeight),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      blurRadius: 24,
+                      offset: Offset(0, 8),
+                    )
+                  ]
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 20, 16, 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('피드백',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff404040),
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 4)),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('CLOVA AI가 매장 리뷰를 분석해서 제공하는 피드백이에요.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xff949494),
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 16)),
+                      Align(
+                        alignment: Alignment.topLeft,
+                          child: Text('😊 칭찬해요',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 11)),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Column(
+                          key: _goodColumnKey,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: good.map((good) => Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
+                            child: Row(
+                              children: [
+                                Icon(Icons.circle, size: 5),
+                                SizedBox(width: 8),
+                                Text(good,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )).toList(),
+                        )
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 6)),
+                      Container(
+                        width: double.infinity,
+                        height: _goodFeedbackContainerHeight + 20,
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.all(10),
+                          child: Text(good_feedback,
+                            key: _goodFeedbackTextKey,
+                            style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xffF2F2F2),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              blurRadius: 24,
+                              offset: Offset(0, 8),
+                            )
+                          ],
+                        ),
+                      ),
+
+                      /*Container(
+                        width: double.infinity,
+                        height: _goodFeedbackContainerHeight + 20,
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(good_feedback,
+                            key: _goodFeedbackTextKey,
+                            style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xffF2F2F2),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              blurRadius: 24,
+                              offset: Offset(0, 8),
+                            )
+                          ],
+                        ),
+                      ),*/
+                      Padding(padding: EdgeInsets.only(top: 24)),
+                      DottedDivider(),
+                      Padding(padding: EdgeInsets.only(top: 24)),
+                      Align(
+                        alignment: Alignment.topLeft,
+                          child: Text('🙁 아쉬워요',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 11)),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Column(
+                          key: _badColumnKey,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: bad.map((bad) => Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
+                            child: Row(
+                              children: [
+                                Icon(Icons.circle, size: 5),
+                                SizedBox(width: 8),
+                                Text(bad,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )).toList(),
+                        )
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 6)),
+                      Container(
+                        width: double.infinity,
+                        height: _badFeedbackContainerHeight + 20,
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.all(10),
+                          child: Text(bad_feedback,
+                            key: _badFeedbackTextKey,
+                            style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xffF2F2F2),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              blurRadius: 24,
+                              offset: Offset(0, 8),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -215,7 +465,7 @@ class _ReviewState extends State<Review> {
   }
 
   Widget _buildKeywordBubble({required String text, required double ratio, required Offset position}) {
-    final size = 80.0 + 100.0 * ratio; // 크기를 비율에 따라 조정
+    final size = 80.0 + 100.0 * ratio;
     return AnimatedPositioned(
       duration: Duration(seconds: 1),
       left: _visible ? position.dx : position.dx,
@@ -242,30 +492,43 @@ class _ReviewState extends State<Review> {
             ),
           ),
         )
-      /*child: Positioned(
-        left: position.dx,
-        top: position.dy,
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color.fromARGB(255, 180 - (ratio * 10).toInt() * 18, 200 - (ratio * 10).toInt() * 7, 0 + (ratio * 10).toInt() * 15)/*.withOpacity(0.5 + ratio)*/,
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: size * 0.2,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      )*/
       )
     );
+  }
+}
+
+class DottedDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: DottedDividerPainter(),
+      child: Container(
+        height: 1.0,
+      ),
+    );
+  }
+}
+
+class DottedDividerPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Color(0xffD6D6D6)
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    var max = size.width;
+    var dashWidth = 5.0;
+    var dashSpace = 3.0;
+    double startX = 0;
+    while (startX < max) {
+      canvas.drawLine(Offset(startX, 0), Offset(startX + dashWidth, 0), paint);
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
