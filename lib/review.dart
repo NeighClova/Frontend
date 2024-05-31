@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'dart:ui';
 
 class Review extends StatefulWidget {
 	const Review({Key? key}) : super(key: key);
@@ -33,11 +34,12 @@ class _ReviewState extends State<Review> {
   double _badFeedbackContainerHeight = 0;
 
   //첫 리뷰 분석 완료 여부
-  bool done = false;
+  bool _isBlurred = true;
 
   @override
   void initState() {
     super.initState();
+    _isBlurred = false;
     switch(daysNum) {
       case 0:
         day = '월요일';
@@ -243,20 +245,35 @@ class _ReviewState extends State<Review> {
                         ),
                       ),
                       Expanded(
-                        child: Stack(
-                          children: keywords
+                        child: ClipRRect(
+                          borderRadius : BorderRadius.circular(23),
+                          child: Stack(
+                            children: [
+                              ...keywords
                               .asMap()
-                              .map((index, keyword) => MapEntry(
-                                    index,
-                                    _buildKeywordBubble(
-                                      text: keyword['keyword'],
-                                      ratio: keyword['ratio'].toDouble(),
-                                      position: _getPositionForKeyword(index),
-                                    ),
-                                  ))
+                              .map((index, keyword) {
+                                return MapEntry(
+                                  index,
+                                  _buildKeywordBubble(
+                                    text: keyword['keyword'],
+                                    ratio: keyword['ratio'].toDouble(),
+                                    position: _getPositionForKeyword(index),
+                                  ),
+                                );
+                              })
                               .values
                               .toList(),
+                              if (_isBlurred)
+                                BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                  child: Container(
+                                    color: Colors.white.withOpacity(0),
+                                  ),
+                                ),
+                            ]
+                          ),
                         ),
+                        
                       ),
                     ],
                   ),
@@ -312,73 +329,82 @@ class _ReviewState extends State<Review> {
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(top: 11)),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Column(
-                          key: _goodColumnKey,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: good.map((good) => Padding(
-                            padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
-                            child: Row(
-                              children: [
-                                Icon(Icons.circle, size: 5),
-                                SizedBox(width: 8),
-                                Text(good,
-                                  style: TextStyle(
-                                    fontSize: 14,
+                      Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Column(
+                              key: _goodColumnKey,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: good.map((good) => Padding(
+                                padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.circle, size: 5),
+                                    SizedBox(width: 8),
+                                    Text(good,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )).toList(),
+                            ),
+                          ),
+                          if (_isBlurred)
+                            Positioned.fill(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                  child: Container(
+                                    color: Colors.transparent,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          )).toList(),
-                        )
+                        ],
                       ),
                       Padding(padding: EdgeInsets.only(top: 6)),
-                      Container(
-                        width: double.infinity,
-                        height: _goodFeedbackContainerHeight + 20,
-                        child: SingleChildScrollView(
-                          padding: EdgeInsets.all(10),
-                          child: Text(good_feedback,
-                            key: _goodFeedbackTextKey,
-                            style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                      Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: _goodFeedbackContainerHeight + 20,
+                            child: SingleChildScrollView(
+                              padding: EdgeInsets.all(10),
+                              child: Text(good_feedback,
+                                key: _goodFeedbackTextKey,
+                                style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xffF2F2F2),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 24,
+                                  offset: Offset(0, 8),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xffF2F2F2),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              blurRadius: 24,
-                              offset: Offset(0, 8),
-                            )
-                          ],
-                        ),
+                          if (_isBlurred)
+                            Positioned.fill(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                  child: Container(
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-
-                      /*Container(
-                        width: double.infinity,
-                        height: _goodFeedbackContainerHeight + 20,
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(good_feedback,
-                            key: _goodFeedbackTextKey,
-                            style: TextStyle(fontSize: 14, color: Color(0xff404040)),
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xffF2F2F2),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              blurRadius: 24,
-                              offset: Offset(0, 8),
-                            )
-                          ],
-                        ),
-                      ),*/
                       Padding(padding: EdgeInsets.only(top: 24)),
                       DottedDivider(),
                       Padding(padding: EdgeInsets.only(top: 24)),
@@ -391,49 +417,81 @@ class _ReviewState extends State<Review> {
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(top: 11)),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Column(
-                          key: _badColumnKey,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: bad.map((bad) => Padding(
-                            padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
-                            child: Row(
-                              children: [
-                                Icon(Icons.circle, size: 5),
-                                SizedBox(width: 8),
-                                Text(bad,
-                                  style: TextStyle(
-                                    fontSize: 14,
+                      Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Column(
+                              key: _badColumnKey,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: bad.map((bad) => Padding(
+                                padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.circle, size: 5),
+                                    SizedBox(width: 8),
+                                    Text(bad,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )).toList(),
+                            )
+                          ),
+                          if (_isBlurred)
+                            Positioned.fill(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                  child: Container(
+                                    color: Colors.transparent,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          )).toList(),
-                        )
+                        ],
                       ),
                       Padding(padding: EdgeInsets.only(top: 6)),
-                      Container(
-                        width: double.infinity,
-                        height: _badFeedbackContainerHeight + 20,
-                        child: SingleChildScrollView(
-                          padding: EdgeInsets.all(10),
-                          child: Text(bad_feedback,
-                            key: _badFeedbackTextKey,
-                            style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                      Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: _badFeedbackContainerHeight + 20,
+                            child: SingleChildScrollView(
+                              padding: EdgeInsets.all(10),
+                              child: Text(bad_feedback,
+                                key: _badFeedbackTextKey,
+                                style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xffF2F2F2),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 24,
+                                  offset: Offset(0, 8),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xffF2F2F2),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              blurRadius: 24,
-                              offset: Offset(0, 8),
-                            )
-                          ],
-                        ),
+                          if (_isBlurred)
+                            Positioned.fill(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                  child: Container(
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),
