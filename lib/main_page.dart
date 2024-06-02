@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/edit_info.dart';
 import 'package:flutter_neighclova/mypage.dart';
+import 'package:flutter_neighclova/news.dart';
 import 'package:flutter_neighclova/register_info.dart';
 import 'dart:ui';
+
+import 'package:flutter_neighclova/tabview.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -37,6 +40,9 @@ class _MainPageState extends State<MainPage> {
  //피드백
  String goodFeedback = '음식이 맛있고 사장님이 친절해요.';
  String badFeedback = '음식에 먼지가 나왔어요. 위생에 유의해 주세요.';
+
+ //소식 생성 날짜
+ int afterGenerateNews = 0;
 
  void _updateContainerHeight(StateSetter bottomState) {
     final RenderBox? renderBox = _containerKey.currentContext?.findRenderObject() as RenderBox?;
@@ -110,6 +116,9 @@ class _MainPageState extends State<MainPage> {
     //피드백 세팅
     goodFeedback = '😊 ' + goodFeedback;
     badFeedback = '☹️ ' + badFeedback;
+
+    //소식 생성 날짜 세팅
+    afterGenerateNews = 10;
   }
   bool isRegistered = false;
   String storeName = '';
@@ -398,9 +407,6 @@ class _MainPageState extends State<MainPage> {
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(top: 22)),
-                      /*Expanded(
-                        child: 
-                      ),*/
                       Wrap(
                         key: _wrapKey,
                         spacing: 34.0,
@@ -476,6 +482,109 @@ class _MainPageState extends State<MainPage> {
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(top: 27)),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(padding: EdgeInsets.only(top: 16)),
+              Container(
+                width: double.infinity,
+                height: 188,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      blurRadius: 24,
+                      offset: Offset(0, 8),
+                    )
+                  ]
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 20, 16, 14),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('소식',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff404040),
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 16)),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: RichText(
+                          text: TextSpan(
+                            text: '새로운 소식 글을 작성한지 ',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xff404040),
+                            ), 
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: afterGenerateNews.toString() + '일',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xff03AA5A),
+                                ),  
+                              ),
+                              TextSpan(
+                                text: '이 지났어요.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xff404040),
+                                ), 
+                              ),
+                            ]
+                          )
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 8)),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('매장 홍보를 위해 소식 글을 업로드해 보세요.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xff404040),
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 13)),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final tabViewState = TabView.of(context);
+                              if (tabViewState != null) {
+                                tabViewState.navigateToNewsPage();
+                              } else {
+                                print('탭바 오류');
+                              }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            side: BorderSide(
+                              color: Color(0xff03AA5A),
+                              width: 1,
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Text('소식 글 생성하기',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xff03AA5A)
+                          ),),
+                        ),
+                      ),
                     ],
                   ),
                 ),
