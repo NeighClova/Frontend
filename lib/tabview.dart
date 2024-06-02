@@ -11,6 +11,9 @@ class TabView extends StatefulWidget {
  
   @override
   State<TabView> createState() => _TabViewState();
+
+  static _TabViewState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_TabViewState>();
 }
  
 class _TabViewState extends State<TabView> with TickerProviderStateMixin {
@@ -35,6 +38,17 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
     setState(() {
       _index = _tabController.index;
     });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _index = index;
+    });
+    _tabController.animateTo(index);
+  }
+
+  void navigateToNewsPage() {
+    _onItemTapped(3);
   }
  
   @override

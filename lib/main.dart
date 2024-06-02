@@ -28,6 +28,16 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: Color(0xff404040)),
         ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Color(0xff404040)),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Color(0xff404040)),
+          ),
+        ),
         fontFamily: 'Pretendard'
       ),
     );
