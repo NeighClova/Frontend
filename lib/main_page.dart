@@ -92,12 +92,12 @@ class _MainPageState extends State<MainPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!isRegistered) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => RegisterInfo()));
-      }
+      // if (!isRegistered) {
+      //   Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (BuildContext context) => RegisterInfo()));
+      // }
       _updateWrapHeight();
       _updateGoodFeedbackHeight();
       _updateBadFeedbackHeight();
@@ -125,7 +125,7 @@ class _MainPageState extends State<MainPage> {
     afterGenerateNews = 10;
   }
 
-  bool isRegistered = false;
+  // bool isRegistered = false;
   String storeName = '';
 
   @override

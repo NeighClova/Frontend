@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
+import 'package:flutter_neighclova/place/register_info.dart';
 import 'package:flutter_neighclova/tabview.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
@@ -60,7 +61,7 @@ class _LoginState extends State<Login> {
   bool passwordVisible = false;
 
   static final storage = FlutterSecureStorage();
-  dynamic userInfo = ''; //storage 내의 유저 정보 저장
+  dynamic isFirst = ''; //storage 내의 유저 정보 저장
 
   @override
   void initState() {
@@ -73,19 +74,25 @@ class _LoginState extends State<Login> {
     });*/
   }
 
-  _asyncMethod() async {
+  routeway() async {
     // 데이터 없으면 null
-    userInfo = await storage.read(key: 'login');
+    isFirst = await storage.read(key: 'isFirst');
 
-    if (userInfo != null) {
+    if (isFirst != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (BuildContext context) => TabView(),
         ),
       );
+
+      await storage.write(
+        key: 'isFirst',
+        value: 'false',
+      );
     } else {
-      print('로그인이 필요합니다');
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) => RegisterInfo()));
     }
   }
 
@@ -97,22 +104,32 @@ class _LoginState extends State<Login> {
 
       Response response = await dio.post('/auth/sign-in', data: param);
 
+      print("***************************");
+      print(response.data['token']);
       if (response.statusCode == 200) {
-        // final jsonBody = json.decode(response.data);
-        // var login = LoginModel(email, password);
-        // var val = jsonEncode(login.toJson());
-
-        // await storage.write(
-        //   key: 'login',
-        //   value: val,
-        // );
+        await storage.write(
+          key: 'token',
+          value: response.data['token'],
+        );
         print('로그인 정보 일치');
         return true;
-      } else {
+      } else if (response.statusCode == 401) {
         print('로그인 정보 불일치');
         return false;
+      } else {
+        print('error: ${response.statusCode}');
+        return false;
       }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
     } catch (e) {
+      print('Exception: $e');
       return false;
     }
   }
@@ -216,13 +233,7 @@ class _LoginState extends State<Login> {
                                 Future<bool> result =
                                     loginAction(username.text, password.text);
                                 if (await result) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          TabView(),
-                                    ),
-                                  );
+                                  routeway();
                                 } else {
                                   showSnackBar(
                                       context, Text('이메일이나 비밀번호가 옳지 않습니다.'));
