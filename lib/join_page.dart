@@ -6,6 +6,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/main_page.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
+
+import 'package:flutter_neighclova/model.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({Key? key}) : super(key: key);
@@ -15,8 +19,8 @@ class JoinPage extends StatefulWidget {
 }
 
 class _JoinPageState extends State<JoinPage> {
-  TextEditingController controller = TextEditingController(); // 이메일
-  TextEditingController controller2 = TextEditingController(); // 비밀번호
+  TextEditingController username = TextEditingController(); // 이메일
+  TextEditingController password = TextEditingController(); // 비밀번호
   bool passwordVisible = false;
   final _formKey = GlobalKey<FormState>();
   String userEmail = '';
@@ -34,6 +38,70 @@ class _JoinPageState extends State<JoinPage> {
     super.initState();
     passwordVisible = false;
   }
+
+  /*emailCheckAction(email) async {
+    try {
+      var dio = Dio();
+      var param = {'email': email};
+      dio.options.baseUrl = 'http://192.168.35.197:8080';
+
+      Response response = await dio.post('/auth/email-check', data: param);
+
+      if (response.statusCode == 200) {
+        print('중복되지 않음');
+        return true;
+      } else if (response.statusCode == 400){
+        print('중복된 이메일 존재');
+        return false;
+      } else {
+        print('error: ${response.statusCode}');
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
+  }
+
+  emailCertificationAction(email) async {
+    try {
+      var dio = Dio();
+      var param = {'email': email};
+      dio.options.baseUrl = 'http://192.168.35.197:8080';
+
+      Response response = await dio.post('/auth/email-certification', data: param);
+
+      if (response.statusCode == 200) {
+        print('이메일 전송');
+        return true;
+      } else if (response.statusCode == 400){
+        print('중복된 이메일 존재');
+        return false;
+      } else {
+        print('error: ${response.statusCode}');
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +145,7 @@ class _JoinPageState extends State<JoinPage> {
                                 validator: (value) {
                                   if (value!.isEmpty || !value.contains('@')) {
                                     return '유효한 이메일을 입력해주세요.';
-                                  } else if (value == 'ex@naver.com') {
+                                  } else if (/*emailCheckAction(username.text) == false*/ username.text == 'ex@naver.com') {
                                     return '이미 사용중인 이메일입니다.';
                                   } else {
                                     return null;
@@ -86,7 +154,7 @@ class _JoinPageState extends State<JoinPage> {
                                 onSaved: (value) {
                                   userEmail = value!;
                                 },
-                                controller: controller,
+                                controller: username,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(10),
                                   isDense: true,
@@ -147,7 +215,7 @@ class _JoinPageState extends State<JoinPage> {
                                 onSaved: (value) {
                                   userPassword = value!;
                                 },
-                                controller: controller2,
+                                controller: password,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(10),
                                   isDense: true,
@@ -197,6 +265,7 @@ class _JoinPageState extends State<JoinPage> {
                                   _tryValidation();
                                   if (_formKey.currentState!.validate()) {
                                     // 이메일 인증 코드 보내기
+                                    //emailCertificationAction(username.text);
                                     final userdata = Userdata(userEmail, userPassword);
                                     final result = await Navigator.push(
                                       context,
@@ -261,7 +330,7 @@ class _JoinPageState extends State<JoinPage> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
+                padding: const EdgeInsets.only(bottom: 0.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -300,7 +369,7 @@ class _JoinPageState extends State<JoinPage> {
                         width: 50.0,
                       ),
                     ),
-                    SizedBox(height: 32.0), // 하단 여백 추가
+                    SizedBox(height: 32.0),
                   ],
                 ),
               ),
