@@ -55,7 +55,7 @@ class _RegisterInfo extends State<RegisterInfo> {
         "placeUrl": placeUrl
       };
 
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      dio.options.baseUrl = 'http://192.168.35.197:8080';
       final accessToken = await getToken();
 
       dio.options.headers['Authorization'] = 'Bearer $accessToken';
@@ -398,9 +398,9 @@ class _RegisterInfo extends State<RegisterInfo> {
             targetAges[index]['isSelected'] = !targetAges[index]['isSelected'];
             //추가된 부분
             if (targetAges[index]['isSelected']) {
-              selectedAges.add(targetAges[index]['target']);
+              selectedAges.add(targetAges[index]['age']);
             } else {
-              selectedAges.remove(targetAges[index]['target']);
+              selectedAges.remove(targetAges[index]['age']);
             }
           });
         },

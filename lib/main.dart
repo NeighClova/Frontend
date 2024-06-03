@@ -100,7 +100,7 @@ class _LoginState extends State<Login> {
     try {
       var dio = Dio();
       var param = {'email': email, 'password': password};
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      dio.options.baseUrl = 'http://192.168.35.197:8080';
 
       Response response = await dio.post('/auth/sign-in', data: param);
 
