@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/find_password_page.dart';
 import 'package:flutter_neighclova/join_page.dart';
 import 'package:flutter_neighclova/tabview.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_neighclova/model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -50,15 +54,67 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController controller = TextEditingController(); // 이메일
-  TextEditingController controller2 = TextEditingController(); // 비밀번호
+  TextEditingController username = TextEditingController();
+  TextEditingController password= TextEditingController();
   bool passwordVisible = false;
+
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = ''; //storage 내의 유저 정보 저장
 
   @override
   void initState() {
     super.initState();
     passwordVisible = false;
+
+    //flutter secure storage 정보 불러오기
+    /*WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });*/
   }
+
+  /*_asyncMethod() async {
+
+    // 데이터 없으면 null
+    userInfo = await storage.read(key:'login');
+
+    if (userInfo != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => TabView(),
+        ),
+      );
+    } else {
+      print('로그인이 필요합니다');
+    }
+  }
+
+  loginAction(email, password) async {
+    try {
+      var dio = Dio();
+      var param = {'email': email, 'password': password};
+
+      Response response = await dio.post('/auth/sign-in', data: param);
+
+      if (response.statusCode == 200) {
+        final jsonBody = json.decode(response.data);
+        var login = LoginModel(email, password);
+        var val = jsonEncode(login.toJson());
+        
+				await storage.write( 
+          key: 'login',
+          value: val,
+        );
+        print('접속 성공!');
+        return true;
+      } else {
+        print('error');
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +150,7 @@ class _LoginState extends State<Login> {
                         child: Column(
                           children: [
                             TextField(
-                              controller: controller,
+                              controller: username,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.all(10),
                                 isDense: true,
@@ -117,7 +173,7 @@ class _LoginState extends State<Login> {
                             ),
                             Padding(padding: EdgeInsets.only(top: 16)),
                             TextField(
-                              controller: controller2,
+                              controller: password,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.all(10),
                                 isDense: true,
@@ -152,8 +208,8 @@ class _LoginState extends State<Login> {
                             ),
                             SizedBox(height: 25.0),
                             ElevatedButton(
-                              onPressed: () {
-                                if (true /*아이디, 비밀번호 확인*/) {
+                              onPressed: () async {
+                                if (/*await loginAction(username.text, password.text) == */true) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -221,7 +277,7 @@ class _LoginState extends State<Login> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
+                padding: const EdgeInsets.only(bottom: 0.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
