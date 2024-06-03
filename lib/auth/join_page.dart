@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_neighclova/email_auth_page.dart';
+import 'package:flutter_neighclova/auth/email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/main_page.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
-import 'package:flutter_neighclova/model.dart';
+import 'package:flutter_neighclova/auth/model.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({Key? key}) : super(key: key);

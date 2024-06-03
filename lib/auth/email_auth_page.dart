@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_neighclova/join_page.dart';
+import 'package:flutter_neighclova/auth/join_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/main_page.dart';
-import 'package:flutter_neighclova/register_info.dart';
+import 'package:flutter_neighclova/place/register_info.dart';
 import 'package:dio/dio.dart';
 
 class EmailAuthPage extends StatefulWidget {

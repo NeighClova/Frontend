@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/find_password_page.dart';
-import 'package:flutter_neighclova/join_page.dart';
+import 'package:flutter_neighclova/auth/find_password_page.dart';
+import 'package:flutter_neighclova/auth/join_page.dart';
 import 'package:flutter_neighclova/tabview.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_neighclova/model.dart';
+import 'package:flutter_neighclova/auth/model.dart';
 
 void main() {
   runApp(const MyApp());

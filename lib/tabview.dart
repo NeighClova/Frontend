@@ -1,39 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_neighclova/introduction.dart';
+import 'package:flutter_neighclova/introduction/introduction.dart';
 import 'package:flutter_neighclova/main_page.dart';
-import 'package:flutter_neighclova/mypage.dart';
-import 'package:flutter_neighclova/news.dart';
-import 'package:flutter_neighclova/review.dart';
+import 'package:flutter_neighclova/mypage/mypage.dart';
+import 'package:flutter_neighclova/news/news.dart';
+import 'package:flutter_neighclova/review/review.dart';
 
 class TabView extends StatefulWidget {
   const TabView({super.key});
- 
+
   @override
   State<TabView> createState() => _TabViewState();
 
   static _TabViewState? of(BuildContext context) =>
       context.findAncestorStateOfType<_TabViewState>();
 }
- 
+
 class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   late TabController _tabController;
   int _index = 0;
- 
+
   @override
   void initState() {
     super.initState();
- 
+
     _tabController = TabController(length: _navItems.length, vsync: this);
     _tabController.addListener(tabListener);
   }
- 
+
   @override
   void dispose() {
     _tabController.removeListener(tabListener);
     super.dispose();
   }
- 
+
   void tabListener() {
     setState(() {
       _index = _tabController.index;
@@ -50,7 +50,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   void navigateToNewsPage() {
     _onItemTapped(3);
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,13 +92,13 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
     );
   }
 }
- 
+
 class NavItem {
   final int index;
   final IconData activeIcon;
   final IconData inactiveIcon;
   final String label;
- 
+
   const NavItem({
     required this.index,
     required this.activeIcon,
@@ -106,7 +106,7 @@ class NavItem {
     required this.label,
   });
 }
- 
+
 const _navItems = [
   NavItem(
     index: 0,
