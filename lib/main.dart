@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/find_password_page.dart';
-import 'package:flutter_neighclova/join_page.dart';
+import 'package:flutter_neighclova/auth/find_password_page.dart';
+import 'package:flutter_neighclova/auth/join_page.dart';
 import 'package:flutter_neighclova/tabview.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_neighclova/model.dart';
+import 'package:flutter_neighclova/auth/model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,29 +21,30 @@ class MyApp extends StatelessWidget {
       title: 'Login',
       home: Login(),
       theme: ThemeData(
-        primaryColor: Colors.white,
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
-        ),
-        primaryTextTheme: TextTheme(
-          bodyLarge: TextStyle(color: Color(0xff404040)),
-        ),
-        textTheme: TextTheme(
-          bodyLarge: TextStyle(color: Color(0xff404040)),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(Color(0xff404040)),
+          primaryColor: Colors.white,
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.white,
           ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(Color(0xff404040)),
+          primaryTextTheme: TextTheme(
+            bodyLarge: TextStyle(color: Color(0xff404040)),
           ),
-        ),
-        fontFamily: 'Pretendard'
-      ),
+          textTheme: TextTheme(
+            bodyLarge: TextStyle(color: Color(0xff404040)),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+              foregroundColor:
+                  MaterialStateProperty.all<Color>(Color(0xff404040)),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              foregroundColor:
+                  MaterialStateProperty.all<Color>(Color(0xff404040)),
+            ),
+          ),
+          fontFamily: 'Pretendard'),
     );
   }
 }
@@ -55,7 +56,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   TextEditingController username = TextEditingController();
-  TextEditingController password= TextEditingController();
+  TextEditingController password = TextEditingController();
   bool passwordVisible = false;
 
   static final storage = FlutterSecureStorage();
@@ -72,10 +73,9 @@ class _LoginState extends State<Login> {
     });*/
   }
 
-  /*_asyncMethod() async {
-
+  _asyncMethod() async {
     // 데이터 없으면 null
-    userInfo = await storage.read(key:'login');
+    userInfo = await storage.read(key: 'login');
 
     if (userInfo != null) {
       Navigator.push(
@@ -89,32 +89,33 @@ class _LoginState extends State<Login> {
     }
   }
 
-  loginAction(email, password) async {
+  Future<bool> loginAction(email, password) async {
     try {
       var dio = Dio();
       var param = {'email': email, 'password': password};
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
 
       Response response = await dio.post('/auth/sign-in', data: param);
 
       if (response.statusCode == 200) {
-        final jsonBody = json.decode(response.data);
-        var login = LoginModel(email, password);
-        var val = jsonEncode(login.toJson());
-        
-				await storage.write( 
-          key: 'login',
-          value: val,
-        );
-        print('접속 성공!');
+        // final jsonBody = json.decode(response.data);
+        // var login = LoginModel(email, password);
+        // var val = jsonEncode(login.toJson());
+
+        // await storage.write(
+        //   key: 'login',
+        //   value: val,
+        // );
+        print('로그인 정보 일치');
         return true;
       } else {
-        print('error');
+        print('로그인 정보 불일치');
         return false;
       }
     } catch (e) {
       return false;
     }
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +143,8 @@ class _LoginState extends State<Login> {
                       data: ThemeData(
                         primaryColor: Colors.grey,
                         inputDecorationTheme: InputDecorationTheme(
-                          labelStyle: TextStyle(color: Colors.teal, fontSize: 15.0),
+                          labelStyle:
+                              TextStyle(color: Colors.teal, fontSize: 15.0),
                         ),
                       ),
                       child: Container(
@@ -192,7 +194,9 @@ class _LoginState extends State<Login> {
                                 ),
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                    passwordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
                                     color: Colors.grey,
                                   ),
                                   onPressed: () {
@@ -209,18 +213,23 @@ class _LoginState extends State<Login> {
                             SizedBox(height: 25.0),
                             ElevatedButton(
                               onPressed: () async {
-                                if (/*await loginAction(username.text, password.text) == */true) {
+                                Future<bool> result =
+                                    loginAction(username.text, password.text);
+                                if (await result) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (BuildContext context) => TabView(),
+                                      builder: (BuildContext context) =>
+                                          TabView(),
                                     ),
                                   );
                                 } else {
-                                  showSnackBar(context, Text('이메일이나 비밀번호가 옳지 않습니다.'));
+                                  showSnackBar(
+                                      context, Text('이메일이나 비밀번호가 옳지 않습니다.'));
                                 }
                               },
-                              child: Text('로그인', style: TextStyle(color: Colors.white)),
+                              child: Text('로그인',
+                                  style: TextStyle(color: Colors.white)),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Color(0xff03C75A),
                                 shape: RoundedRectangleBorder(
@@ -239,30 +248,38 @@ class _LoginState extends State<Login> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (BuildContext context) => PasswordPage(),
+                                        builder: (BuildContext context) =>
+                                            PasswordPage(),
                                       ),
                                     );
                                   },
-                                  child: Text('비밀번호 찾기', style: TextStyle(color: Color(0xff404040))),
+                                  child: Text('비밀번호 찾기',
+                                      style:
+                                          TextStyle(color: Color(0xff404040))),
                                 ),
-                                Padding(padding: EdgeInsets.fromLTRB(0, 0, 30, 0)),
+                                Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 30, 0)),
                                 Container(
                                   width: 1.0,
                                   height: 15,
                                   color: Colors.grey,
                                   alignment: Alignment.center,
                                 ),
-                                Padding(padding: EdgeInsets.fromLTRB(30, 0, 0, 0)),
+                                Padding(
+                                    padding: EdgeInsets.fromLTRB(30, 0, 0, 0)),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (BuildContext context) => JoinPage(),
+                                        builder: (BuildContext context) =>
+                                            JoinPage(),
                                       ),
                                     );
                                   },
-                                  child: Text('   회원가입    ', style: TextStyle(color: Color(0xff404040))),
+                                  child: Text('   회원가입    ',
+                                      style:
+                                          TextStyle(color: Color(0xff404040))),
                                 ),
                               ],
                             ),
@@ -294,7 +311,8 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         SizedBox(width: 10.0),
-                        Text('네이버로 간편하게 로그인하기', style: TextStyle(color: Color(0xff404040))),
+                        Text('네이버로 간편하게 로그인하기',
+                            style: TextStyle(color: Color(0xff404040))),
                         SizedBox(width: 10.0),
                         Expanded(
                           child: Container(

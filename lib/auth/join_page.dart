@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_neighclova/email_auth_page.dart';
+import 'package:flutter_neighclova/auth/email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/main_page.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
-import 'package:flutter_neighclova/model.dart';
+import 'package:flutter_neighclova/auth/model.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({Key? key}) : super(key: key);
@@ -39,18 +39,18 @@ class _JoinPageState extends State<JoinPage> {
     passwordVisible = false;
   }
 
-  /*emailCheckAction(email) async {
+  emailCheckAction(email) async {
     try {
       var dio = Dio();
       var param = {'email': email};
-      dio.options.baseUrl = 'http://192.168.35.197:8080';
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
 
       Response response = await dio.post('/auth/email-check', data: param);
 
       if (response.statusCode == 200) {
         print('중복되지 않음');
         return true;
-      } else if (response.statusCode == 400){
+      } else if (response.statusCode == 400) {
         print('중복된 이메일 존재');
         return false;
       } else {
@@ -75,14 +75,15 @@ class _JoinPageState extends State<JoinPage> {
     try {
       var dio = Dio();
       var param = {'email': email};
-      dio.options.baseUrl = 'http://192.168.35.197:8080';
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
 
-      Response response = await dio.post('/auth/email-certification', data: param);
+      Response response =
+          await dio.post('/auth/email-certification', data: param);
 
       if (response.statusCode == 200) {
         print('이메일 전송');
         return true;
-      } else if (response.statusCode == 400){
+      } else if (response.statusCode == 400) {
         print('중복된 이메일 존재');
         return false;
       } else {
@@ -101,7 +102,7 @@ class _JoinPageState extends State<JoinPage> {
       print('Exception: $e');
       return false;
     }
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,18 +135,18 @@ class _JoinPageState extends State<JoinPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('이메일',
+                              Text(
+                                '이메일',
                                 style: TextStyle(
-                                  color: Color(0xff717171),
-                                  fontSize: 16
-                                ),
+                                    color: Color(0xff717171), fontSize: 16),
                               ),
                               Padding(padding: EdgeInsets.only(top: 5)),
                               TextFormField(
                                 validator: (value) {
                                   if (value!.isEmpty || !value.contains('@')) {
                                     return '유효한 이메일을 입력해주세요.';
-                                  } else if (/*emailCheckAction(username.text) == false*/ username.text == 'ex@naver.com') {
+                                  } else if (emailCheckAction(username.text) ==
+                                      false) {
                                     return '이미 사용중인 이메일입니다.';
                                   } else {
                                     return null;
@@ -188,15 +189,15 @@ class _JoinPageState extends State<JoinPage> {
                                 style: TextStyle(fontSize: 15),
                               ),
                               Padding(padding: EdgeInsets.only(top: 22)),
-                              Text('비밀번호',
+                              Text(
+                                '비밀번호',
                                 style: TextStyle(
-                                  color: Color(0xff717171),
-                                  fontSize: 16
-                                ),
+                                    color: Color(0xff717171), fontSize: 16),
                               ),
                               TextFormField(
                                 validator: (value) {
-                                  String pwPattern = r'^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,15}$';
+                                  String pwPattern =
+                                      r'^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,15}$';
                                   RegExp regExp = RegExp(pwPattern);
                                   String pwPattern2 = r'[a-zA-Z]';
                                   RegExp regExp2 = RegExp(pwPattern2);
@@ -246,7 +247,9 @@ class _JoinPageState extends State<JoinPage> {
                                   ),
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                      passwordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
                                       color: Colors.grey,
                                     ),
                                     onPressed: () {
@@ -265,8 +268,9 @@ class _JoinPageState extends State<JoinPage> {
                                   _tryValidation();
                                   if (_formKey.currentState!.validate()) {
                                     // 이메일 인증 코드 보내기
-                                    //emailCertificationAction(username.text);
-                                    final userdata = Userdata(userEmail, userPassword);
+                                    emailCertificationAction(username.text);
+                                    final userdata =
+                                        Userdata(userEmail, userPassword);
                                     final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -276,7 +280,8 @@ class _JoinPageState extends State<JoinPage> {
                                     );
                                   }
                                 },
-                                child: Text('회원가입', style: TextStyle(color: Colors.white)),
+                                child: Text('회원가입',
+                                    style: TextStyle(color: Colors.white)),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xff03C75A),
                                   shape: RoundedRectangleBorder(
@@ -302,7 +307,8 @@ class _JoinPageState extends State<JoinPage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (BuildContext context) => Login(),
+                                          builder: (BuildContext context) =>
+                                              Login(),
                                         ),
                                       );
                                     },
@@ -347,7 +353,8 @@ class _JoinPageState extends State<JoinPage> {
                           ),
                         ),
                         SizedBox(width: 10.0),
-                        Text('네이버로 간편하게 로그인하기', style: TextStyle(color: Color(0xff404040))),
+                        Text('네이버로 간편하게 로그인하기',
+                            style: TextStyle(color: Color(0xff404040))),
                         SizedBox(width: 10.0),
                         Expanded(
                           child: Container(
@@ -390,7 +397,7 @@ void showSnackBar(BuildContext context, Text text) {
   ScaffoldMessenger.of(context).showSnackBar;
 }
 
-class Userdata{
+class Userdata {
   String email;
   String password;
   Userdata(this.email, this.password);
