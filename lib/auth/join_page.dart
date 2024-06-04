@@ -75,7 +75,7 @@ class _JoinPageState extends State<JoinPage> {
     try {
       var dio = Dio();
       var param = {'email': email};
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      dio.options.baseUrl = 'http://192.168.35.197:8080';
 
       Response response =
           await dio.post('/auth/email-certification', data: param);

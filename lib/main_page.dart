@@ -109,7 +109,6 @@ class _MainPageState extends State<MainPage> {
     stores.addAll([
       Store('소곤 식당', 'assets/storeImg.png'),
       Store('소곤 카페', ''),
-      Store('망한 식당', '')
     ]);
 
     //바텀시트 가게 선택 상태

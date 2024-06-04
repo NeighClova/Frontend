@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
@@ -26,6 +27,17 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
   TextEditingController controller4 = TextEditingController();
   TextEditingController controller5 = TextEditingController();
   TextEditingController controller6 = TextEditingController();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    controller2.dispose();
+    controller3.dispose();
+    controller4.dispose();
+    controller5.dispose();
+    controller6.dispose();
+    super.dispose();
+  }
 
   Future<bool> signInAction(code) async {
     try {
@@ -125,6 +137,7 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                   ),
                 ),
               ),
+              
               Form(
                   child: Container(
                       padding: EdgeInsets.all(40.0),
@@ -140,8 +153,11 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       controller: controller,
                                       maxLength: 1,
                                       //textInputAction: TextInputAction.next,
-                                      onChanged: (_) =>
-                                          FocusScope.of(context).nextFocus(),
+                                      onChanged: (text) {
+                                        if (text.isNotEmpty) {
+                                          FocusScope.of(context).nextFocus();
+                                        }
+                                      },
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
@@ -162,8 +178,11 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       controller: controller2,
                                       maxLength: 1,
                                       //textInputAction: TextInputAction.next,
-                                      onChanged: (_) =>
-                                          FocusScope.of(context).nextFocus(),
+                                      onChanged: (text) {
+                                        if (text.isNotEmpty) {
+                                          FocusScope.of(context).nextFocus();
+                                        }
+                                      },
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
@@ -184,8 +203,11 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       controller: controller3,
                                       maxLength: 1,
                                       //textInputAction: TextInputAction.next,
-                                      onChanged: (_) =>
-                                          FocusScope.of(context).nextFocus(),
+                                      onChanged: (text) {
+                                        if (text.isNotEmpty) {
+                                          FocusScope.of(context).nextFocus();
+                                        }
+                                      },
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
@@ -206,8 +228,11 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       controller: controller4,
                                       maxLength: 1,
                                       //textInputAction: TextInputAction.next,
-                                      onChanged: (_) =>
-                                          FocusScope.of(context).nextFocus(),
+                                      onChanged: (text) {
+                                        if (text.isNotEmpty) {
+                                          FocusScope.of(context).nextFocus();
+                                        }
+                                      },
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
@@ -228,8 +253,11 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       controller: controller5,
                                       maxLength: 1,
                                       //textInputAction: TextInputAction.next,
-                                      onChanged: (_) =>
-                                          FocusScope.of(context).nextFocus(),
+                                      onChanged: (text) {
+                                        if (text.isNotEmpty) {
+                                          FocusScope.of(context).nextFocus();
+                                        }
+                                      },
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
@@ -250,8 +278,11 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       controller: controller6,
                                       maxLength: 1,
                                       //textInputAction: TextInputAction.next,
-                                      onChanged: (_) =>
-                                          FocusScope.of(context).unfocus(),
+                                      onChanged: (text) {
+                                        if (text.isNotEmpty) {
+                                          FocusScope.of(context).nextFocus();
+                                        }
+                                      },
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
