@@ -56,7 +56,7 @@ class _RegisterInfo extends State<RegisterInfo> {
         "placeUrl": placeUrl
       };
 
-      dio.options.baseUrl = 'http://192.168.35.197:8080';
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
       final accessToken = await getToken();
 
       dio.options.headers['Authorization'] = 'Bearer $accessToken';
@@ -118,8 +118,12 @@ class _RegisterInfo extends State<RegisterInfo> {
                 showSnackBar(context, Text('필수 정보를 입력해주세요.'));
               } else {
                 //데이터 저장
-                Future<bool> result = savePlaceAction(placeName.text, category.text, placeUrl.text,
-                    selectedAges, selectedTargets);
+                Future<bool> result = savePlaceAction(
+                    placeName.text,
+                    category.text,
+                    placeUrl.text,
+                    selectedAges,
+                    selectedTargets);
                 if (await result) {
                   //등록 여부 저장
                   await storage.write(
@@ -128,11 +132,11 @@ class _RegisterInfo extends State<RegisterInfo> {
                   );
                   // 메인 페이지로 이동
                   Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => TabView(),
-                    ),
-                    (route) => false);
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => TabView(),
+                      ),
+                      (route) => false);
                 }
               }
             },
