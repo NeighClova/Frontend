@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/news/generate_news.dart';
 import 'package:flutter_neighclova/news/news_card.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'news_response.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);
@@ -13,6 +16,51 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
+  static final storage = FlutterSecureStorage();
+  dynamic accesstoken = '';
+  List<News>? newsList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getAllNewsAction();
+  }
+
+  Future<List<News>?> getAllNewsAction() async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    accesstoken = await storage.read(key: 'token');
+
+    // 헤더 설정
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+
+    // 파라미터 설정
+    Map<String, dynamic> queryParams = {
+      'placeId': 1,
+    };
+
+    try {
+      Response response =
+          await dio.get('/news/all', queryParameters: queryParams);
+
+      if (response.statusCode == 200) {
+        NewsResponse newsResponse = NewsResponse.fromJson(response.data);
+        newsList = newsResponse.newsList;
+
+        int newsListLength = newsList?.length ?? 0;
+        print('Number of news items: $newsListLength');
+
+        return newsList;
+      } else {
+        print('Error: ${response.statusCode}');
+        return newsList;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return newsList;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,11 +85,15 @@ class _NewsPageState extends State<NewsPage> {
       ),
       backgroundColor: Color(0xffF5F5F5),
       body: ListView.separated(
-        itemCount: 30,
+        itemCount: newsList?.length ?? 0,
         itemBuilder: (BuildContext context, int index) {
+          var news = newsList?[index];
           return NewsCard(
-            number: index,
-          );
+              number: index + 1,
+              title: news?.title ?? 'No title',
+              content: news?.content ?? 'No content',
+              placeName: news?.placeName ?? '소곤 식당',
+              createdAt: news?.createdAt ?? '2024-06-04');
         },
         separatorBuilder: (BuildContext context, int index) {
           return SizedBox(

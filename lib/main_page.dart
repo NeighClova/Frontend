@@ -109,6 +109,10 @@ class _MainPageState extends State<MainPage> {
     stores.addAll([
       Store('소곤 식당', 'assets/storeImg.png'),
       Store('소곤 카페', ''),
+<<<<<<< HEAD
+=======
+      Store('공릉동 닭한마리', '')
+>>>>>>> cf8116d19b897317d554c9e8b037e81cdfaec13d
     ]);
 
     //바텀시트 가게 선택 상태
@@ -421,7 +425,7 @@ class _MainPageState extends State<MainPage> {
               Padding(padding: EdgeInsets.only(top: 16)),
               Container(
                 width: double.infinity,
-                height: 129 + _wrapHeight,
+                height: 130 + _wrapHeight,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(14),
                     color: Colors.white,
@@ -545,7 +549,7 @@ class _MainPageState extends State<MainPage> {
               Padding(padding: EdgeInsets.only(top: 16)),
               Container(
                 width: double.infinity,
-                height: 188,
+                height: 190,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(14),
                     color: Colors.white,
