@@ -79,17 +79,24 @@ class _LoginState extends State<Login> {
     isFirst = await storage.read(key: 'isFirst');
 
     if (isFirst != null) {
-      Navigator.push(
+      /*Navigator.push(
         context,
         MaterialPageRoute(
           builder: (BuildContext context) => TabView(),
         ),
-      );
+      );*/
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>
+              TabView(),
+        ),
+        (route) => false);
 
-      await storage.write(
+      /*await storage.write(
         key: 'isFirst',
         value: 'false',
-      );
+      );*/
     } else {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) => RegisterInfo()));

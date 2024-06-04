@@ -20,6 +20,7 @@ class _RegisterInfo extends State<RegisterInfo> {
   List<String> selectedTargets = [];
 
   static final storage = FlutterSecureStorage();
+  dynamic isFirst = '';
 
   final List<Map<String, dynamic>> targetAges = [
     {'age': '10대', 'isSelected': false},
@@ -63,7 +64,7 @@ class _RegisterInfo extends State<RegisterInfo> {
       Response response = await dio.post('/place', data: body);
 
       if (response.statusCode == 200) {
-        print('이메일 인증 코드 일치');
+        print('업체 정보 등록 완료');
         return true;
       } else if (response.statusCode == 401) {
         print('이메일 인증 코드 불일치');
@@ -112,23 +113,28 @@ class _RegisterInfo extends State<RegisterInfo> {
         child: Padding(
           padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
           child: ElevatedButton(
-            onPressed: () {
-              if (placeUrl.text == '') {
+            onPressed: () async {
+              if (placeUrl.text == '' || placeName.text == '') {
                 showSnackBar(context, Text('필수 정보를 입력해주세요.'));
               } else {
                 //데이터 저장
-                savePlaceAction(placeName.text, category.text, placeUrl.text,
+                Future<bool> result = savePlaceAction(placeName.text, category.text, placeUrl.text,
                     selectedAges, selectedTargets);
-
-                // 메인 페이지로 이동
-                Navigator.pushAndRemoveUntil(
+                if (await result) {
+                  //등록 여부 저장
+                  await storage.write(
+                    key: 'isFirst',
+                    value: 'false',
+                  );
+                  // 메인 페이지로 이동
+                  Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
                       builder: (BuildContext context) => TabView(),
                     ),
                     (route) => false);
+                }
               }
-              print('업체정보 데이터 전달');
             },
             child: Text(
               '저장',
@@ -160,7 +166,7 @@ class _RegisterInfo extends State<RegisterInfo> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '매장명',
+                          '매장명 *',
                           style:
                               TextStyle(color: Color(0xff717171), fontSize: 16),
                         ),
