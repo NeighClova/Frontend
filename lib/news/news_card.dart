@@ -25,7 +25,6 @@ class NewsCard extends StatefulWidget {
 }
 
 class _NewsCardState extends State<NewsCard> {
-
   final GlobalKey _titleKey = GlobalKey();
   double _titleHeight = 0;
 
@@ -97,15 +96,15 @@ class _NewsCardState extends State<NewsCard> {
                   child: Container(
                     width: 40,
                     height: 40,
-                    color: Colors.black,
+                    color: Color.fromRGBO(161, 182, 233, 1),
                     child: Positioned.fill(
-                      child: widget.profileImg != ''
-                          ? Image.network('url',
-                              fit: BoxFit.cover)
-                          : Icon(
-                              Icons.person,
-                              color: Colors.white,
-                            )),
+                        child: widget.profileImg != ''
+                            ? Image.network('${widget.profileImg}',
+                                fit: BoxFit.cover)
+                            : Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              )),
                   ),
                 ),
                 Padding(padding: EdgeInsets.only(left: 10)),
@@ -190,7 +189,8 @@ class _NewsCardState extends State<NewsCard> {
                     widget.content,
                     style: TextStyle(
                       fontSize: 14,
-                    ),),
+                    ),
+                  ),
                 ],
               ),
             ),
