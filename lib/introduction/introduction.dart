@@ -2,9 +2,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/introduction/generate_introduction.dart';
+import 'package:flutter_neighclova/introduction/introduction_response.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Introduction extends StatefulWidget {
   const Introduction({Key? key}) : super(key: key);
@@ -16,16 +19,60 @@ class Introduction extends StatefulWidget {
 class _IntroductionState extends State<Introduction> {
   @override
   void initState() {
-    //imgUrl 가져오기
+    super.initState();
+    getIntroduceAction();
   }
-  String imgUrl = "";
-  bool isProfileImg = true;
+
+  String? placeProfileImg = "";
+  String? placeName = "";
+  String? placeCategory = "";
+  bool isProfileImgExist = false;
   final pageController = PageController();
-  final List<String> texts = [
-    "저희 가게는...\n따사로운 햇빛이 들어오는 소곤 식당은 높은 층고, 통창으로 들어오는 햇살을 받으며 밝은 분위기로 여유롭게 식사하기 좋습니다.\n어둑해지는 디너타임의 소곤 식당은 은은한 조명, 빔 프로젝트로 감성적인 분위기를 즐길 수 있습니다.  언제 방문하더라도 질리지 않고 편한 분위기를 만들 수 있도록, 소곤 식당에서의 시간이 행복하고 따뜻한 기억이 될 수 있도록 항상 노력하겠습니다.",
-    "소개글2",
-    "소개글3",
-  ];
+  List<Introduces>? introduceList = [];
+
+  static final storage = FlutterSecureStorage();
+  dynamic accesstoken = '';
+
+  getIntroduceAction() async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    accesstoken = await storage.read(key: 'token');
+
+    // 헤더 설정
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+
+    // 파라미터 설정
+    Map<String, dynamic> queryParams = {
+      'placeId': 1,
+    };
+
+    try {
+      Response response =
+          await dio.get('/introduce', queryParameters: queryParams);
+
+      if (response.statusCode == 200) {
+        IntroducesResponse introducesResponse =
+            IntroducesResponse.fromJson(response.data);
+
+        setState(() {
+          placeName = response.data['placeName'];
+          placeCategory = response.data['placeCategory'];
+          placeProfileImg = response.data['placeProfileImg'];
+
+          if (placeProfileImg != null) {
+            isProfileImgExist = true;
+          }
+          introduceList = introducesResponse.introduceList;
+        });
+
+        return;
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +87,7 @@ class _IntroductionState extends State<Introduction> {
               width: 3,
             ),
           ),
-          title: Text('소개 생성',
+          title: const Text('소개 생성',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Color(0xff404040),
@@ -56,10 +103,11 @@ class _IntroductionState extends State<Introduction> {
               Container(
                 width: double.infinity,
                 height: 184,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/storeImg.png'),
-                    //image: DecorationImage(image: NetworkImage('url')),
+                    image: isProfileImgExist
+                        ? AssetImage(placeProfileImg!)
+                        : AssetImage('assets/storeImg.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -67,13 +115,21 @@ class _IntroductionState extends State<Introduction> {
               Container(
                 width: double.infinity,
                 height: 52,
+                decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.6),
+                    blurRadius: 2,
+                    spreadRadius: -2,
+                    offset: const Offset(0, 2),
+                  )
+                ]),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        '식당이름',
+                        placeName ?? ' ',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -81,7 +137,7 @@ class _IntroductionState extends State<Introduction> {
                       ),
                       Padding(padding: EdgeInsets.only(left: 10)),
                       Text(
-                        '업종',
+                        placeCategory ?? ' ',
                         style: TextStyle(
                           fontSize: 14,
                           color: Color(0xffB3B3B3),
@@ -90,24 +146,16 @@ class _IntroductionState extends State<Introduction> {
                     ],
                   ),
                 ),
-                decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.6),
-                    blurRadius: 2,
-                    spreadRadius: -2,
-                    offset: Offset(0, 2),
-                  )
-                ]),
               ),
               Container(
                 width: double.infinity,
                 height: 501,
                 child: Padding(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Align(
+                      const Align(
                         alignment: Alignment.topLeft,
                         child: Text(
                           '가게 소개',
@@ -117,40 +165,38 @@ class _IntroductionState extends State<Introduction> {
                           ),
                         ),
                       ),
-                      Padding(padding: EdgeInsets.only(top: 20)),
+                      const Padding(padding: EdgeInsets.only(top: 20)),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(18),
                         child: Container(
                           width: 50,
                           height: 50,
-                          color: Colors.black,
+                          color: Color.fromRGBO(161, 182, 233, 1),
                           child: Positioned.fill(
-                              child: isProfileImg
-                                  ? Image.asset('assets/storeImg.png',
+                              child: isProfileImgExist
+                                  ? Image.asset(placeProfileImg!,
                                       fit: BoxFit.cover)
-                                  //Image.Network('url',
-                                  //  fit: BoxFit.cover)
-                                  : Icon(
+                                  : const Icon(
                                       Icons.person,
                                       color: Colors.white,
                                     )),
                         ),
                       ),
-                      Padding(padding: EdgeInsets.only(top: 22)),
+                      const Padding(padding: EdgeInsets.only(top: 22)),
                       Stack(
                         children: [
                           Container(
                               width: double.infinity,
                               height: 270,
                               decoration: BoxDecoration(
-                                color: Color(0xffF2F2F2),
+                                color: const Color(0xffF2F2F2),
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.5),
                                     spreadRadius: 0,
                                     blurRadius: 24,
-                                    offset: Offset(0, 8),
+                                    offset: const Offset(0, 8),
                                   ),
                                 ],
                               ),
@@ -160,13 +206,14 @@ class _IntroductionState extends State<Introduction> {
                                   scrollDirection: Axis.horizontal,
                                   controller: pageController,
                                   physics: const BouncingScrollPhysics(),
-                                  itemCount: texts.length,
+                                  itemCount: introduceList?.length ?? 0,
                                   itemBuilder: (context, index) {
+                                    var introduces = introduceList?[index];
                                     return SingleChildScrollView(
                                       padding:
                                           EdgeInsets.fromLTRB(20, 20, 20, 20),
                                       child: Text(
-                                        texts[index],
+                                        introduces?.content ?? ' ',
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: Color(0xff404040)),
@@ -183,8 +230,8 @@ class _IntroductionState extends State<Introduction> {
                                 alignment: Alignment.center,
                                 child: SmoothPageIndicator(
                                   controller: pageController,
-                                  count: texts.length,
-                                  effect: ScrollingDotsEffect(
+                                  count: introduceList?.length ?? 0,
+                                  effect: const ScrollingDotsEffect(
                                     activeDotColor: Color(0xff03AA5A),
                                     activeStrokeWidth: 10,
                                     activeDotScale: 1.7,
@@ -203,7 +250,8 @@ class _IntroductionState extends State<Introduction> {
                               onPressed: () {
                                 int currentPage =
                                     pageController.page?.round() ?? 0;
-                                String currentText = texts[currentPage];
+                                var introduces = introduceList?[currentPage];
+                                String currentText = introduces?.content ?? ' ';
                                 Clipboard.setData(
                                     ClipboardData(text: currentText));
                                 showToast();
@@ -233,16 +281,16 @@ class _IntroductionState extends State<Introduction> {
                                   builder: (BuildContext context) =>
                                       GenerateIntroduction()));
                         },
-                        child: Text(
-                          '소개 글 생성하기',
-                          style: TextStyle(fontSize: 14, color: Colors.white),
-                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xff03AA5A),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
                           minimumSize: Size(200, 37),
+                        ),
+                        child: const Text(
+                          '소개 글 생성하기',
+                          style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                       ),
                     ],
