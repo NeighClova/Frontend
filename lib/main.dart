@@ -67,7 +67,7 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
     passwordVisible = false;
-
+    
     //flutter secure storage 정보 불러오기
     /*WidgetsBinding.instance.addPostFrameCallback((_) {
       _asyncMethod();
@@ -75,6 +75,7 @@ class _LoginState extends State<Login> {
   }
 
   routeway() async {
+    
     // 데이터 없으면 null
     isFirst = await storage.read(key: 'isFirst');
 
@@ -98,8 +99,13 @@ class _LoginState extends State<Login> {
         value: 'false',
       );*/
     } else {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) => RegisterInfo()));
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>
+              RegisterInfo(),
+        ),
+        (route) => false);
     }
   }
 

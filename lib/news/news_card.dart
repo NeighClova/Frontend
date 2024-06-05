@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:ui';
 
 class NewsCard extends StatefulWidget {
   final int number;
@@ -8,6 +9,7 @@ class NewsCard extends StatefulWidget {
   final String content;
   final String placeName;
   final String createdAt;
+  final String profileImg;
 
   NewsCard({
     required this.number,
@@ -15,6 +17,7 @@ class NewsCard extends StatefulWidget {
     required this.content,
     required this.placeName,
     required this.createdAt,
+    required this.profileImg,
   });
 
   @override
@@ -22,6 +25,47 @@ class NewsCard extends StatefulWidget {
 }
 
 class _NewsCardState extends State<NewsCard> {
+
+  final GlobalKey _titleKey = GlobalKey();
+  double _titleHeight = 0;
+
+  final GlobalKey _contentKey = GlobalKey();
+  double _contentHeight = 0;
+
+  //bool isProfileImg = false;
+
+  void _updateTitleHeight() {
+    final RenderBox? renderBox =
+        _titleKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      setState(() {
+        _titleHeight = renderBox.size.height;
+      });
+    }
+    print('title 크기 : ${_titleHeight}');
+  }
+
+  void _updateContentHeight() {
+    final RenderBox? renderBox =
+        _contentKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      setState(() {
+        _contentHeight = renderBox.size.height;
+      });
+    }
+    print('content 크기 : ${_contentHeight}');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateTitleHeight();
+      _updateContentHeight();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,25 +87,28 @@ class _NewsCardState extends State<NewsCard> {
         children: [
           Padding(padding: EdgeInsets.only(left: 10)),
           Container(
-            height: 70,
+            height: 60,
             width: double.infinity,
             color: Colors.white,
             child: Row(
               children: [
                 Padding(padding: EdgeInsets.only(left: 20)),
-                Container(
-                  height: 50,
-                  width: 50,
-                  alignment: Alignment.centerLeft,
-                  child: Center(
-                    child: Text('사진'), // 여기에 이미지 URL을 사용할 수 있습니다.
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    shape: BoxShape.circle,
+                ClipOval(
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    color: Colors.black,
+                    child: Positioned.fill(
+                      child: widget.profileImg != ''
+                          ? Image.network('url',
+                              fit: BoxFit.cover)
+                          : Icon(
+                              Icons.person,
+                              color: Colors.white,
+                            )),
                   ),
                 ),
-                Padding(padding: EdgeInsets.only(left: 20)),
+                Padding(padding: EdgeInsets.only(left: 10)),
                 Expanded(
                   child: Container(
                     alignment: Alignment.centerLeft,
@@ -90,7 +137,7 @@ class _NewsCardState extends State<NewsCard> {
                   ),
                 ),
                 SizedBox(
-                  width: 120,
+                  width: 80,
                   child: Container(
                     alignment: Alignment.centerRight,
                     child: OutlinedButton(
@@ -121,7 +168,7 @@ class _NewsCardState extends State<NewsCard> {
             ),
           ),
           Container(
-            height: 300,
+            height: 42 + _titleHeight + _contentHeight,
             width: double.infinity,
             color: Colors.white,
             child: Padding(
@@ -130,6 +177,7 @@ class _NewsCardState extends State<NewsCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
+                    key: _titleKey,
                     widget.title,
                     style: TextStyle(
                       fontSize: 18,
@@ -137,7 +185,12 @@ class _NewsCardState extends State<NewsCard> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Text(widget.content),
+                  Text(
+                    key: _contentKey,
+                    widget.content,
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),),
                 ],
               ),
             ),

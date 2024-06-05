@@ -56,7 +56,7 @@ class _RegisterInfo extends State<RegisterInfo> {
         "placeUrl": placeUrl
       };
 
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      dio.options.baseUrl = 'http://192.168.35.197:8080';
       final accessToken = await getToken();
 
       dio.options.headers['Authorization'] = 'Bearer $accessToken';

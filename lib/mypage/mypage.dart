@@ -7,6 +7,7 @@ import 'package:flutter_neighclova/mypage/change_password.dart';
 import 'package:flutter_neighclova/place/edit_info.dart';
 import 'package:flutter_neighclova/mypage/license.dart';
 import 'package:flutter_neighclova/main.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,6 +23,7 @@ class _MyPageState extends State<MyPage> {
   XFile? _pickedFile; //프로필 이미지 저장
   final _imageSize = 60.0;
   final String username = '아이디';
+  static final storage = FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -550,7 +552,8 @@ class _MyPageState extends State<MyPage> {
                                                   Expanded(
                                                       child: Center(
                                                     child: TextButton(
-                                                        onPressed: () {
+                                                        onPressed: () async {
+                                                          await storage.delete(key: 'isFirst');
                                                           print('회원 탈퇴');
                                                           Navigator
                                                               .pushAndRemoveUntil(
