@@ -66,7 +66,7 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   makeNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
 
     // 파라미터 설정
     Map<String, dynamic> queryParams = {'placeId': 1};
@@ -102,7 +102,7 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   saveNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
@@ -235,8 +235,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                           onPressed: () {
                             saveNewsAction();
                             Navigator.pop(context);
-                            Navigator.pop(context);
-                            setState(() {});
+                            Navigator.pop(context, true);
+                            //setState(() {});
                             // Navigator.pushReplacement(
                             //   context,
                             //   MaterialPageRoute(
@@ -262,6 +262,7 @@ class _GenerateNewsState extends State<GenerateNews> {
               );
             });
           });
+
     });
   }
 

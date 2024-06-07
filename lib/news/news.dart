@@ -26,36 +26,65 @@ class _NewsPageState extends State<NewsPage> {
     getAllNewsAction();
   }
 
-  getAllNewsAction() async {
+  // getAllNewsAction() async {
+  //   var dio = Dio();
+  //   dio.options.baseUrl = 'http://192.168.35.197:8080';
+  //   accesstoken = await storage.read(key: 'token');
+
+  //   // 헤더 설정
+  //   dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+
+  //   // 파라미터 설정
+  //   Map<String, dynamic> queryParams = {
+  //     'placeId': 1,
+  //   };
+
+  //   try {
+  //     Response response =
+  //         await dio.get('/news/all', queryParameters: queryParams);
+
+  //     if (response.statusCode == 200) {
+  //       NewsResponse newsResponse = NewsResponse.fromJson(response.data);
+
+  //       setState(() {
+  //         newsList = newsResponse.newsList;
+  //       });
+
+  //       return;
+  //     } else {
+  //       print('Error: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   }
+  // }
+
+  Future<List<News>?> getAllNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
-
     // 파라미터 설정
     Map<String, dynamic> queryParams = {
       'placeId': 1,
     };
-
     try {
       Response response =
           await dio.get('/news/all', queryParameters: queryParams);
-
       if (response.statusCode == 200) {
         NewsResponse newsResponse = NewsResponse.fromJson(response.data);
+        newsList = newsResponse.newsList;
 
-        setState(() {
-          newsList = newsResponse.newsList;
-        });
-
-        return;
+        return newsList;
       } else {
         print('Error: ${response.statusCode}');
+        return newsList;
       }
     } catch (e) {
       print('Error: $e');
+      return newsList;
     }
   }
 
@@ -82,29 +111,52 @@ class _NewsPageState extends State<NewsPage> {
         automaticallyImplyLeading: false,
       ),
       backgroundColor: Color(0xffF5F5F5),
-      body: ListView.separated(
-          itemCount: newsList?.length ?? 0,
-          itemBuilder: (BuildContext context, int index) {
-            var news = newsList?[index];
-            return NewsCard(
-                number: index + 1,
-                title: news?.title ?? '',
-                content: news?.content ?? '',
-                placeName: news?.placeName ?? '',
-                createdAt: news?.createdAt ?? '',
-                profileImg: news?.profileImg ?? '');
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return SizedBox(
-              height: 20,
+      // 
+      body: FutureBuilder<List<News>?>(
+        future: getAllNewsAction(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
             );
-          }),
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            newsList = snapshot.data;
+            return ListView.separated(
+              itemCount: newsList?.length ?? 0,
+              itemBuilder: (BuildContext context, int index) {
+                var news = newsList?[index];
+                return NewsCard(
+                    number: index + 1,
+                    title: news?.title ?? '',
+                    content: news?.content ?? '',
+                    placeName: news?.placeName ?? '',
+                    createdAt: news?.createdAt ?? '',
+                    profileImg: news?.profileImg ?? '');
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return SizedBox(
+                  height: 20,
+                );
+              },
+            );
+          }
+        },
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => GenerateNews()));
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => GenerateNews()));
+            
+            if (result == true) {
+              await getAllNewsAction();
+              setState((){});
+            }
         },
         child: Icon(Icons.edit),
         backgroundColor: Color(0xff03AA5A),

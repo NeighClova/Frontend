@@ -33,9 +33,11 @@ class _IntroductionState extends State<Introduction> {
   static final storage = FlutterSecureStorage();
   dynamic accesstoken = '';
 
+  bool _isLoading = false;
+
   getIntroduceAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
@@ -63,6 +65,7 @@ class _IntroductionState extends State<Introduction> {
             isProfileImgExist = true;
           }
           introduceList = introducesResponse.introduceList;
+          _isLoading = false;
         });
 
         return;
@@ -72,6 +75,14 @@ class _IntroductionState extends State<Introduction> {
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  void _fetchIntroduction() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await Future.delayed(Duration(seconds: 1));
+    getIntroduceAction();
   }
 
   @override
@@ -172,14 +183,13 @@ class _IntroductionState extends State<Introduction> {
                           width: 50,
                           height: 50,
                           color: Color.fromRGBO(161, 182, 233, 1),
-                          child: Positioned.fill(
-                              child: isProfileImgExist
-                                  ? Image.asset(placeProfileImg!,
-                                      fit: BoxFit.cover)
-                                  : const Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    )),
+                          child: isProfileImgExist
+                            ? Image.asset(placeProfileImg!,
+                                fit: BoxFit.cover)
+                            : const Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              )
                         ),
                       ),
                       const Padding(padding: EdgeInsets.only(top: 22)),
@@ -209,16 +219,23 @@ class _IntroductionState extends State<Introduction> {
                                   itemCount: introduceList?.length ?? 0,
                                   itemBuilder: (context, index) {
                                     var introduces = introduceList?[index];
-                                    return SingleChildScrollView(
-                                      padding:
-                                          EdgeInsets.fromLTRB(20, 20, 20, 20),
-                                      child: Text(
-                                        introduces?.content ?? ' ',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: Color(0xff404040)),
-                                      ),
-                                    );
+                                    if (_isLoading == false) {
+                                      return SingleChildScrollView(
+                                        padding:
+                                            EdgeInsets.fromLTRB(20, 20, 20, 20),
+                                        child: Text(
+                                          introduces?.content ?? ' ',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Color(0xff404040)),
+                                        ),
+                                      );
+                                    } else {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                      
                                   },
                                 ),
                               )),
@@ -274,12 +291,24 @@ class _IntroductionState extends State<Introduction> {
                       ),
                       Padding(padding: EdgeInsets.only(top: 20)),
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      GenerateIntroduction()));
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => GenerateIntroduction()));
+                            
+                            if (result == true) {
+                              // setState((){
+                              //   _isLoading = true;
+                              // });
+                              // await Future.delayed(Duration(seconds: 1));
+                              // getIntroduceAction();
+                              // setState((){
+                              //   _isLoading = false;
+                              // });
+                              // print(_isLoading);
+                              _fetchIntroduction();
+                            }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xff03AA5A),

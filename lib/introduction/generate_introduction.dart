@@ -76,7 +76,7 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
 
   makeIntroduceAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
 
     // 파라미터 설정
     Map<String, dynamic> queryParams = {'placeId': 1};
@@ -108,7 +108,7 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
 
   saveIntroduceAction(resContent) async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
@@ -236,15 +236,7 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
                           onPressed: () {
                             saveIntroduceAction(resContent);
                             Navigator.pop(context);
-                            Navigator.pop(context);
-                            setState(() {});
-                            // final tabViewState = TabView.of(context);
-                            // if (tabViewState != null) {
-                            //   tabViewState.navigateToIntroductionPage();
-                            // } else {
-                            //   setState(() {});
-                            //   print('탭바 오류');
-                            // }
+                            Navigator.pop(context, true);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xff03AA5A),

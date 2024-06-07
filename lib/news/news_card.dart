@@ -97,14 +97,13 @@ class _NewsCardState extends State<NewsCard> {
                     width: 40,
                     height: 40,
                     color: Color.fromRGBO(161, 182, 233, 1),
-                    child: Positioned.fill(
-                        child: widget.profileImg != ''
-                            ? Image.network('${widget.profileImg}',
-                                fit: BoxFit.cover)
-                            : Icon(
-                                Icons.person,
-                                color: Colors.white,
-                              )),
+                    child: widget.profileImg != ''
+                      ? Image.network('${widget.profileImg}',
+                          fit: BoxFit.cover)
+                      : Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        )
                   ),
                 ),
                 Padding(padding: EdgeInsets.only(left: 10)),
