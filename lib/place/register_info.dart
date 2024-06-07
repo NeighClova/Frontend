@@ -21,6 +21,7 @@ class _RegisterInfo extends State<RegisterInfo> {
 
   static final storage = FlutterSecureStorage();
   dynamic isFirst = '';
+  dynamic email = '';
 
   final List<Map<String, dynamic>> targetAges = [
     {'age': '10대', 'isSelected': false},
@@ -126,8 +127,9 @@ class _RegisterInfo extends State<RegisterInfo> {
                     selectedTargets);
                 if (await result) {
                   //등록 여부 저장
+                  email = await storage.read(key: 'email');
                   await storage.write(
-                    key: 'isFirst',
+                    key: email + 'First',
                     value: 'false',
                   );
                   // 메인 페이지로 이동

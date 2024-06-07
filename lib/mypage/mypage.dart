@@ -10,6 +10,8 @@ import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -22,8 +24,47 @@ class _MyPageState extends State<MyPage> {
   final picker = ImagePicker();
   XFile? _pickedFile; //프로필 이미지 저장
   final _imageSize = 60.0;
-  final String username = '아이디';
   static final storage = FlutterSecureStorage();
+  dynamic accesstoken = '';
+  dynamic email = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getEmail();
+  }
+
+  Future<void> getEmail() async {
+    String? storedEmail = await storage.read(key: 'email');
+    setState(() {
+      email = storedEmail;
+    });
+  }
+
+  deleteAction() async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    accesstoken = await storage.read(key: 'token');
+
+    // 헤더 설정
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+
+    try {
+      Response response =
+          await dio.patch('/auth/delete');
+
+      if (response.statusCode == 200) {
+        //email = await storage.read(key: 'email');
+        await storage.delete(key: email + 'First');
+        print('탈퇴 완료');
+        return;
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +288,7 @@ class _MyPageState extends State<MyPage> {
                             ),
                             Padding(padding: EdgeInsets.only(right: 15)),
                             Text(
-                              username,
+                              '아이디',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -260,7 +301,7 @@ class _MyPageState extends State<MyPage> {
                         alignment: Alignment.centerRight,
                         height: 55,
                         child: Text(
-                          '아이디',
+                          email,
                           style: TextStyle(
                             fontSize: 13,
                             color: Color(0xff949494),
@@ -397,18 +438,19 @@ class _MyPageState extends State<MyPage> {
                                                 Expanded(
                                                     child: Center(
                                                   child: TextButton(
-                                                      onPressed: () {
+                                                      onPressed: () async {
+                                                        await storage.delete(key: 'token');
                                                         print('로그아웃');
                                                         Navigator
-                                                            .pushAndRemoveUntil(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      Login(),
-                                                                ),
-                                                                (route) =>
-                                                                    false);
+                                                          .pushAndRemoveUntil(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (BuildContext
+                                                                        context) =>
+                                                                    Login(),
+                                                              ),
+                                                              (route) =>
+                                                                  false);
                                                       },
                                                       style:
                                                           TextButton.styleFrom(
@@ -552,19 +594,16 @@ class _MyPageState extends State<MyPage> {
                                                   Expanded(
                                                       child: Center(
                                                     child: TextButton(
-                                                        onPressed: () async {
-                                                          await storage.delete(key: 'isFirst');
-                                                          print('회원 탈퇴');
-                                                          Navigator
-                                                              .pushAndRemoveUntil(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder: (BuildContext
-                                                                            context) =>
-                                                                        Login(),
-                                                                  ),
-                                                                  (route) =>
-                                                                      false);
+                                                      onPressed: () async {
+                                                        deleteAction();
+                                                        Navigator.pushAndRemoveUntil(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (BuildContext context) =>
+                                                              Login(),
+                                                          ),
+                                                          (route) =>
+                                                              false);
                                                         },
                                                         style: TextButton
                                                             .styleFrom(

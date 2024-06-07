@@ -62,6 +62,7 @@ class _LoginState extends State<Login> {
 
   static final storage = FlutterSecureStorage();
   dynamic isFirst = ''; //storage 내의 유저 정보 저장
+  dynamic email = '';
 
   @override
   void initState() {
@@ -77,7 +78,8 @@ class _LoginState extends State<Login> {
   routeway() async {
     
     // 데이터 없으면 null
-    isFirst = await storage.read(key: 'isFirst');
+    email = await storage.read(key: 'email');
+    isFirst = await storage.read(key: email + 'First');
 
     if (isFirst != null) {
       /*Navigator.push(
@@ -110,6 +112,7 @@ class _LoginState extends State<Login> {
   }
 
   Future<bool> loginAction(email, password) async {
+    
     try {
       var dio = Dio();
       var param = {'email': email, 'password': password};
@@ -123,6 +126,14 @@ class _LoginState extends State<Login> {
         await storage.write(
           key: 'token',
           value: response.data['token'],
+        );
+        await storage.write(
+          key: 'password',
+          value: password,
+        );
+        await storage.write(
+          key: 'email',
+          value: email,
         );
         print('로그인 정보 일치');
         return true;
