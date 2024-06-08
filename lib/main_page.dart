@@ -185,7 +185,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext newContext) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -420,12 +420,15 @@ class _MainPageState extends State<MainPage> {
                                             width: double.infinity,
                                             child: ElevatedButton(
                                               onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (BuildContext
-                                                                context) =>
-                                                            MyPage()));
+                                                Navigator.pop(context, true);
+                                                final tabViewState =
+                                                    TabView.of(newContext);
+                                                if (tabViewState != null) {
+                                                  tabViewState
+                                                      .navigateToMyPage();
+                                                } else {
+                                                  print('탭바 오류');
+                                                }
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor:
