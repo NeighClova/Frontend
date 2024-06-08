@@ -27,6 +27,8 @@ class _GenerateNewsState extends State<GenerateNews> {
   static final storage = FlutterSecureStorage();
   dynamic accesstoken = '';
 
+  bool showPeriod = false;
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +43,8 @@ class _GenerateNewsState extends State<GenerateNews> {
         ? finalTime.hour - 12
         : finalTime.hour;
     if (finalHour == 0) finalHour = 12;
+
+    showPeriod = false;
   }
 
   final List<Map<String, dynamic>> keyword = [
@@ -426,227 +430,231 @@ class _GenerateNewsState extends State<GenerateNews> {
                             ),
                           ),
                         ),
-                        Padding(padding: EdgeInsets.only(top: 30)),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        if (showPeriod)
+                          Padding(padding: EdgeInsets.only(top: 30)),
+                        if (showPeriod)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '기간',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff404040),
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Text('특별 이벤트나 세일의 유효 기간 등을 작성해주세요.',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15,
+                                    )),
+                              ],
+                            ),
+                          ),
+                        if (showPeriod)
+                          Padding(padding: EdgeInsets.only(top: 20)),
+                        if (showPeriod)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                '기간',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff404040),
-                                  fontSize: 20,
+                              Container(
+                                child: Column(
+                                  children: [
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        textStyle: TextStyle(fontSize: 18),
+                                        foregroundColor: Color(0xff404040),
+                                      ),
+                                      onPressed: () async {
+                                        final DateTime? dateTime =
+                                            await showDatePicker(
+                                          context: context,
+                                          initialDate: initialDay,
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(3000),
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: ThemeData.light().copyWith(
+                                                colorScheme: ColorScheme.light(
+                                                  primary: Color(0xff404040),
+                                                  onSurface: Color(0xff404040),
+                                                ),
+                                                buttonTheme: ButtonThemeData(
+                                                  colorScheme: ColorScheme.light(
+                                                    primary: Color(0xff404040),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+                                        if (dateTime != null) {
+                                          setState(() {
+                                            initialDay = dateTime;
+                                          });
+                                        }
+                                      },
+                                      child: Text(
+                                          '${initialDay.month}월 ${initialDay.day}일 (${DateFormat('E', 'ko_KR').format(initialDay)})'),
+                                    ),
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        textStyle: TextStyle(fontSize: 15),
+                                        foregroundColor: Color(0xff404040),
+                                      ),
+                                      onPressed: () async {
+                                        final TimeOfDay? timeOfDay =
+                                            await showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay(
+                                              hour: initHour,
+                                              minute: initialTime.minute),
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: ThemeData.light().copyWith(
+                                                colorScheme: ColorScheme.light(
+                                                  primary: Color(0xff404040),
+                                                  onSurface: Color(0xff404040),
+                                                ),
+                                                buttonTheme: ButtonThemeData(
+                                                  colorScheme: ColorScheme.light(
+                                                    primary: Color(0xff404040),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+                                        if (timeOfDay != null) {
+                                          setState(() {
+                                            initialTime = timeOfDay;
+                                            initAmPm = initialTime.hour >= 12 &&
+                                                    initialTime.hour < 24
+                                                ? "오후"
+                                                : "오전";
+                                            initHour = initialTime.hour > 12 &&
+                                                    initialTime.hour <= 24
+                                                ? initialTime.hour - 12
+                                                : initialTime.hour;
+                                            if (initHour == 0) initHour = 12;
+                                          });
+                                        }
+                                      },
+                                      child: Text(
+                                          '${initAmPm} ${initHour}:${initialTime.minute}'),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text('특별 이벤트나 세일의 유효 기간 등을 작성해주세요.',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 15,
-                                  )),
+                              Padding(padding: EdgeInsets.only(right: 20)),
+                              Container(
+                                child: Icon(
+                                  Icons.arrow_forward,
+                                  size: 30,
+                                  color: Color(0xff404040),
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.only(right: 20)),
+                              Container(
+                                child: Column(
+                                  children: [
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        textStyle: TextStyle(
+                                            fontSize: 18,
+                                            color: Color(0xff404040)),
+                                        foregroundColor: Color(0xff404040),
+                                      ),
+                                      onPressed: () async {
+                                        final DateTime? dateTime =
+                                            await showDatePicker(
+                                          context: context,
+                                          initialDate: finalDay,
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(3000),
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: ThemeData.light().copyWith(
+                                                colorScheme: ColorScheme.light(
+                                                  primary: Color(0xff404040),
+                                                  onSurface: Color(0xff404040),
+                                                ),
+                                                buttonTheme: ButtonThemeData(
+                                                  colorScheme: ColorScheme.light(
+                                                    primary: Color(0xff404040),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+                                        if (dateTime != null) {
+                                          setState(() {
+                                            finalDay = dateTime;
+                                          });
+                                        }
+                                      },
+                                      child: Text(
+                                          '${finalDay.month}월 ${finalDay.day}일 (${DateFormat('E', 'ko_KR').format(finalDay)})'),
+                                    ),
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        textStyle: TextStyle(fontSize: 15),
+                                        foregroundColor: Color(0xff404040),
+                                      ),
+                                      onPressed: () async {
+                                        final TimeOfDay? timeOfDay =
+                                            await showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay(
+                                              hour: finalHour,
+                                              minute: finalTime.minute),
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: ThemeData.light().copyWith(
+                                                colorScheme: ColorScheme.light(
+                                                  primary: Color(0xff404040),
+                                                  onSurface: Color(0xff404040),
+                                                ),
+                                                buttonTheme: ButtonThemeData(
+                                                  colorScheme: ColorScheme.light(
+                                                    primary: Color(0xff404040),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+                                        if (timeOfDay != null) {
+                                          setState(() {
+                                            finalTime = timeOfDay;
+                                            finalAmPm = finalTime.hour >= 12 &&
+                                                    finalTime.hour < 24
+                                                ? "오후"
+                                                : "오전";
+                                            finalHour = finalTime.hour > 12 &&
+                                                    finalTime.hour <= 24
+                                                ? finalTime.hour - 12
+                                                : initialTime.hour;
+                                            if (finalHour == 0) finalHour = 12;
+                                          });
+                                        }
+                                      },
+                                      child: Text(
+                                          '${finalAmPm} ${finalHour}:${finalTime.minute}'),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                        Padding(padding: EdgeInsets.only(top: 20)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              child: Column(
-                                children: [
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      textStyle: TextStyle(fontSize: 18),
-                                      foregroundColor: Color(0xff404040),
-                                    ),
-                                    onPressed: () async {
-                                      final DateTime? dateTime =
-                                          await showDatePicker(
-                                        context: context,
-                                        initialDate: initialDay,
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(3000),
-                                        builder: (context, child) {
-                                          return Theme(
-                                            data: ThemeData.light().copyWith(
-                                              colorScheme: ColorScheme.light(
-                                                primary: Color(0xff404040),
-                                                onSurface: Color(0xff404040),
-                                              ),
-                                              buttonTheme: ButtonThemeData(
-                                                colorScheme: ColorScheme.light(
-                                                  primary: Color(0xff404040),
-                                                ),
-                                              ),
-                                            ),
-                                            child: child!,
-                                          );
-                                        },
-                                      );
-                                      if (dateTime != null) {
-                                        setState(() {
-                                          initialDay = dateTime;
-                                        });
-                                      }
-                                    },
-                                    child: Text(
-                                        '${initialDay.month}월 ${initialDay.day}일 (${DateFormat('E', 'ko_KR').format(initialDay)})'),
-                                  ),
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      textStyle: TextStyle(fontSize: 15),
-                                      foregroundColor: Color(0xff404040),
-                                    ),
-                                    onPressed: () async {
-                                      final TimeOfDay? timeOfDay =
-                                          await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay(
-                                            hour: initHour,
-                                            minute: initialTime.minute),
-                                        builder: (context, child) {
-                                          return Theme(
-                                            data: ThemeData.light().copyWith(
-                                              colorScheme: ColorScheme.light(
-                                                primary: Color(0xff404040),
-                                                onSurface: Color(0xff404040),
-                                              ),
-                                              buttonTheme: ButtonThemeData(
-                                                colorScheme: ColorScheme.light(
-                                                  primary: Color(0xff404040),
-                                                ),
-                                              ),
-                                            ),
-                                            child: child!,
-                                          );
-                                        },
-                                      );
-                                      if (timeOfDay != null) {
-                                        setState(() {
-                                          initialTime = timeOfDay;
-                                          initAmPm = initialTime.hour >= 12 &&
-                                                  initialTime.hour < 24
-                                              ? "오후"
-                                              : "오전";
-                                          initHour = initialTime.hour > 12 &&
-                                                  initialTime.hour <= 24
-                                              ? initialTime.hour - 12
-                                              : initialTime.hour;
-                                          if (initHour == 0) initHour = 12;
-                                        });
-                                      }
-                                    },
-                                    child: Text(
-                                        '${initAmPm} ${initHour}:${initialTime.minute}'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(padding: EdgeInsets.only(right: 20)),
-                            Container(
-                              child: Icon(
-                                Icons.arrow_forward,
-                                size: 30,
-                                color: Color(0xff404040),
-                              ),
-                            ),
-                            Padding(padding: EdgeInsets.only(right: 20)),
-                            Container(
-                              child: Column(
-                                children: [
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      textStyle: TextStyle(
-                                          fontSize: 18,
-                                          color: Color(0xff404040)),
-                                      foregroundColor: Color(0xff404040),
-                                    ),
-                                    onPressed: () async {
-                                      final DateTime? dateTime =
-                                          await showDatePicker(
-                                        context: context,
-                                        initialDate: finalDay,
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(3000),
-                                        builder: (context, child) {
-                                          return Theme(
-                                            data: ThemeData.light().copyWith(
-                                              colorScheme: ColorScheme.light(
-                                                primary: Color(0xff404040),
-                                                onSurface: Color(0xff404040),
-                                              ),
-                                              buttonTheme: ButtonThemeData(
-                                                colorScheme: ColorScheme.light(
-                                                  primary: Color(0xff404040),
-                                                ),
-                                              ),
-                                            ),
-                                            child: child!,
-                                          );
-                                        },
-                                      );
-                                      if (dateTime != null) {
-                                        setState(() {
-                                          finalDay = dateTime;
-                                        });
-                                      }
-                                    },
-                                    child: Text(
-                                        '${finalDay.month}월 ${finalDay.day}일 (${DateFormat('E', 'ko_KR').format(finalDay)})'),
-                                  ),
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      textStyle: TextStyle(fontSize: 15),
-                                      foregroundColor: Color(0xff404040),
-                                    ),
-                                    onPressed: () async {
-                                      final TimeOfDay? timeOfDay =
-                                          await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay(
-                                            hour: finalHour,
-                                            minute: finalTime.minute),
-                                        builder: (context, child) {
-                                          return Theme(
-                                            data: ThemeData.light().copyWith(
-                                              colorScheme: ColorScheme.light(
-                                                primary: Color(0xff404040),
-                                                onSurface: Color(0xff404040),
-                                              ),
-                                              buttonTheme: ButtonThemeData(
-                                                colorScheme: ColorScheme.light(
-                                                  primary: Color(0xff404040),
-                                                ),
-                                              ),
-                                            ),
-                                            child: child!,
-                                          );
-                                        },
-                                      );
-                                      if (timeOfDay != null) {
-                                        setState(() {
-                                          finalTime = timeOfDay;
-                                          finalAmPm = finalTime.hour >= 12 &&
-                                                  finalTime.hour < 24
-                                              ? "오후"
-                                              : "오전";
-                                          finalHour = finalTime.hour > 12 &&
-                                                  finalTime.hour <= 24
-                                              ? finalTime.hour - 12
-                                              : initialTime.hour;
-                                          if (finalHour == 0) finalHour = 12;
-                                        });
-                                      }
-                                    },
-                                    child: Text(
-                                        '${finalAmPm} ${finalHour}:${finalTime.minute}'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
                         Padding(padding: EdgeInsets.only(top: 30)),
                         Align(
                           alignment: Alignment.centerLeft,
@@ -740,6 +748,7 @@ class _GenerateNewsState extends State<GenerateNews> {
           ),
         ),
         selected: selectedKeywordIndex == index,
+        //selected: keyword[index]['isSelected'],
         selectedColor: Color(0xff03AA5A),
         backgroundColor: Color(0xffF2F2F2),
         showCheckmark: false,
@@ -753,6 +762,11 @@ class _GenerateNewsState extends State<GenerateNews> {
               selectedKeywordIndex = -1;
               keyword[index]['isSelected'] = false;
               selectedKeyword = '';
+              if (keyword[index]['keyword'] == '임시 휴무' || keyword[index]['keyword'] == 'EVENT' || keyword[index]['keyword'] == 'SALE') {
+                showPeriod = false;
+              } else {
+                showPeriod = false;
+              }
             } else {
               if (selectedKeywordIndex != -1)
                 keyword[selectedKeywordIndex]['isSelected'] = false;
@@ -760,6 +774,12 @@ class _GenerateNewsState extends State<GenerateNews> {
               selectedKeywordIndex = index;
               keyword[index]['isSelected'] = true;
               selectedKeyword = keyword[index]['keyword'];
+
+              if (selectedKeyword == '임시 휴무' || selectedKeyword == 'EVENT' || selectedKeyword == 'SALE') {
+                showPeriod = true;
+              } else {
+                showPeriod = false;
+              }
             }
           });
         },
