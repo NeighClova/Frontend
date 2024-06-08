@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:app_links/app_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,6 +11,10 @@ import 'package:dio/dio.dart';
 import 'dart:convert';
 
 import 'package:flutter_neighclova/auth/model.dart';
+import 'package:flutter_neighclova/place/register_info.dart';
+import 'package:flutter_neighclova/tabview.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({Key? key}) : super(key: key);
@@ -25,6 +30,10 @@ class _JoinPageState extends State<JoinPage> {
   final _formKey = GlobalKey<FormState>();
   String userEmail = '';
   String userPassword = '';
+
+  //네이버 로그인
+  late AppLinks _appLinks;
+  final String redirectUri = 'http://localhost:3000/auth/oauth-response';
 
   void _tryValidation() {
     final isValid = _formKey.currentState!.validate();
@@ -102,6 +111,16 @@ class _JoinPageState extends State<JoinPage> {
       print('Exception: $e');
       return false;
     }
+  }
+
+  void naverLogin() async {
+    final Uri loginUrl = Uri.parse('http://192.168.35.197:8080/oauth2/authorization/naver');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WebViewContainer(loginUrl.toString(), redirectUri),
+      ),
+    );
   }
 
   @override
@@ -369,6 +388,7 @@ class _JoinPageState extends State<JoinPage> {
                     SizedBox(height: 10.0),
                     InkWell(
                       onTap: () {
+                        naverLogin();
                         print("네이버 로그인");
                       },
                       child: Image(
@@ -401,4 +421,128 @@ class Userdata {
   String email;
   String password;
   Userdata(this.email, this.password);
+}
+
+class WebViewContainer extends StatefulWidget {
+  final String url;
+  final String redirectUri;
+  WebViewContainer(this.url, this.redirectUri);
+
+  @override
+  _WebViewContainerState createState() => _WebViewContainerState();
+}
+
+class _WebViewContainerState extends State<WebViewContainer> {
+  late WebViewController _controller;
+
+  static final storage = FlutterSecureStorage();
+
+  String _decodeBase64(String str) {
+    String output = str.replaceAll('-', '+').replaceAll('_', '/');
+
+    switch (output.length % 4) {
+      case 0:
+        break;
+      case 2:
+        output += '==';
+        break;
+      case 3:
+        output += '=';
+        break;
+      default:
+        throw Exception('Illegal base64url string!"');
+    }
+
+    return utf8.decode(base64Url.decode(output));
+  }
+
+  Map<String, dynamic> parseJwtPayLoad(String token) {
+    final parts = token.split('.');
+    if (parts.length != 3) {
+      throw Exception('invalid token');
+    }
+
+    final payload = _decodeBase64(parts[1]);
+    final payloadMap = json.decode(payload);
+    if (payloadMap is! Map<String, dynamic>) {
+      throw Exception('invalid payload');
+    }
+
+    return payloadMap;
+  }
+
+  String? getUserIdFromToken(String token) {
+    final payload = parseJwtPayLoad(token);
+    return payload['sub'] ?? payload['user_id'];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: WebView(
+        initialUrl: widget.url,
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewController webViewController) {
+          _controller = webViewController;
+        },
+        navigationDelegate: (NavigationRequest request) {
+          if (request.url.startsWith(widget.redirectUri)) {
+            String? token = Uri.parse(request.url).pathSegments.length > 3
+                ? Uri.parse(request.url).pathSegments[2]
+                : null;
+            print('네이버 토큰: $token');
+            if (token != null) {
+              String? userId = getUserIdFromToken(token);
+              if (userId != null) {
+                print('User ID: $userId');
+                saveNaverToken(token, userId);
+              } else {
+                print('User ID not found in token');
+              }
+              return NavigationDecision.prevent;
+            }
+          }
+          return NavigationDecision.navigate;
+        },
+        onPageFinished: (String url) {
+          print('Page finished loading: $url');
+        },
+      ),
+    );
+  }
+
+  void saveNaverToken(String token, String email) async {
+    await storage.write(
+      key: 'token',
+      value: token,
+    );
+    await storage.write(
+      key: 'email',
+      value: email,
+    );
+    print('네이버 토큰 저장됨 : $token');
+    print('네이버 이메일 저장됨 : $email');
+
+    dynamic isFirst = '';
+    isFirst = await storage.read(key: email + 'First');
+
+    if (isFirst != null) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>
+              TabView(),
+        ),
+        (route) => false);
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>
+              RegisterInfo(),
+        ),
+        (route) => false);
+    }
+  }
 }
