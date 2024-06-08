@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/mypage/change_password.dart';
 import 'package:flutter_neighclova/place/edit_info.dart';
 import 'package:flutter_neighclova/mypage/license.dart';
 import 'package:flutter_neighclova/main.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_neighclova/place/place_response.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
@@ -26,11 +25,14 @@ class _MyPageState extends State<MyPage> {
   final _imageSize = 60.0;
   static final storage = FlutterSecureStorage();
   dynamic accesstoken = '';
+  dynamic placeId;
+  dynamic place;
   dynamic email = '';
 
   @override
   void initState() {
     super.initState();
+    getPlaceInfo();
     getEmail();
   }
 
@@ -41,17 +43,48 @@ class _MyPageState extends State<MyPage> {
     });
   }
 
+  void _fetchMyInfo() async {
+    await Future.delayed(Duration(seconds: 1));
+    getPlaceInfo();
+  }
+
+  getPlaceInfo() async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    accesstoken = await storage.read(key: 'token');
+    placeId = await storage.read(key: 'placeId');
+
+    // 헤더 설정
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+    Map<String, dynamic> queryParams = {
+      'placeId': placeId,
+    };
+
+    try {
+      Response response = await dio.get('/place', queryParameters: queryParams);
+      if (response.statusCode == 200) {
+        setState(() {
+          place = Place.fromJson(response.data);
+        });
+        print(place?.placeName);
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   deleteAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
 
     try {
-      Response response =
-          await dio.patch('/auth/delete');
+      Response response = await dio.patch('/auth/delete');
 
       if (response.statusCode == 200) {
         //email = await storage.read(key: 'email');
@@ -193,7 +226,7 @@ class _MyPageState extends State<MyPage> {
                               Row(
                                 children: [
                                   Text(
-                                    '식당 이름',
+                                    place?.placeName ?? '',
                                     style: TextStyle(
                                       color: Color(0xff404040),
                                       fontSize: 16,
@@ -203,7 +236,7 @@ class _MyPageState extends State<MyPage> {
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 5)),
                                   Text(
-                                    '업종',
+                                    place?.category ?? '',
                                     style: TextStyle(
                                       color: Color(0xff949494),
                                       fontSize: 12,
@@ -214,7 +247,7 @@ class _MyPageState extends State<MyPage> {
                               ),
                               Padding(padding: EdgeInsets.only(top: 5)),
                               Text(
-                                '플레이스 주소',
+                                place?.placeUrl ?? '',
                                 style: TextStyle(
                                   color: Color(0xff717171),
                                   fontSize: 12,
@@ -231,12 +264,15 @@ class _MyPageState extends State<MyPage> {
                         child: Container(
                           alignment: Alignment.centerRight,
                           child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.push(
+                            onPressed: () async {
+                              final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           EditInfo()));
+                              if (result == true) {
+                                _fetchMyInfo();
+                              }
                             },
                             child: const Text('수정',
                                 style: TextStyle(
@@ -439,18 +475,21 @@ class _MyPageState extends State<MyPage> {
                                                     child: Center(
                                                   child: TextButton(
                                                       onPressed: () async {
-                                                        await storage.delete(key: 'token');
+                                                        await storage.delete(
+                                                            key: 'token');
+                                                        await storage.delete(
+                                                            key: 'placeId');
                                                         print('로그아웃');
                                                         Navigator
-                                                          .pushAndRemoveUntil(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (BuildContext
-                                                                        context) =>
-                                                                    Login(),
-                                                              ),
-                                                              (route) =>
-                                                                  false);
+                                                            .pushAndRemoveUntil(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      Login(),
+                                                                ),
+                                                                (route) =>
+                                                                    false);
                                                       },
                                                       style:
                                                           TextButton.styleFrom(
@@ -594,16 +633,18 @@ class _MyPageState extends State<MyPage> {
                                                   Expanded(
                                                       child: Center(
                                                     child: TextButton(
-                                                      onPressed: () async {
-                                                        deleteAction();
-                                                        Navigator.pushAndRemoveUntil(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (BuildContext context) =>
-                                                              Login(),
-                                                          ),
-                                                          (route) =>
-                                                              false);
+                                                        onPressed: () async {
+                                                          deleteAction();
+                                                          Navigator
+                                                              .pushAndRemoveUntil(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (BuildContext
+                                                                            context) =>
+                                                                        Login(),
+                                                                  ),
+                                                                  (route) =>
+                                                                      false);
                                                         },
                                                         style: TextButton
                                                             .styleFrom(
