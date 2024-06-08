@@ -89,6 +89,7 @@ class _MyPageState extends State<MyPage> {
       if (response.statusCode == 200) {
         //email = await storage.read(key: 'email');
         await storage.delete(key: email + 'First');
+        await storage.delete(key: 'token');
         print('탈퇴 완료');
         return;
       } else {
