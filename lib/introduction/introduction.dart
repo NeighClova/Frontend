@@ -32,20 +32,22 @@ class _IntroductionState extends State<Introduction> {
 
   static final storage = FlutterSecureStorage();
   dynamic accesstoken = '';
+  dynamic placeId;
 
   bool _isLoading = false;
 
   getIntroduceAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
+    placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
 
     // 파라미터 설정
     Map<String, dynamic> queryParams = {
-      'placeId': 1,
+      'placeId': placeId,
     };
 
     try {
@@ -140,7 +142,7 @@ class _IntroductionState extends State<Introduction> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        placeName ?? ' ',
+                        placeName ?? '',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -148,7 +150,7 @@ class _IntroductionState extends State<Introduction> {
                       ),
                       Padding(padding: EdgeInsets.only(left: 10)),
                       Text(
-                        placeCategory ?? ' ',
+                        placeCategory ?? '',
                         style: TextStyle(
                           fontSize: 14,
                           color: Color(0xffB3B3B3),
@@ -180,65 +182,77 @@ class _IntroductionState extends State<Introduction> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(18),
                         child: Container(
-                          width: 50,
-                          height: 50,
-                          color: Color.fromRGBO(161, 182, 233, 1),
-                          child: isProfileImgExist
-                            ? Image.asset(placeProfileImg!,
-                                fit: BoxFit.cover)
-                            : const Icon(
-                                Icons.person,
-                                color: Colors.white,
-                              )
-                        ),
+                            width: 50,
+                            height: 50,
+                            color: Color.fromRGBO(161, 182, 233, 1),
+                            child: isProfileImgExist
+                                ? Image.asset(placeProfileImg!,
+                                    fit: BoxFit.cover)
+                                : const Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                  )),
                       ),
                       const Padding(padding: EdgeInsets.only(top: 22)),
                       Stack(
                         children: [
                           Container(
-                              width: double.infinity,
-                              height: 270,
-                              decoration: BoxDecoration(
-                                color: const Color(0xffF2F2F2),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 0,
-                                    blurRadius: 24,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 45),
-                                child: PageView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  controller: pageController,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: introduceList?.length ?? 0,
-                                  itemBuilder: (context, index) {
-                                    var introduces = introduceList?[index];
-                                    if (_isLoading == false) {
-                                      return SingleChildScrollView(
-                                        padding:
-                                            EdgeInsets.fromLTRB(20, 20, 20, 20),
-                                        child: Text(
-                                          introduces?.content ?? ' ',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Color(0xff404040)),
-                                        ),
-                                      );
-                                    } else {
-                                      return Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    }
-                                      
-                                  },
+                            width: double.infinity,
+                            height: 270,
+                            decoration: BoxDecoration(
+                              color: const Color(0xffF2F2F2),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 0,
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 8),
                                 ),
-                              )),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 45),
+                              child: introduceList == null ||
+                                      introduceList?.length == 0
+                                  ? Center(
+                                      child: Text(
+                                        "아직 소개글을 생성하지 않으셨네요!\n인공지능을 통해 매장 소개글을 쉽고 빠르게 작성해보세요.",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Color(0xff404040),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )
+                                  : PageView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      controller: pageController,
+                                      physics: const BouncingScrollPhysics(),
+                                      itemCount: introduceList?.length ?? 0,
+                                      itemBuilder: (context, index) {
+                                        var introduces = introduceList?[index];
+                                        if (_isLoading == false) {
+                                          return SingleChildScrollView(
+                                            padding: EdgeInsets.fromLTRB(
+                                                20, 20, 20, 20),
+                                            child: Text(
+                                              introduces?.content ?? '',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Color(0xff404040),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      },
+                                    ),
+                            ),
+                          ),
                           Positioned(
                               bottom: 20,
                               left: 0,
@@ -263,29 +277,27 @@ class _IntroductionState extends State<Introduction> {
                           Positioned(
                             bottom: 0,
                             right: 0,
-                            child: IconButton(
-                              onPressed: () {
-                                int currentPage =
-                                    pageController.page?.round() ?? 0;
-                                var introduces = introduceList?[currentPage];
-                                String currentText = introduces?.content ?? ' ';
-                                Clipboard.setData(
-                                    ClipboardData(text: currentText));
-                                showToast();
-                              },
-                              icon: Icon(Icons.content_copy_outlined),
-                              color: Color(0xffB0B0B0),
-                              iconSize: 15,
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
+                            child: Visibility(
+                              visible: introduceList != null &&
+                                  introduceList?.length != 0,
+                              child: IconButton(
+                                onPressed: () {
+                                  int currentPage =
+                                      pageController.page?.round() ?? 0;
+                                  var introduces = introduceList?[currentPage];
+                                  String currentText =
+                                      introduces?.content ?? ' ';
+                                  Clipboard.setData(
+                                      ClipboardData(text: currentText));
+                                  showToast();
+                                },
+                                icon: Icon(Icons.content_copy_outlined),
+                                color: Color(0xffB0B0B0),
+                                iconSize: 15,
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                              ),
                             ),
-                            /*child: SizedBox(
-                            width: 55,
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              child: 
-                            ),
-                          ),*/
                           ),
                         ],
                       ),
@@ -293,22 +305,14 @@ class _IntroductionState extends State<Introduction> {
                       ElevatedButton(
                         onPressed: () async {
                           final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => GenerateIntroduction()));
-                            
-                            if (result == true) {
-                              // setState((){
-                              //   _isLoading = true;
-                              // });
-                              // await Future.delayed(Duration(seconds: 1));
-                              // getIntroduceAction();
-                              // setState((){
-                              //   _isLoading = false;
-                              // });
-                              // print(_isLoading);
-                              _fetchIntroduction();
-                            }
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      GenerateIntroduction()));
+
+                          if (result == true) {
+                            _fetchIntroduction();
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xff03AA5A),
