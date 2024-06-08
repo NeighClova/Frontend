@@ -69,6 +69,7 @@ class _LoginState extends State<Login> {
   static final storage = FlutterSecureStorage();
   dynamic isFirst = ''; //storage 내의 유저 정보 저장
   dynamic email = '';
+  dynamic userInfo = '';
 
   //네이버 로그인
   late AppLinks _appLinks;
@@ -84,10 +85,25 @@ class _LoginState extends State<Login> {
       WebView.platform = SurfaceAndroidWebView();
     }
     //flutter secure storage 정보 불러오기
-    /*WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _asyncMethod();
-    });*/
+    });
+  }
 
+  _asyncMethod() async {
+    userInfo = await storage.read(key:'token');
+
+    if (userInfo != null) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>
+              TabView(),
+        ),
+        (route) => false);
+    } else {
+      print('로그인이 필요합니다');
+    }
   }
 
   void naverLogin() async {
@@ -519,7 +535,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
     print('네이버 이메일 저장됨 : $email');
 
     dynamic isFirst = '';
-    isFirst = await storage.read(key: email + 'First');
+    isFirst = await storage.read(key: email + 'First!');
 
     if (isFirst != null) {
       Navigator.pushAndRemoveUntil(

@@ -66,7 +66,7 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   makeNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     var placeId = await storage.read(key: 'placeId');
 
     // 파라미터 설정
@@ -103,7 +103,7 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   saveNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     accesstoken = await storage.read(key: 'token');
     var placeId = await storage.read(key: 'placeId');
 

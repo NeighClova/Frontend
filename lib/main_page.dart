@@ -101,7 +101,7 @@ class _MainPageState extends State<MainPage> {
 
   getAllPlaces() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
@@ -137,7 +137,7 @@ class _MainPageState extends State<MainPage> {
     }
 
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정

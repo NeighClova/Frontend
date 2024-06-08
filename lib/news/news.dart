@@ -26,7 +26,7 @@ class _NewsPageState extends State<NewsPage> {
 
   Future<List<News>?> getAllNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.35.197:8080';
     accesstoken = await storage.read(key: 'token');
     placeId = await storage.read(key: 'placeId');
 
