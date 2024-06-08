@@ -46,12 +46,16 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
     _tabController.animateTo(index);
   }
 
+  void navigateToIntroductionPage() {
+    _onItemTapped(2);
+  }
+
   void navigateToNewsPage() {
     _onItemTapped(3);
   }
 
-  void navigateToIntroductionPage() {
-    _onItemTapped(2);
+  void navigateToMyPage() {
+    _onItemTapped(4);
   }
 
   @override

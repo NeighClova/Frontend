@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/mypage/mypage.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_neighclova/place/place_response.dart';
 
 class EditInfo extends StatefulWidget {
   const EditInfo({Key? key}) : super(key: key);
@@ -10,28 +12,18 @@ class EditInfo extends StatefulWidget {
 }
 
 class _EditInfoState extends State<EditInfo> {
-  @override
-  void initState() {
-    super.initState();
-    ////////기존 데이터 세팅
-    for (int i = 0; i < ages.length; i++) {
-      //기존 정보 받아와서 age[i]에 세팅
-      age[i] = false;
-      ages[i]['isSelected'] = age[i];
-    }
-    for (int i = 0; i < targets.length; i++) {
-      target[i] = false;
-      targets[i]['isSelected'] = target[i];
-    }
-  }
+  static final storage = FlutterSecureStorage();
+  dynamic place;
+  dynamic accesstoken;
+  dynamic placeId;
 
-  TextEditingController controller = TextEditingController();
-  TextEditingController controller2 = TextEditingController();
-  TextEditingController controller3 = TextEditingController();
-  List<bool> age = [false, false, false, false, false, false];
-  List<bool> target = [false, false, false, false, false, false, false];
+  TextEditingController placeNameText = TextEditingController();
+  TextEditingController categoryText = TextEditingController();
+  TextEditingController placeUrlText = TextEditingController();
+  List<String> selectedAges = [];
+  List<String> selectedTargets = [];
 
-  final List<Map<String, dynamic>> ages = [
+  List<Map<String, dynamic>> ages = [
     {'age': '10대', 'isSelected': false},
     {'age': '20대', 'isSelected': false},
     {'age': '30대', 'isSelected': false},
@@ -39,7 +31,7 @@ class _EditInfoState extends State<EditInfo> {
     {'age': '50대', 'isSelected': false},
     {'age': '60대 이상', 'isSelected': false},
   ];
-  final List<Map<String, dynamic>> targets = [
+  List<Map<String, dynamic>> targets = [
     {'target': '학생', 'isSelected': false},
     {'target': '지역 주민', 'isSelected': false},
     {'target': '회사원', 'isSelected': false},
@@ -48,6 +40,105 @@ class _EditInfoState extends State<EditInfo> {
     {'target': '여성', 'isSelected': false},
     {'target': '남성', 'isSelected': false},
   ];
+
+  getPlaceInfo() async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    accesstoken = await storage.read(key: 'token');
+    placeId = await storage.read(key: 'placeId');
+
+    // 헤더 설정
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+    Map<String, dynamic> queryParams = {
+      'placeId': placeId,
+    };
+
+    try {
+      Response response = await dio.get('/place', queryParameters: queryParams);
+      if (response.statusCode == 200) {
+        setState(() {
+          place = Place.fromJson(response.data);
+        });
+
+        for (var age in ages) {
+          if (place.targetAge.contains(age['age'])) {
+            age['isSelected'] = true;
+            selectedAges.add(age['age']);
+          }
+        }
+        for (var target in targets) {
+          if (place.target.contains(target['target'])) {
+            target['isSelected'] = true;
+            selectedTargets.add(target['target']);
+          }
+        }
+
+        setState(() {
+          place = Place.fromJson(response.data);
+          ages = ages;
+          targets = targets;
+          selectedTargets = selectedTargets;
+          selectedAges = selectedAges;
+          placeNameText = TextEditingController(text: (place?.placeName ?? ''));
+          categoryText = TextEditingController(text: (place?.category ?? ''));
+          placeUrlText = TextEditingController(text: (place?.placeUrl ?? ''));
+        });
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  patchPlaceAction(selectedAges, selectedTargets) async {
+    print(selectedAges);
+    print(selectedTargets);
+    try {
+      var dio = Dio();
+      var body = {
+        "placeName": placeNameText.text,
+        "category": categoryText.text,
+        "targetAge": selectedAges,
+        "target": selectedTargets,
+        "placeUrl": placeUrlText.text
+      };
+
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      final accessToken = await storage.read(key: "token");
+
+      dio.options.headers['Authorization'] = 'Bearer $accessToken';
+      Map<String, dynamic> queryParams = {
+        'placeId': placeId,
+      };
+
+      Response response =
+          await dio.patch('/place', data: body, queryParameters: queryParams);
+
+      if (response.statusCode == 200) {
+        print('patch success');
+      } else if (response.statusCode == 401) {
+        print('forbiden');
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getPlaceInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,17 +167,11 @@ class _EditInfoState extends State<EditInfo> {
           padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
           child: ElevatedButton(
             onPressed: () {
-              if (controller3.text == '') {
+              if (placeUrlText.text == '' || placeNameText.text == '') {
                 showSnackBar(context, Text('필수 정보를 입력해주세요.'));
               } else {
-                //데이터 저장
-                //마이페이지로 이동
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => MyPage(),
-                    ),
-                    (route) => false);
+                patchPlaceAction(selectedAges, selectedTargets);
+                Navigator.pop(context, true);
               }
             },
             child: Text(
@@ -119,13 +204,13 @@ class _EditInfoState extends State<EditInfo> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '매장명',
+                          '매장명 *',
                           style:
                               TextStyle(color: Color(0xff717171), fontSize: 16),
                         ),
                         Padding(padding: EdgeInsets.only(top: 5)),
                         TextField(
-                          controller: controller,
+                          controller: placeNameText,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(10),
                             isDense: true,
@@ -162,7 +247,7 @@ class _EditInfoState extends State<EditInfo> {
                         ),
                         Padding(padding: EdgeInsets.only(top: 5)),
                         TextField(
-                          controller: controller2,
+                          controller: categoryText,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(10),
                             isDense: true,
@@ -257,7 +342,7 @@ class _EditInfoState extends State<EditInfo> {
                         ),
                         Padding(padding: EdgeInsets.only(top: 5)),
                         TextField(
-                          controller: controller3,
+                          controller: placeUrlText,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(10),
                             isDense: true,
@@ -311,6 +396,12 @@ class _EditInfoState extends State<EditInfo> {
         onSelected: (value) {
           setState(() {
             ages[index]['isSelected'] = !ages[index]['isSelected'];
+            //추가된 부분
+            if (ages[index]['isSelected']) {
+              selectedAges.add(ages[index]['age']);
+            } else {
+              selectedAges.remove(ages[index]['age']);
+            }
           });
         },
         elevation: 0,
@@ -347,6 +438,12 @@ class _EditInfoState extends State<EditInfo> {
         onSelected: (value) {
           setState(() {
             targets[index]['isSelected'] = !targets[index]['isSelected'];
+            //추가된 부분
+            if (targets[index]['isSelected']) {
+              selectedTargets.add(targets[index]['target']);
+            } else {
+              selectedTargets.remove(targets[index]['target']);
+            }
           });
         },
         elevation: 0,

@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/news/generate_news.dart';
 import 'package:flutter_neighclova/news/news_card.dart';
 import 'package:dio/dio.dart';
@@ -18,6 +15,7 @@ class NewsPage extends StatefulWidget {
 class _NewsPageState extends State<NewsPage> {
   static final storage = FlutterSecureStorage();
   dynamic accesstoken = '';
+  dynamic placeId;
   List<News>? newsList = [];
 
   @override
@@ -26,49 +24,17 @@ class _NewsPageState extends State<NewsPage> {
     getAllNewsAction();
   }
 
-  // getAllNewsAction() async {
-  //   var dio = Dio();
-  //   dio.options.baseUrl = 'http://192.168.35.197:8080';
-  //   accesstoken = await storage.read(key: 'token');
-
-  //   // 헤더 설정
-  //   dio.options.headers['Authorization'] = 'Bearer $accesstoken';
-
-  //   // 파라미터 설정
-  //   Map<String, dynamic> queryParams = {
-  //     'placeId': 1,
-  //   };
-
-  //   try {
-  //     Response response =
-  //         await dio.get('/news/all', queryParameters: queryParams);
-
-  //     if (response.statusCode == 200) {
-  //       NewsResponse newsResponse = NewsResponse.fromJson(response.data);
-
-  //       setState(() {
-  //         newsList = newsResponse.newsList;
-  //       });
-
-  //       return;
-  //     } else {
-  //       print('Error: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     print('Error: $e');
-  //   }
-  // }
-
   Future<List<News>?> getAllNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
+    placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
     // 파라미터 설정
     Map<String, dynamic> queryParams = {
-      'placeId': 1,
+      'placeId': placeId,
     };
     try {
       Response response =
@@ -111,7 +77,7 @@ class _NewsPageState extends State<NewsPage> {
         automaticallyImplyLeading: false,
       ),
       backgroundColor: Color(0xffF5F5F5),
-      // 
+      //
       body: FutureBuilder<List<News>?>(
         future: getAllNewsAction(),
         builder: (context, snapshot) {
@@ -125,6 +91,19 @@ class _NewsPageState extends State<NewsPage> {
             );
           } else {
             newsList = snapshot.data;
+            if (newsList?.length == 0) {
+              return Align(
+                alignment: Alignment.center,
+                child: Text(
+                  '아직 소식글을 생성하지 않으셨네요!\n홍보/공지 등, 매장의 소식 작성해서 고객들에게 전해보세요.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xff404040),
+                  ),
+                ),
+              );
+            }
             return ListView.separated(
               itemCount: newsList?.length ?? 0,
               itemBuilder: (BuildContext context, int index) {
@@ -149,14 +128,14 @@ class _NewsPageState extends State<NewsPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => GenerateNews()));
-            
-            if (result == true) {
-              await getAllNewsAction();
-              setState((){});
-            }
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => GenerateNews()));
+
+          if (result == true) {
+            await getAllNewsAction();
+            setState(() {});
+          }
         },
         child: Icon(Icons.edit),
         backgroundColor: Color(0xff03AA5A),

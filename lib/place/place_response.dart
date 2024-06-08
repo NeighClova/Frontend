@@ -2,19 +2,30 @@ class Place {
   final int? placeId;
   final String? placeName;
   final String? profileImg;
+  final String? category;
+  final String? placeUrl;
+  final List<dynamic>? targetAge;
+  final List<dynamic>? target;
 
   Place({
     this.placeId,
     this.placeName,
     this.profileImg,
+    this.category,
+    this.placeUrl,
+    this.target,
+    this.targetAge,
   });
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
-      placeId: json['placeId'],
-      placeName: json['placeName'],
-      profileImg: json['profileImg'],
-    );
+        placeId: json['placeId'],
+        placeName: json['placeName'],
+        profileImg: json['profileImg'],
+        category: json['category'],
+        placeUrl: json['placeUrl'],
+        target: json['target'],
+        targetAge: json['targetAge']);
   }
 }
 
