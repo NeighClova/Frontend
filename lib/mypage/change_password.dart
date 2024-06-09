@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
+import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/mypage/mypage.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({Key? key}) : super(key: key);
@@ -21,6 +24,10 @@ class _ChangePasswordState extends State<ChangePassword> {
   String userPassword = '';
   String newPassword = '';
   String checkNewPassword = '';
+  String? currentPassword = '';
+
+  static final storage = FlutterSecureStorage();
+  dynamic accesstoken = '';
 
   void _tryValidation() {
     final isValid = _formKey.currentState!.validate();
@@ -32,6 +39,69 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   void initState() {
     passwordVisible = false;
+  }
+
+  Future<void> checkPassword() async {
+    currentPassword = await storage.read(key: 'password');
+    if (currentPassword != null) {
+      _tryValidation();
+    }
+  }
+
+  Future<void> _handleChangePassword() async {
+    await checkPassword();
+
+    if (_formKey.currentState!.validate()) {
+      Future<bool> result = patchPasswordAction(userPassword, newPassword);
+      if (await result) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => MyApp(),
+            ),
+            (route) => false);
+      }
+    }
+  }
+
+  Future<bool> patchPasswordAction(oldPassword, newPassword) async {
+    try {
+      if (currentPassword == null) {
+        return false;
+      }
+      var dio = Dio();
+      var param = {
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+      };
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      accesstoken = await storage.read(key: 'token');
+      dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+
+      Response response = await dio.patch('/auth/patch-password', data: param);
+
+      if (response.statusCode == 200) {
+        print('비밀번호 변경 완료');
+        return true;
+      } else if (response.statusCode == 403) {
+        print('인증 실패');
+        return false;
+      } else {
+        print('error: ${response.statusCode}');
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
   }
 
   @override
@@ -61,16 +131,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
           child: ElevatedButton(
             onPressed: () async {
-              //////////데이터 전달
-              _tryValidation();
-              if (_formKey.currentState!.validate()) {
-                print('비밀번호 변경 완료');
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => MyPage(),
-                    ));
-              }
+              _handleChangePassword();
             },
             child: Text(
               '비밀번호 변경',
@@ -123,7 +184,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               Padding(padding: EdgeInsets.only(top: 10)),
                               TextFormField(
                                 validator: (value) {
-                                  if (value! != 'qwerty123') {
+                                  if (value! != currentPassword) {
                                     return '비밀번호가 일치하지 않습니다.';
                                   }
                                   return null;
@@ -267,7 +328,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   return null;
                                 },
                                 onSaved: (value) {
-                                  userPassword = value!;
+                                  newPassword = value!;
                                 },
                                 controller: controller3,
                                 decoration: InputDecoration(

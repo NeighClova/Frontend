@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/introduction/introduction.dart';
 import 'package:flutter_neighclova/main_page.dart';
 import 'package:flutter_neighclova/mypage/mypage.dart';
@@ -47,8 +46,16 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
     _tabController.animateTo(index);
   }
 
+  void navigateToIntroductionPage() {
+    _onItemTapped(2);
+  }
+
   void navigateToNewsPage() {
     _onItemTapped(3);
+  }
+
+  void navigateToMyPage() {
+    _onItemTapped(4);
   }
 
   @override

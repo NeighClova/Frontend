@@ -2,13 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/mypage/change_password.dart';
 import 'package:flutter_neighclova/place/edit_info.dart';
 import 'package:flutter_neighclova/mypage/license.dart';
 import 'package:flutter_neighclova/main.dart';
+import 'package:flutter_neighclova/place/place_response.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -19,9 +21,123 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   final picker = ImagePicker();
+  dynamic sendData;
   XFile? _pickedFile; //프로필 이미지 저장
   final _imageSize = 60.0;
-  final String username = '아이디';
+  static final storage = FlutterSecureStorage();
+  dynamic accesstoken = '';
+  dynamic placeId;
+  dynamic place;
+  dynamic email = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getPlaceInfo();
+    getEmail();
+  }
+
+  Future<void> getEmail() async {
+    String? storedEmail = await storage.read(key: 'email');
+    setState(() {
+      email = storedEmail;
+    });
+  }
+
+  void _fetchMyInfo() async {
+    await Future.delayed(Duration(seconds: 1));
+    getPlaceInfo();
+  }
+
+  Future<void> patchImg(String filePath) async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
+
+    // 저장소에서 token과 placeId 읽기
+    String? accesstoken = await storage.read(key: 'token');
+    String? placeId = await storage.read(key: 'placeId');
+
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+    MultipartFile img = await MultipartFile.fromFile(filePath);
+
+    // FormData 생성
+    FormData formData = FormData.fromMap({
+      'file': img,
+    });
+
+    // 파라미터 설정
+    Map<String, dynamic> queryParams = {
+      'placeId': placeId,
+    };
+
+    // PATCH 요청 보내기
+    try {
+      Response response = await dio.patch('/place/img',
+          queryParameters: queryParams, data: formData);
+      if (response.statusCode == 200) {
+        // 성공적인 응답 처리
+        print('이미지 업로드 성공');
+      } else {
+        // 200이 아닌 응답 처리
+        print('이미지 업로드 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      // 오류 처리
+      print('이미지 업로드 중 오류 발생: $e');
+    }
+  }
+
+  getPlaceInfo() async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    accesstoken = await storage.read(key: 'token');
+    placeId = await storage.read(key: 'placeId');
+
+    // 헤더 설정
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+    Map<String, dynamic> queryParams = {
+      'placeId': placeId,
+    };
+
+    try {
+      Response response = await dio.get('/place', queryParameters: queryParams);
+      if (response.statusCode == 200) {
+        setState(() {
+          place = Place.fromJson(response.data);
+        });
+        print(place?.placeName);
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  deleteAction() async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    accesstoken = await storage.read(key: 'token');
+
+    // 헤더 설정
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+
+    try {
+      Response response = await dio.patch('/auth/delete');
+
+      if (response.statusCode == 200) {
+        //email = await storage.read(key: 'email');
+        await storage.delete(key: email + 'First');
+        await storage.delete(key: 'token');
+        print('탈퇴 완료');
+        return;
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +180,23 @@ class _MyPageState extends State<MyPage> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          if (_pickedFile == null)
+                          if (place?.profileImg == null)
                             Stack(
                               alignment: Alignment.bottomRight,
                               children: [
-                                Icon(
-                                  Icons.account_circle,
-                                  size: _imageSize,
+                                ClipOval(
+                                  child: Container(
+                                      width: _imageSize,
+                                      height: _imageSize,
+                                      color: Color.fromRGBO(161, 182, 233, 1),
+                                      child: _pickedFile == null
+                                          ? Icon(Icons.person,
+                                              color: Colors.white,
+                                              size: _imageSize - 20)
+                                          : Image.file(
+                                              File(_pickedFile!.path),
+                                              fit: BoxFit.cover,
+                                            )),
                                 ),
                                 Positioned(
                                   bottom: 0,
@@ -110,8 +236,12 @@ class _MyPageState extends State<MyPage> {
                                   decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       image: DecorationImage(
-                                          image: FileImage(
-                                              File(_pickedFile!.path)),
+                                          image: (_pickedFile == null)
+                                              ? NetworkImage(
+                                                      '${place?.profileImg}')
+                                                  as ImageProvider<Object>
+                                              : FileImage(
+                                                  File(_pickedFile!.path)),
                                           fit: BoxFit.cover)),
                                 ),
                                 Positioned(
@@ -150,7 +280,7 @@ class _MyPageState extends State<MyPage> {
                               Row(
                                 children: [
                                   Text(
-                                    '식당 이름',
+                                    place?.placeName ?? '',
                                     style: TextStyle(
                                       color: Color(0xff404040),
                                       fontSize: 16,
@@ -160,7 +290,7 @@ class _MyPageState extends State<MyPage> {
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 5)),
                                   Text(
-                                    '업종',
+                                    place?.category ?? '',
                                     style: TextStyle(
                                       color: Color(0xff949494),
                                       fontSize: 12,
@@ -171,7 +301,7 @@ class _MyPageState extends State<MyPage> {
                               ),
                               Padding(padding: EdgeInsets.only(top: 5)),
                               Text(
-                                '플레이스 주소',
+                                place?.placeUrl ?? '',
                                 style: TextStyle(
                                   color: Color(0xff717171),
                                   fontSize: 12,
@@ -188,12 +318,15 @@ class _MyPageState extends State<MyPage> {
                         child: Container(
                           alignment: Alignment.centerRight,
                           child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.push(
+                            onPressed: () async {
+                              final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           EditInfo()));
+                              if (result == true) {
+                                _fetchMyInfo();
+                              }
                             },
                             child: const Text('수정',
                                 style: TextStyle(
@@ -245,7 +378,7 @@ class _MyPageState extends State<MyPage> {
                             ),
                             Padding(padding: EdgeInsets.only(right: 15)),
                             Text(
-                              username,
+                              '아이디',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -258,7 +391,7 @@ class _MyPageState extends State<MyPage> {
                         alignment: Alignment.centerRight,
                         height: 55,
                         child: Text(
-                          '아이디',
+                          email,
                           style: TextStyle(
                             fontSize: 13,
                             color: Color(0xff949494),
@@ -395,7 +528,11 @@ class _MyPageState extends State<MyPage> {
                                                 Expanded(
                                                     child: Center(
                                                   child: TextButton(
-                                                      onPressed: () {
+                                                      onPressed: () async {
+                                                        await storage.delete(
+                                                            key: 'token');
+                                                        await storage.delete(
+                                                            key: 'placeId');
                                                         print('로그아웃');
                                                         Navigator
                                                             .pushAndRemoveUntil(
@@ -550,8 +687,8 @@ class _MyPageState extends State<MyPage> {
                                                   Expanded(
                                                       child: Center(
                                                     child: TextButton(
-                                                        onPressed: () {
-                                                          print('회원 탈퇴');
+                                                        onPressed: () async {
+                                                          deleteAction();
                                                           Navigator
                                                               .pushAndRemoveUntil(
                                                                   context,
@@ -797,6 +934,8 @@ class _MyPageState extends State<MyPage> {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
+      sendData = pickedFile.path;
+      patchImg(sendData);
       setState(() {
         _pickedFile = pickedFile;
       });
@@ -811,6 +950,8 @@ class _MyPageState extends State<MyPage> {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
+      sendData = pickedFile.path;
+      patchImg(sendData);
       setState(() {
         _pickedFile = pickedFile;
       });
