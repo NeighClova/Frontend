@@ -91,33 +91,33 @@ class _LoginState extends State<Login> {
   }
 
   _asyncMethod() async {
-    userInfo = await storage.read(key:'token');
+    userInfo = await storage.read(key: 'token');
 
     if (userInfo != null) {
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              TabView(),
-        ),
-        (route) => false);
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => TabView(),
+          ),
+          (route) => false);
     } else {
       print('로그인이 필요합니다');
     }
   }
 
   void naverLogin() async {
-    final Uri loginUrl = Uri.parse('http://192.168.35.197:8080/oauth2/authorization/naver');
+    final Uri loginUrl =
+        Uri.parse('http://10.0.2.2:8080/oauth2/authorization/naver');
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WebViewContainer(loginUrl.toString(), redirectUri),
+        builder: (context) =>
+            WebViewContainer(loginUrl.toString(), redirectUri),
       ),
     );
   }
 
   routeway() async {
-    
     // 데이터 없으면 null
     email = await storage.read(key: 'email');
     isFirst = await storage.read(key: email + 'First');
@@ -130,12 +130,11 @@ class _LoginState extends State<Login> {
         ),
       );*/
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              TabView(),
-        ),
-        (route) => false);
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => TabView(),
+          ),
+          (route) => false);
 
       /*await storage.write(
         key: 'isFirst',
@@ -143,21 +142,19 @@ class _LoginState extends State<Login> {
       );*/
     } else {
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              RegisterInfo(),
-        ),
-        (route) => false);
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => RegisterInfo(),
+          ),
+          (route) => false);
     }
   }
 
   Future<bool> loginAction(email, password) async {
-    
     try {
       var dio = Dio();
       var param = {'email': email, 'password': password};
-      dio.options.baseUrl = 'http://192.168.35.197:8080';
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
 
       Response response = await dio.post('/auth/sign-in', data: param);
 
@@ -539,20 +536,18 @@ class _WebViewContainerState extends State<WebViewContainer> {
 
     if (isFirst != null) {
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              TabView(),
-        ),
-        (route) => false);
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => TabView(),
+          ),
+          (route) => false);
     } else {
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              RegisterInfo(),
-        ),
-        (route) => false);
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => RegisterInfo(),
+          ),
+          (route) => false);
     }
   }
 }

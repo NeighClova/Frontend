@@ -49,7 +49,7 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
       };
       print(userdata.email);
       print(userdata.password);
-      dio.options.baseUrl = 'http://192.168.35.197:8080';
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
 
       Response response = await dio.post('/auth/sign-up', data: param);
 

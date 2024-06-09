@@ -52,7 +52,7 @@ class _JoinPageState extends State<JoinPage> {
     try {
       var dio = Dio();
       var param = {'email': email};
-      dio.options.baseUrl = 'http://192.168.35.197:8080';
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
 
       Response response = await dio.post('/auth/email-check', data: param);
 
@@ -84,7 +84,7 @@ class _JoinPageState extends State<JoinPage> {
     try {
       var dio = Dio();
       var param = {'email': email};
-      dio.options.baseUrl = 'http://192.168.35.197:8080';
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
 
       Response response =
           await dio.post('/auth/email-certification', data: param);
@@ -114,11 +114,13 @@ class _JoinPageState extends State<JoinPage> {
   }
 
   void naverLogin() async {
-    final Uri loginUrl = Uri.parse('http://192.168.35.197:8080/oauth2/authorization/naver');
+    final Uri loginUrl =
+        Uri.parse('http://10.0.2.2:8080/oauth2/authorization/naver');
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WebViewContainer(loginUrl.toString(), redirectUri),
+        builder: (context) =>
+            WebViewContainer(loginUrl.toString(), redirectUri),
       ),
     );
   }
@@ -529,20 +531,18 @@ class _WebViewContainerState extends State<WebViewContainer> {
 
     if (isFirst != null) {
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              TabView(),
-        ),
-        (route) => false);
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => TabView(),
+          ),
+          (route) => false);
     } else {
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              RegisterInfo(),
-        ),
-        (route) => false);
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => RegisterInfo(),
+          ),
+          (route) => false);
     }
   }
 }

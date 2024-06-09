@@ -70,7 +70,7 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   makeNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     var placeId = await storage.read(key: 'placeId');
 
     // 파라미터 설정
@@ -107,7 +107,7 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   saveNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
     var placeId = await storage.read(key: 'placeId');
 
@@ -483,7 +483,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                                                   onSurface: Color(0xff404040),
                                                 ),
                                                 buttonTheme: ButtonThemeData(
-                                                  colorScheme: ColorScheme.light(
+                                                  colorScheme:
+                                                      ColorScheme.light(
                                                     primary: Color(0xff404040),
                                                   ),
                                                 ),
@@ -521,7 +522,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                                                   onSurface: Color(0xff404040),
                                                 ),
                                                 buttonTheme: ButtonThemeData(
-                                                  colorScheme: ColorScheme.light(
+                                                  colorScheme:
+                                                      ColorScheme.light(
                                                     primary: Color(0xff404040),
                                                   ),
                                                 ),
@@ -585,7 +587,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                                                   onSurface: Color(0xff404040),
                                                 ),
                                                 buttonTheme: ButtonThemeData(
-                                                  colorScheme: ColorScheme.light(
+                                                  colorScheme:
+                                                      ColorScheme.light(
                                                     primary: Color(0xff404040),
                                                   ),
                                                 ),
@@ -623,7 +626,8 @@ class _GenerateNewsState extends State<GenerateNews> {
                                                   onSurface: Color(0xff404040),
                                                 ),
                                                 buttonTheme: ButtonThemeData(
-                                                  colorScheme: ColorScheme.light(
+                                                  colorScheme:
+                                                      ColorScheme.light(
                                                     primary: Color(0xff404040),
                                                   ),
                                                 ),
@@ -762,7 +766,9 @@ class _GenerateNewsState extends State<GenerateNews> {
               selectedKeywordIndex = -1;
               keyword[index]['isSelected'] = false;
               selectedKeyword = '';
-              if (keyword[index]['keyword'] == '임시 휴무' || keyword[index]['keyword'] == 'EVENT' || keyword[index]['keyword'] == 'SALE') {
+              if (keyword[index]['keyword'] == '임시 휴무' ||
+                  keyword[index]['keyword'] == 'EVENT' ||
+                  keyword[index]['keyword'] == 'SALE') {
                 showPeriod = false;
               } else {
                 showPeriod = false;
@@ -775,7 +781,9 @@ class _GenerateNewsState extends State<GenerateNews> {
               keyword[index]['isSelected'] = true;
               selectedKeyword = keyword[index]['keyword'];
 
-              if (selectedKeyword == '임시 휴무' || selectedKeyword == 'EVENT' || selectedKeyword == 'SALE') {
+              if (selectedKeyword == '임시 휴무' ||
+                  selectedKeyword == 'EVENT' ||
+                  selectedKeyword == 'SALE') {
                 showPeriod = true;
               } else {
                 showPeriod = false;

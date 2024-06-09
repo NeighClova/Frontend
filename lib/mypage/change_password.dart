@@ -55,12 +55,11 @@ class _ChangePasswordState extends State<ChangePassword> {
       Future<bool> result = patchPasswordAction(userPassword, newPassword);
       if (await result) {
         Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) =>
-                MyApp(),
-          ),
-          (route) => false);
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => MyApp(),
+            ),
+            (route) => false);
       }
     }
   }
@@ -75,10 +74,10 @@ class _ChangePasswordState extends State<ChangePassword> {
         'oldPassword': oldPassword,
         'newPassword': newPassword,
       };
-      dio.options.baseUrl = 'http://192.168.35.197:8080';
+      dio.options.baseUrl = 'http://10.0.2.2:8080';
       accesstoken = await storage.read(key: 'token');
       dio.options.headers['Authorization'] = 'Bearer $accesstoken';
-      
+
       Response response = await dio.patch('/auth/patch-password', data: param);
 
       if (response.statusCode == 200) {
