@@ -21,6 +21,7 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   final picker = ImagePicker();
+  dynamic sendData;
   XFile? _pickedFile; //프로필 이미지 저장
   final _imageSize = 60.0;
   static final storage = FlutterSecureStorage();
@@ -48,9 +49,47 @@ class _MyPageState extends State<MyPage> {
     getPlaceInfo();
   }
 
+  Future<void> patchImg(String filePath) async {
+    var dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
+
+    // 저장소에서 token과 placeId 읽기
+    String? accesstoken = await storage.read(key: 'token');
+    String? placeId = await storage.read(key: 'placeId');
+
+    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+    MultipartFile img = await MultipartFile.fromFile(filePath);
+
+    // FormData 생성
+    FormData formData = FormData.fromMap({
+      'file': img,
+    });
+
+    // 파라미터 설정
+    Map<String, dynamic> queryParams = {
+      'placeId': placeId,
+    };
+
+    // PATCH 요청 보내기
+    try {
+      Response response = await dio.patch('/place/img',
+          queryParameters: queryParams, data: formData);
+      if (response.statusCode == 200) {
+        // 성공적인 응답 처리
+        print('이미지 업로드 성공');
+      } else {
+        // 200이 아닌 응답 처리
+        print('이미지 업로드 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      // 오류 처리
+      print('이미지 업로드 중 오류 발생: $e');
+    }
+  }
+
   getPlaceInfo() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
     placeId = await storage.read(key: 'placeId');
 
@@ -77,7 +116,7 @@ class _MyPageState extends State<MyPage> {
 
   deleteAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
@@ -141,13 +180,23 @@ class _MyPageState extends State<MyPage> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          if (_pickedFile == null)
+                          if (place?.profileImg == null)
                             Stack(
                               alignment: Alignment.bottomRight,
                               children: [
-                                Icon(
-                                  Icons.account_circle,
-                                  size: _imageSize,
+                                ClipOval(
+                                  child: Container(
+                                      width: _imageSize,
+                                      height: _imageSize,
+                                      color: Color.fromRGBO(161, 182, 233, 1),
+                                      child: _pickedFile == null
+                                          ? Icon(Icons.person,
+                                              color: Colors.white,
+                                              size: _imageSize - 20)
+                                          : Image.file(
+                                              File(_pickedFile!.path),
+                                              fit: BoxFit.cover,
+                                            )),
                                 ),
                                 Positioned(
                                   bottom: 0,
@@ -187,8 +236,12 @@ class _MyPageState extends State<MyPage> {
                                   decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       image: DecorationImage(
-                                          image: FileImage(
-                                              File(_pickedFile!.path)),
+                                          image: (_pickedFile == null)
+                                              ? NetworkImage(
+                                                      '${place?.profileImg}')
+                                                  as ImageProvider<Object>
+                                              : FileImage(
+                                                  File(_pickedFile!.path)),
                                           fit: BoxFit.cover)),
                                 ),
                                 Positioned(
@@ -881,6 +934,8 @@ class _MyPageState extends State<MyPage> {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
+      sendData = pickedFile.path;
+      patchImg(sendData);
       setState(() {
         _pickedFile = pickedFile;
       });
@@ -895,6 +950,8 @@ class _MyPageState extends State<MyPage> {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
+      sendData = pickedFile.path;
+      patchImg(sendData);
       setState(() {
         _pickedFile = pickedFile;
       });
