@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/mypage/mypage.dart';
 import 'package:flutter_neighclova/place/place_response.dart';
 import 'package:flutter_neighclova/place/register_info.dart';
 
@@ -101,7 +100,7 @@ class _MainPageState extends State<MainPage> {
 
   getAllPlaces() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
@@ -137,7 +136,7 @@ class _MainPageState extends State<MainPage> {
     }
 
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정
@@ -355,22 +354,17 @@ class _MainPageState extends State<MainPage> {
                                                         backgroundColor:
                                                             Colors.grey[400],
                                                         child: ClipOval(
-                                                            child: placeList?[
-                                                                            index]
+                                                            child: placeList?[index]
                                                                         .profileImg !=
                                                                     null
-                                                                ? Image.asset(
-                                                                    placeList![
-                                                                            index]
-                                                                        .profileImg
-                                                                        .toString(),
+                                                                ? Image.network(
+                                                                    '${placeList![index].profileImg}',
                                                                     fit: BoxFit
                                                                         .cover,
                                                                     width: double
                                                                         .infinity,
                                                                     height: double
-                                                                        .infinity,
-                                                                  )
+                                                                        .infinity)
                                                                 : Icon(
                                                                     Icons
                                                                         .person,

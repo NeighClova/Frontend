@@ -38,7 +38,7 @@ class _IntroductionState extends State<Introduction> {
 
   getIntroduceAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = 'http://10.0.2.2:8080';
     accesstoken = await storage.read(key: 'token');
     placeId = await storage.read(key: 'placeId');
 
@@ -119,8 +119,9 @@ class _IntroductionState extends State<Introduction> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: isProfileImgExist
-                        ? AssetImage(placeProfileImg!)
-                        : AssetImage('assets/storeImg.png'),
+                        ? NetworkImage('$placeProfileImg')
+                            as ImageProvider<Object> // NetworkImage 사용
+                        : AssetImage('assets/storeImg.png'), // AssetImage 사용
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -186,8 +187,10 @@ class _IntroductionState extends State<Introduction> {
                             height: 50,
                             color: Color.fromRGBO(161, 182, 233, 1),
                             child: isProfileImgExist
-                                ? Image.asset(placeProfileImg!,
-                                    fit: BoxFit.cover)
+                                ? Image.network('$placeProfileImg',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity)
                                 : const Icon(
                                     Icons.person,
                                     color: Colors.white,
