@@ -51,7 +51,7 @@ class _MyPageState extends State<MyPage> {
 
   Future<void> patchImg(String filePath) async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.45.77:8080';
 
     // 저장소에서 token과 placeId 읽기
     String? accesstoken = await storage.read(key: 'token');
@@ -89,7 +89,7 @@ class _MyPageState extends State<MyPage> {
 
   getPlaceInfo() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.45.77:8080';
     accesstoken = await storage.read(key: 'token');
     placeId = await storage.read(key: 'placeId');
 
@@ -116,7 +116,7 @@ class _MyPageState extends State<MyPage> {
 
   deleteAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.45.77:8080';
     accesstoken = await storage.read(key: 'token');
 
     // 헤더 설정

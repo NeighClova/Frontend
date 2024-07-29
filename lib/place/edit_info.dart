@@ -43,7 +43,7 @@ class _EditInfoState extends State<EditInfo> {
 
   getPlaceInfo() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = 'http://192.168.45.77:8080';
     accesstoken = await storage.read(key: 'token');
     placeId = await storage.read(key: 'placeId');
 
@@ -104,7 +104,7 @@ class _EditInfoState extends State<EditInfo> {
         "placeUrl": placeUrlText.text
       };
 
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      dio.options.baseUrl = 'http://192.168.45.77:8080';
       final accessToken = await storage.read(key: "token");
 
       dio.options.headers['Authorization'] = 'Bearer $accessToken';

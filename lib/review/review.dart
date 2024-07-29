@@ -10,6 +10,7 @@ class Review extends StatefulWidget {
 }
 
 class _ReviewState extends State<Review> {
+
   //리뷰 분석 날짜
   int daysNum = 0;
   String day = '';
@@ -41,7 +42,9 @@ class _ReviewState extends State<Review> {
   @override
   void initState() {
     super.initState();
-    _isBlurred = false;
+    //블러 여부
+    _isBlurred = true;
+
     switch (daysNum) {
       case 0:
         day = '월요일';
@@ -287,167 +290,160 @@ class _ReviewState extends State<Review> {
               Padding(padding: EdgeInsets.only(top: 21)),
               Container(
                 width: double.infinity,
-                height: 283 +
-                    (_goodContainerHeight +
-                        _badContainerHeight +
-                        _goodFeedbackContainerHeight +
-                        _badFeedbackContainerHeight),
+                height: 283 + _goodContainerHeight + _badContainerHeight + _goodFeedbackContainerHeight + _badFeedbackContainerHeight,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        blurRadius: 24,
-                        offset: Offset(0, 8),
-                      )
-                    ]),
+                  borderRadius: BorderRadius.circular(14),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      blurRadius: 24,
+                      offset: Offset(0, 8),
+                    )
+                  ],
+                ),
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(16, 20, 16, 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          '피드백',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff404040),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            '피드백',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff404040),
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 4)),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'CLOVA AI가 매장 리뷰를 분석해서 제공하는 피드백이에요.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xff949494),
+                        Padding(padding: EdgeInsets.only(top: 4)),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'CLOVA AI가 매장 리뷰를 분석해서 제공하는 피드백이에요.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color(0xff949494),
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 16)),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          '😊 칭찬해요',
-                          style: TextStyle(
-                            fontSize: 16,
+                        Padding(padding: EdgeInsets.only(top: 16)),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            '😊 칭찬해요',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 11)),
-                      Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Column(
-                              key: _goodColumnKey,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: good
-                                  .map((good) => Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(15, 0, 0, 10),
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.circle, size: 5),
-                                            SizedBox(width: 8),
-                                            Text(
-                                              good,
-                                              style: TextStyle(
-                                                fontSize: 14,
+                        Padding(padding: EdgeInsets.only(top: 11)),
+                        Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Column(
+                                key: _goodColumnKey,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: good
+                                    .map((good) => Padding(
+                                          padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.circle, size: 5),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                good,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ))
-                                  .toList(),
+                                            ],
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
                             ),
-                          ),
-                          if (_isBlurred)
-                            Positioned.fill(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(23),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                      sigmaX: 10.0, sigmaY: 10.0),
-                                  child: Container(
-                                    color: Colors.transparent,
+                            if (_isBlurred)
+                              Positioned.fill(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(23),
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                    child: Container(
+                                      color: Colors.transparent,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 6)),
-                      Stack(
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: _goodFeedbackContainerHeight + 20,
-                            child: SingleChildScrollView(
-                              padding: EdgeInsets.all(10),
-                              child: Text(
-                                good_feedback,
-                                key: _goodFeedbackTextKey,
-                                style: TextStyle(
-                                    fontSize: 14, color: Color(0xff404040)),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 6)),
+                        Stack(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: _goodFeedbackContainerHeight + 20,
+                              child: SingleChildScrollView(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  good_feedback,
+                                  key: _goodFeedbackTextKey,
+                                  style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                                ),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xffF2F2F2),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    blurRadius: 24,
+                                    offset: Offset(0, 8),
+                                  )
+                                ],
                               ),
                             ),
-                            decoration: BoxDecoration(
-                              color: Color(0xffF2F2F2),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  blurRadius: 24,
-                                  offset: Offset(0, 8),
-                                )
-                              ],
-                            ),
-                          ),
-                          if (_isBlurred)
-                            Positioned.fill(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(23),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                      sigmaX: 10.0, sigmaY: 10.0),
-                                  child: Container(
-                                    color: Colors.transparent,
+                            if (_isBlurred)
+                              Positioned.fill(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(23),
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                    child: Container(
+                                      color: Colors.transparent,
+                                    ),
                                   ),
                                 ),
                               ),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 24)),
+                        DottedDivider(),
+                        Padding(padding: EdgeInsets.only(top: 24)),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            '🙁 아쉬워요',
+                            style: TextStyle(
+                              fontSize: 16,
                             ),
-                        ],
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 24)),
-                      DottedDivider(),
-                      Padding(padding: EdgeInsets.only(top: 24)),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          '🙁 아쉬워요',
-                          style: TextStyle(
-                            fontSize: 16,
                           ),
                         ),
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 11)),
-                      Stack(
-                        children: [
-                          Align(
+                        Padding(padding: EdgeInsets.only(top: 11)),
+                        Stack(
+                          children: [
+                            Align(
                               alignment: Alignment.topLeft,
                               child: Column(
                                 key: _badColumnKey,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: bad
                                     .map((bad) => Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(15, 0, 0, 10),
+                                          padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
                                           child: Row(
                                             children: [
                                               Icon(Icons.circle, size: 5),
@@ -462,68 +458,67 @@ class _ReviewState extends State<Review> {
                                           ),
                                         ))
                                     .toList(),
-                              )),
-                          if (_isBlurred)
-                            Positioned.fill(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(23),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                      sigmaX: 10.0, sigmaY: 10.0),
-                                  child: Container(
-                                    color: Colors.transparent,
+                              ),
+                            ),
+                            if (_isBlurred)
+                              Positioned.fill(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(23),
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                    child: Container(
+                                      color: Colors.transparent,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 6)),
-                      Stack(
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: _badFeedbackContainerHeight + 20,
-                            child: SingleChildScrollView(
-                              padding: EdgeInsets.all(10),
-                              child: Text(
-                                bad_feedback,
-                                key: _badFeedbackTextKey,
-                                style: TextStyle(
-                                    fontSize: 14, color: Color(0xff404040)),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 6)),
+                        Stack(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: _badFeedbackContainerHeight + 20,
+                              child: SingleChildScrollView(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  bad_feedback,
+                                  key: _badFeedbackTextKey,
+                                  style: TextStyle(fontSize: 14, color: Color(0xff404040)),
+                                ),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xffF2F2F2),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    blurRadius: 24,
+                                    offset: Offset(0, 8),
+                                  )
+                                ],
                               ),
                             ),
-                            decoration: BoxDecoration(
-                              color: Color(0xffF2F2F2),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  blurRadius: 24,
-                                  offset: Offset(0, 8),
-                                )
-                              ],
-                            ),
-                          ),
-                          if (_isBlurred)
-                            Positioned.fill(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(23),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                      sigmaX: 10.0, sigmaY: 10.0),
-                                  child: Container(
-                                    color: Colors.transparent,
+                            if (_isBlurred)
+                              Positioned.fill(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(23),
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                    child: Container(
+                                      color: Colors.transparent,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              )
             ],
           ),
         ),
