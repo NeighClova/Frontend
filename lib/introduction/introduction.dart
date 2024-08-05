@@ -222,7 +222,7 @@ class _IntroductionState extends State<Introduction> {
                                       child: Text(
                                         "아직 소개글을 생성하지 않으셨네요!\n인공지능을 통해 매장 소개글을 쉽고 빠르게 작성해보세요.",
                                         style: TextStyle(
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           color: Color(0xff404040),
                                         ),
                                         textAlign: TextAlign.center,

@@ -483,14 +483,23 @@ class _MyPageState extends State<MyPage> {
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       backgroundColor: Colors.white,
+                                      elevation: 0,
                                       title: Text(
                                         '로그아웃',
                                         textAlign: TextAlign.center,
                                       ),
-                                      content: Text(
-                                        '로그아웃 하시겠어요?',
-                                        textAlign: TextAlign.center,
-                                      ),
+                                      contentPadding: EdgeInsets.zero,
+                                      actionsPadding: EdgeInsets.zero,
+                                      content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(height: 10),
+                                            Text(
+                                              '로그아웃 하시겠어요?',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            SizedBox(height: 20),
+                                          ]),
                                       actions: [
                                         Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -521,7 +530,7 @@ class _MyPageState extends State<MyPage> {
                                                       )),
                                                 )),
                                                 Container(
-                                                  height: 47,
+                                                  height: 48,
                                                   width: 1,
                                                   color: Colors.grey,
                                                 ),
@@ -620,13 +629,17 @@ class _MyPageState extends State<MyPage> {
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       backgroundColor: Colors.white,
+                                      elevation: 0,
                                       title: Text(
                                         '회원 탈퇴',
                                         textAlign: TextAlign.center,
                                       ),
+                                      contentPadding: EdgeInsets.zero,
+                                      actionsPadding: EdgeInsets.zero,
                                       content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
+                                            SizedBox(height: 10),
                                             RichText(
                                               textAlign: TextAlign.center,
                                               text: TextSpan(
@@ -638,14 +651,15 @@ class _MyPageState extends State<MyPage> {
                                                   TextSpan(
                                                     text: '불가능',
                                                     style: TextStyle(
-                                                        color: Colors.red),
+                                                      color: Colors.red),
                                                   ),
                                                   TextSpan(
-                                                      text:
-                                                          '합니다.\n정말로 탈퇴하시겠어요?'),
+                                                    text:
+                                                        '합니다.\n정말로 탈퇴하시겠어요?'),
                                                 ],
                                               ),
                                             ),
+                                            SizedBox(height: 20),
                                           ]),
                                       actions: [
                                         Column(
@@ -680,7 +694,7 @@ class _MyPageState extends State<MyPage> {
                                                     ),
                                                   ),
                                                   Container(
-                                                    height: 47, // 버튼 높이에 맞춰서 설정
+                                                    height: 48,
                                                     width: 1,
                                                     color: Colors.grey,
                                                   ),

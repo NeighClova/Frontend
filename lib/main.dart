@@ -78,6 +78,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+
     passwordVisible = false;
     _appLinks = AppLinks();
     //_initDeepLinks();
