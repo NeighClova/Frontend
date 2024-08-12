@@ -11,11 +11,13 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_neighclova/auth/model.dart';
 import 'package:app_links/app_links.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const MyApp());
+  MobileAds.instance.initialize();//광고 초기화
 }
 
 class MyApp extends StatelessWidget {

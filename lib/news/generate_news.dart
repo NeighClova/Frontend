@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_neighclova/admob.dart';
 import 'package:flutter_neighclova/news/news.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:dio/dio.dart';
@@ -29,6 +32,8 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   bool showPeriod = false;
 
+  InterstitialAd? _interstitialAd;
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +50,8 @@ class _GenerateNewsState extends State<GenerateNews> {
     if (finalHour == 0) finalHour = 12;
 
     showPeriod = false;
+
+    createInterstitialAd();
   }
 
   final List<Map<String, dynamic>> keyword = [
@@ -137,10 +144,43 @@ class _GenerateNewsState extends State<GenerateNews> {
     }
   }
 
+  void createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: admob.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) => _interstitialAd = ad,
+        onAdFailedToLoad: (error) => _interstitialAd = null,
+      ),
+    );
+  }
+  
+  void showInterstitialAd() {
+    if (_interstitialAd != null) {
+      // 전체 화면 모드 설정
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          createInterstitialAd();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+      );
+      _interstitialAd!.show();
+      createInterstitialAd();
+    }
+  }
+
   void _handleButtonPressed() {
     setState(() {
       isLoading = true;
     });
+    showInterstitialAd();
 
     makeNewsAction().then((_) {
       setState(() {

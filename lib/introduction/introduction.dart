@@ -1,8 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/admob.dart';
 import 'package:flutter_neighclova/introduction/generate_introduction.dart';
 import 'package:flutter_neighclova/introduction/introduction_response.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +23,7 @@ class _IntroductionState extends State<Introduction> {
   void initState() {
     super.initState();
     getIntroduceAction();
+    createInterstitialAd();
   }
 
   String? placeProfileImg = "";
@@ -35,6 +38,8 @@ class _IntroductionState extends State<Introduction> {
   dynamic placeId;
 
   bool _isLoading = false;
+
+  InterstitialAd? _interstitialAd;
 
   getIntroduceAction() async {
     var dio = Dio();
@@ -85,6 +90,38 @@ class _IntroductionState extends State<Introduction> {
     });
     await Future.delayed(Duration(seconds: 1));
     getIntroduceAction();
+  }
+
+  void createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: admob.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) => _interstitialAd = ad,
+        onAdFailedToLoad: (error) => _interstitialAd = null,
+      ),
+    );
+  }
+  
+  void showInterstitialAd() {
+    if (_interstitialAd != null) {
+      // 전체 화면 모드 설정
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          createInterstitialAd();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+      );
+      _interstitialAd!.show();
+      createInterstitialAd();
+    }
   }
 
   @override
@@ -307,6 +344,7 @@ class _IntroductionState extends State<Introduction> {
                       Padding(padding: EdgeInsets.only(top: 20)),
                       ElevatedButton(
                         onPressed: () async {
+                          showInterstitialAd();
                           final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -349,3 +387,4 @@ void showToast() {
     toastLength: Toast.LENGTH_SHORT,
   );
 }
+
