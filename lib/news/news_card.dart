@@ -134,6 +134,100 @@ class _NewsCardState extends State<NewsCard> {
                     ),
                   ),
                 ),
+                InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          insetPadding: EdgeInsets.all(0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(10)),
+                          backgroundColor: Colors.white,
+                          elevation: 0,
+                          title: Text(
+                            '인스타그램 업로드',
+                            textAlign: TextAlign.center,
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          actionsPadding: EdgeInsets.zero,
+                          content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(height: 10),
+                                Text(
+                                  '인스타그램에 게시물을 업로드 하시겠어요?',
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 20),
+                              ]),
+                          actions: [
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  child: Divider(
+                                      height: 1,
+                                      color: Colors.grey),
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Center(
+                                      child: TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style:
+                                              TextButton.styleFrom(
+                                            foregroundColor:
+                                                Color(0xff404040),
+                                          ),
+                                          child: Text(
+                                            '취소',
+                                            textAlign:
+                                                TextAlign.center,
+                                          )),
+                                    )),
+                                    Container(
+                                      height: 48,
+                                      width: 1,
+                                      color: Colors.grey,
+                                    ),
+                                    Expanded(
+                                        child: Center(
+                                      child: TextButton(
+                                        onPressed: () async {
+                                          print('인스타 업로드');
+                                          Navigator.pop(context, true);
+                                        },
+                                        style:
+                                            TextButton.styleFrom(
+                                          foregroundColor:
+                                              Color(0xff03AA5A),
+                                        ),
+                                        child: Text(
+                                          '업로드',
+                                          textAlign:
+                                              TextAlign.center,
+                                        )),
+                                    ))
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
+                        );
+                      });
+                  },
+                  child: Image(
+                    image: AssetImage('assets/IG.png'),
+                    width: 30.0,
+                  ),
+                ),
                 SizedBox(
                   width: 80,
                   child: Container(

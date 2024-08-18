@@ -167,9 +167,9 @@ class _NewsPageState extends State<NewsPage> {
         onPressed: () async {
           showInterstitialAd();
           final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => GenerateNews()));
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => GenerateNews()));
 
           if (result == true) {
             await getAllNewsAction();
