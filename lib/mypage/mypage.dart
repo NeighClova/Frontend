@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/mypage/change_password.dart';
+import 'package:flutter_neighclova/mypage/instagram_register.dart';
 import 'package:flutter_neighclova/place/edit_info.dart';
 import 'package:flutter_neighclova/mypage/license.dart';
 import 'package:flutter_neighclova/main.dart';
@@ -29,18 +30,41 @@ class _MyPageState extends State<MyPage> {
   dynamic placeId;
   dynamic place;
   dynamic email = '';
+  dynamic IGName = '';
 
   @override
   void initState() {
     super.initState();
     getPlaceInfo();
     getEmail();
+    _initialize();
   }
 
   Future<void> getEmail() async {
     String? storedEmail = await storage.read(key: 'email');
     setState(() {
       email = storedEmail;
+    });
+  }
+
+  Future<void> _initialize() async {
+    await getPlaceId();
+    print('getName 실행');
+    await getIGName();  // 이 작업이 완료될 때까지 기다림
+  }
+
+  Future<void> getIGName() async {
+    String? storedIGName = await storage.read(key: placeId + 'IGName');
+    setState(() {
+      IGName = storedIGName;
+    });
+    print('IGName : $IGName');
+  }
+
+  Future<void> getPlaceId() async {
+    String? storedPlaceId = await storage.read(key: 'placeId');
+    setState(() {
+      placeId = storedPlaceId;
     });
   }
 
@@ -348,7 +372,7 @@ class _MyPageState extends State<MyPage> {
                 ),
               )),
           Container(
-            height: 250,
+            height: 300,
             width: double.infinity,
             decoration: BoxDecoration(
               border: Border(
@@ -450,6 +474,80 @@ class _MyPageState extends State<MyPage> {
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  Divider(
+                    thickness: 0.5,
+                    height: 1,
+                    color: Color(0xffBCBCBC),
+                  ),
+                  //인스타
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        height: 55,
+                        width: 200,
+                        child: Row(
+                          children: [
+                            Image.asset('assets/insta_black.png',
+                              width: 30,
+                              height: 30),
+                            Padding(padding: EdgeInsets.only(right: 15)),
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                height: 55,
+                                child: TextButton(
+                                  onPressed: () async{
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) => InstagramRegister()));
+                                    if (result == true) {
+                                      await getIGName();
+                                      setState(() {});
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                    foregroundColor:
+                                        MaterialStateProperty.all(Color(0xff404040)),
+                                    shadowColor:
+                                        MaterialStateProperty.all(Colors.transparent),
+                                    overlayColor:
+                                        MaterialStateProperty.all(Colors.transparent),
+                                    minimumSize: MaterialStateProperty.all(
+                                        Size.fromHeight(70)),
+                                    padding: MaterialStateProperty.all(
+                                        EdgeInsets.only(left: 0)),
+                                    alignment: Alignment.centerLeft,
+                                    textStyle: MaterialStateProperty.all(
+                                      TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text('인스타그램 계정 연결'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.centerRight,
+                        height: 55,
+                        child: Text(
+                          IGName,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xff949494),
+                          ),
+                        ),
+                      )),
                     ],
                   ),
                   Divider(
