@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_neighclova/mypage/instagram_register.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:ui';
 
@@ -30,6 +32,11 @@ class _NewsCardState extends State<NewsCard> {
 
   final GlobalKey _contentKey = GlobalKey();
   double _contentHeight = 0;
+
+  static final storage = FlutterSecureStorage();
+  dynamic IGName;
+  dynamic IGPassword;
+  dynamic placeId;
 
   //bool isProfileImg = false;
 
@@ -62,6 +69,28 @@ class _NewsCardState extends State<NewsCard> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateTitleHeight();
       _updateContentHeight();
+    });
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await getPlaceId();
+    print('getName 실행');
+    await getIGName();
+  }
+
+  Future<void> getIGName() async {
+    String? storedIGName = await storage.read(key: placeId + 'IGName');
+    setState(() {
+      IGName = storedIGName ?? '';
+    });
+    print('IGName : $IGName');
+  }
+
+  Future<void> getPlaceId() async {
+    String? storedPlaceId = await storage.read(key: 'placeId');
+    setState(() {
+      placeId = storedPlaceId ?? '';
     });
   }
 
@@ -135,8 +164,19 @@ class _NewsCardState extends State<NewsCard> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
-                    showDialog(
+                  onTap: () async{
+                    IGName = await storage.read(key: placeId + 'IGName');
+                    IGPassword = await storage.read(key: placeId + 'IGPassword');
+                    if (IGName == null && IGPassword == null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => InstagramRegister(),
+                        ),
+                      );
+                    }
+                    else {
+                      showDialog(
                       context: context,
                       barrierDismissible: false,
                       builder: (BuildContext context) {
@@ -222,10 +262,12 @@ class _NewsCardState extends State<NewsCard> {
                           ],
                         );
                       });
+                    }
+                    
                   },
                   child: Image(
                     image: AssetImage('assets/IG.png'),
-                    width: 30.0,
+                    width: 25.0,
                   ),
                 ),
                 SizedBox(

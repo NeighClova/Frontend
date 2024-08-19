@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/admob.dart';
 import 'package:flutter_neighclova/introduction/generate_introduction.dart';
 import 'package:flutter_neighclova/introduction/introduction_response.dart';
+import 'package:flutter_neighclova/mypage/instagram_register.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -36,6 +37,8 @@ class _IntroductionState extends State<Introduction> {
   static final storage = FlutterSecureStorage();
   dynamic accesstoken = '';
   dynamic placeId;
+  dynamic IGName;
+  dynamic IGPassword;
 
   bool _isLoading = false;
 
@@ -321,8 +324,19 @@ class _IntroductionState extends State<Introduction> {
                                 visible: introduceList != null &&
                                   introduceList?.length != 0,
                                 child: InkWell(
-                                  onTap: () {
-                                    showDialog(
+                                  onTap: () async{
+                                    IGName = await storage.read(key: placeId + 'IGName');
+                                    IGPassword = await storage.read(key: placeId + 'IGPassword');
+                                    if (IGName == null && IGPassword == null) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) => InstagramRegister(),
+                                        ),
+                                      );
+                                    }
+                                    else {
+                                      showDialog(
                                       context: context,
                                       barrierDismissible: false,
                                       builder: (BuildContext context) {
@@ -408,6 +422,8 @@ class _IntroductionState extends State<Introduction> {
                                           ],
                                         );
                                       });
+                                    }
+                                    
                                   },
                                   child: Image(
                                     image: AssetImage('assets/IG.png'),

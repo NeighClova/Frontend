@@ -43,7 +43,7 @@ class _MyPageState extends State<MyPage> {
   Future<void> getEmail() async {
     String? storedEmail = await storage.read(key: 'email');
     setState(() {
-      email = storedEmail;
+      email = storedEmail ?? '';
     });
   }
 
@@ -56,7 +56,7 @@ class _MyPageState extends State<MyPage> {
   Future<void> getIGName() async {
     String? storedIGName = await storage.read(key: placeId + 'IGName');
     setState(() {
-      IGName = storedIGName;
+      IGName = storedIGName ?? '';
     });
     print('IGName : $IGName');
   }
@@ -64,7 +64,7 @@ class _MyPageState extends State<MyPage> {
   Future<void> getPlaceId() async {
     String? storedPlaceId = await storage.read(key: 'placeId');
     setState(() {
-      placeId = storedPlaceId;
+      placeId = storedPlaceId ?? '';
     });
   }
 
