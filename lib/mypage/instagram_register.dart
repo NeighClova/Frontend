@@ -168,7 +168,7 @@ class _InstagramRegisterState extends State<InstagramRegister> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '이메일',
+                              '사용자 이름',
                               style: TextStyle(
                                 color: Color(0xff717171),
                                 fontSize: 16,
