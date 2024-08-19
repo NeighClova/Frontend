@@ -261,7 +261,7 @@ class _MainPageState extends State<MainPage> {
                                   }
 
                                   return Container(
-                                    height: 114 +
+                                    height: 130 +
                                         64.0 * ((placeList?.length ?? 0) + 1),
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
