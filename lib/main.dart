@@ -9,15 +9,15 @@ import 'package:flutter_neighclova/tabview.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_neighclova/auth/model.dart';
 import 'package:app_links/app_links.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: 'assets/config/.env');
   runApp(const MyApp());
-  MobileAds.instance.initialize();//광고 초기화
+  MobileAds.instance.initialize(); //광고 초기화
 }
 
 class MyApp extends StatelessWidget {
@@ -94,7 +94,7 @@ class _LoginState extends State<Login> {
   }
 
   _asyncMethod() async {
-    userInfo = await storage.read(key: 'token');
+    userInfo = await storage.read(key: 'accessToken');
 
     if (userInfo != null) {
       Navigator.pushAndRemoveUntil(
@@ -110,7 +110,7 @@ class _LoginState extends State<Login> {
 
   void naverLogin() async {
     final Uri loginUrl =
-        Uri.parse('http://192.168.45.77:8080/oauth2/authorization/naver');
+        Uri.parse('http://192.168.219.105:8080/oauth2/authorization/naver');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -157,16 +157,20 @@ class _LoginState extends State<Login> {
     try {
       var dio = Dio();
       var param = {'email': email, 'password': password};
-      dio.options.baseUrl = 'http://192.168.45.77:8080';
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
       Response response = await dio.post('/auth/sign-in', data: param);
 
       print("***************************");
-      print(response.data['token']);
+      print(response.data['accessToken']);
       if (response.statusCode == 200) {
         await storage.write(
-          key: 'token',
-          value: response.data['token'],
+          key: 'accessToken',
+          value: response.data['accessToken'],
+        );
+        await storage.write(
+          key: 'refreshToken',
+          value: response.data['refreshToken'],
         );
         await storage.write(
           key: 'password',
@@ -466,10 +470,10 @@ class _WebViewContainerState extends State<WebViewContainer> {
     return utf8.decode(base64Url.decode(output));
   }
 
-  Map<String, dynamic> parseJwtPayLoad(String token) {
-    final parts = token.split('.');
+  Map<String, dynamic> parseJwtPayLoad(String accessToken) {
+    final parts = accessToken.split('.');
     if (parts.length != 3) {
-      throw Exception('invalid token');
+      throw Exception('invalid accessToken');
     }
 
     final payload = _decodeBase64(parts[1]);
@@ -481,8 +485,8 @@ class _WebViewContainerState extends State<WebViewContainer> {
     return payloadMap;
   }
 
-  String? getUserIdFromToken(String token) {
-    final payload = parseJwtPayLoad(token);
+  String? getUserIdFromToken(String accessToken) {
+    final payload = parseJwtPayLoad(accessToken);
     return payload['sub'] ?? payload['user_id'];
   }
 
@@ -498,17 +502,17 @@ class _WebViewContainerState extends State<WebViewContainer> {
         },
         navigationDelegate: (NavigationRequest request) {
           if (request.url.startsWith(widget.redirectUri)) {
-            String? token = Uri.parse(request.url).pathSegments.length > 3
+            String? accessToken = Uri.parse(request.url).pathSegments.length > 3
                 ? Uri.parse(request.url).pathSegments[2]
                 : null;
-            print('네이버 토큰: $token');
-            if (token != null) {
-              String? userId = getUserIdFromToken(token);
+            print('네이버 토큰: $accessToken');
+            if (accessToken != null) {
+              String? userId = getUserIdFromToken(accessToken);
               if (userId != null) {
                 print('User ID: $userId');
-                saveNaverToken(token, userId);
+                saveNaverToken(accessToken, userId);
               } else {
-                print('User ID not found in token');
+                print('User ID not found in accessToken');
               }
               return NavigationDecision.prevent;
             }
@@ -522,16 +526,16 @@ class _WebViewContainerState extends State<WebViewContainer> {
     );
   }
 
-  void saveNaverToken(String token, String email) async {
+  void saveNaverToken(String accessToken, String email) async {
     await storage.write(
-      key: 'token',
-      value: token,
+      key: 'accessToken',
+      value: accessToken,
     );
     await storage.write(
       key: 'email',
       value: email,
     );
-    print('네이버 토큰 저장됨 : $token');
+    print('네이버 토큰 저장됨 : $accessToken');
     print('네이버 이메일 저장됨 : $email');
 
     dynamic isFirst = '';

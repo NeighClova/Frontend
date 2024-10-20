@@ -1,13 +1,8 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
 import 'package:flutter_neighclova/main.dart';
-import 'package:flutter_neighclova/main_page.dart';
-import 'package:flutter_neighclova/place/register_info.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EmailAuthPage extends StatefulWidget {
   final Userdata userdata;
@@ -49,7 +44,7 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
       };
       print(userdata.email);
       print(userdata.password);
-      dio.options.baseUrl = 'http://192.168.45.77:8080';
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
       Response response = await dio.post('/auth/sign-up', data: param);
 
@@ -137,7 +132,6 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                   ),
                 ),
               ),
-              
               Form(
                   child: Container(
                       padding: EdgeInsets.all(40.0),

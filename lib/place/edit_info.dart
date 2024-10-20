@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/mypage/mypage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_neighclova/place/place_response.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EditInfo extends StatefulWidget {
   const EditInfo({Key? key}) : super(key: key);
@@ -43,8 +43,8 @@ class _EditInfoState extends State<EditInfo> {
 
   getPlaceInfo() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
     placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
@@ -104,8 +104,8 @@ class _EditInfoState extends State<EditInfo> {
         "placeUrl": placeUrlText.text
       };
 
-      dio.options.baseUrl = 'http://192.168.45.77:8080';
-      final accessToken = await storage.read(key: "token");
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+      final accessToken = await storage.read(key: "accessToken");
 
       dio.options.headers['Authorization'] = 'Bearer $accessToken';
       Map<String, dynamic> queryParams = {

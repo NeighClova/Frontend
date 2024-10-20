@@ -1,6 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/admob.dart';
 import 'package:flutter_neighclova/introduction/generate_introduction.dart';
 import 'package:flutter_neighclova/introduction/introduction_response.dart';
@@ -11,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Introduction extends StatefulWidget {
   const Introduction({Key? key}) : super(key: key);
@@ -46,8 +45,8 @@ class _IntroductionState extends State<Introduction> {
 
   getIntroduceAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
     placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
@@ -105,7 +104,7 @@ class _IntroductionState extends State<Introduction> {
       ),
     );
   }
-  
+
   void showInterstitialAd() {
     if (_interstitialAd != null) {
       // 전체 화면 모드 설정
@@ -297,141 +296,154 @@ class _IntroductionState extends State<Introduction> {
                             ),
                           ),
                           Positioned(
-                            bottom: 20,
-                            left: 0,
-                            right: 0,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: SmoothPageIndicator(
-                                controller: pageController,
-                                count: introduceList?.length ?? 0,
-                                effect: const ScrollingDotsEffect(
-                                  activeDotColor: Color(0xff03AA5A),
-                                  activeStrokeWidth: 10,
-                                  activeDotScale: 1.7,
-                                  maxVisibleDots: 5,
-                                  radius: 8,
-                                  spacing: 10,
-                                  dotHeight: 5,
-                                  dotWidth: 5,
+                              bottom: 20,
+                              left: 0,
+                              right: 0,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: SmoothPageIndicator(
+                                  controller: pageController,
+                                  count: introduceList?.length ?? 0,
+                                  effect: const ScrollingDotsEffect(
+                                    activeDotColor: Color(0xff03AA5A),
+                                    activeStrokeWidth: 10,
+                                    activeDotScale: 1.7,
+                                    maxVisibleDots: 5,
+                                    radius: 8,
+                                    spacing: 10,
+                                    dotHeight: 5,
+                                    dotWidth: 5,
+                                  ),
                                 ),
-                              ),
-                            )),
-                            Positioned(
+                              )),
+                          Positioned(
                               bottom: 12,
                               right: 40,
                               child: Visibility(
                                 visible: introduceList != null &&
-                                  introduceList?.length != 0,
+                                    introduceList?.length != 0,
                                 child: InkWell(
-                                  onTap: () async{
-                                    IGName = await storage.read(key: placeId + 'IGName');
-                                    IGPassword = await storage.read(key: placeId + 'IGPassword');
+                                  onTap: () async {
+                                    IGName = await storage.read(
+                                        key: placeId + 'IGName');
+                                    IGPassword = await storage.read(
+                                        key: placeId + 'IGPassword');
                                     if (IGName == null && IGPassword == null) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (BuildContext context) => InstagramRegister(),
+                                          builder: (BuildContext context) =>
+                                              InstagramRegister(),
                                         ),
                                       );
-                                    }
-                                    else {
+                                    } else {
                                       showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          insetPadding: EdgeInsets.all(0),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          backgroundColor: Colors.white,
-                                          elevation: 0,
-                                          title: Text(
-                                            '인스타그램 업로드',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          contentPadding: EdgeInsets.zero,
-                                          actionsPadding: EdgeInsets.zero,
-                                          content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(height: 10),
-                                                Text(
-                                                  '인스타그램에 게시물을 업로드 하시겠어요?',
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                SizedBox(height: 20),
-                                              ]),
-                                          actions: [
-                                            Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Container(
-                                                  width: double.infinity,
-                                                  child: Divider(
-                                                      height: 1,
-                                                      color: Colors.grey),
-                                                ),
-                                                Row(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              insetPadding: EdgeInsets.all(0),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              backgroundColor: Colors.white,
+                                              elevation: 0,
+                                              title: Text(
+                                                '인스타그램 업로드',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              contentPadding: EdgeInsets.zero,
+                                              actionsPadding: EdgeInsets.zero,
+                                              content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: [
-                                                    Expanded(
-                                                        child: Center(
-                                                      child: TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(context);
-                                                          },
-                                                          style:
-                                                              TextButton.styleFrom(
-                                                            foregroundColor:
-                                                                Color(0xff404040),
-                                                          ),
-                                                          child: Text(
-                                                            '취소',
-                                                            textAlign:
-                                                                TextAlign.center,
-                                                          )),
-                                                    )),
-                                                    Container(
-                                                      height: 48,
-                                                      width: 1,
-                                                      color: Colors.grey,
+                                                    SizedBox(height: 10),
+                                                    Text(
+                                                      '인스타그램에 게시물을 업로드 하시겠어요?',
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
-                                                    Expanded(
-                                                        child: Center(
-                                                      child: TextButton(
-                                                        onPressed: () async {
-                                                          print('인스타 업로드');
-                                                          Navigator.pop(context, true);
-                                                        },
-                                                        style:
-                                                            TextButton.styleFrom(
-                                                          foregroundColor:
-                                                              Color(0xff03AA5A),
-                                                        ),
-                                                        child: Text(
-                                                          '업로드',
-                                                          textAlign:
-                                                              TextAlign.center,
+                                                    SizedBox(height: 20),
+                                                  ]),
+                                              actions: [
+                                                Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Container(
+                                                      width: double.infinity,
+                                                      child: Divider(
+                                                          height: 1,
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                            child: Center(
+                                                          child: TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              style: TextButton
+                                                                  .styleFrom(
+                                                                foregroundColor:
+                                                                    Color(
+                                                                        0xff404040),
+                                                              ),
+                                                              child: Text(
+                                                                '취소',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              )),
                                                         )),
-                                                    ))
+                                                        Container(
+                                                          height: 48,
+                                                          width: 1,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        Expanded(
+                                                            child: Center(
+                                                          child: TextButton(
+                                                              onPressed:
+                                                                  () async {
+                                                                print(
+                                                                    '인스타 업로드');
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    true);
+                                                              },
+                                                              style: TextButton
+                                                                  .styleFrom(
+                                                                foregroundColor:
+                                                                    Color(
+                                                                        0xff03AA5A),
+                                                              ),
+                                                              child: Text(
+                                                                '업로드',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              )),
+                                                        ))
+                                                      ],
+                                                    )
                                                   ],
-                                                )
+                                                ),
                                               ],
-                                            ),
-                                          ],
-                                        );
-                                      });
+                                            );
+                                          });
                                     }
-                                    
                                   },
                                   child: Image(
                                     image: AssetImage('assets/IG.png'),
                                     width: 25.0,
                                   ),
                                 ),
-                              )
-                            ),
+                              )),
                           Positioned(
                             bottom: 0,
                             right: 0,
@@ -505,4 +517,3 @@ void showToast() {
     toastLength: Toast.LENGTH_SHORT,
   );
 }
-

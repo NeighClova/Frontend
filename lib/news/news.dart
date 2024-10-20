@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'news_response.dart';
 import 'package:flutter_neighclova/admob.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);
@@ -32,8 +33,8 @@ class _NewsPageState extends State<NewsPage> {
 
   Future<List<News>?> getAllNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
     placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
@@ -70,7 +71,7 @@ class _NewsPageState extends State<NewsPage> {
       ),
     );
   }
-  
+
   void showInterstitialAd() {
     if (_interstitialAd != null) {
       // 전체 화면 모드 설정
@@ -167,9 +168,9 @@ class _NewsPageState extends State<NewsPage> {
         onPressed: () async {
           showInterstitialAd();
           final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => GenerateNews()));
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => GenerateNews()));
 
           if (result == true) {
             await getAllNewsAction();

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_neighclova/admob.dart';
-import 'package:flutter_neighclova/news/news.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GenerateNews extends StatefulWidget {
   const GenerateNews({Key? key}) : super(key: key);
@@ -77,7 +77,7 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   makeNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
     var placeId = await storage.read(key: 'placeId');
 
     // 파라미터 설정
@@ -114,8 +114,8 @@ class _GenerateNewsState extends State<GenerateNews> {
 
   saveNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
     var placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
@@ -154,7 +154,7 @@ class _GenerateNewsState extends State<GenerateNews> {
       ),
     );
   }
-  
+
   void showInterstitialAd() {
     if (_interstitialAd != null) {
       // 전체 화면 모드 설정

@@ -1,10 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_neighclova/auth/join_page.dart';
 import 'package:flutter_neighclova/main.dart';
-import 'package:flutter_neighclova/main_page.dart';
 
 class PasswordPage extends StatefulWidget {
   const PasswordPage({Key? key}) : super(key: key);

@@ -5,6 +5,7 @@ import 'package:flutter_neighclova/place/register_info.dart';
 import 'package:flutter_neighclova/tabview.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -100,8 +101,8 @@ class _MainPageState extends State<MainPage> {
 
   getAllPlaces() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
 
     // 헤더 설정
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
@@ -136,8 +137,8 @@ class _MainPageState extends State<MainPage> {
     }
 
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
 
     // 헤더 설정
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';

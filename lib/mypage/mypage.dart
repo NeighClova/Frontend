@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -50,7 +51,7 @@ class _MyPageState extends State<MyPage> {
   Future<void> _initialize() async {
     await getPlaceId();
     print('getName 실행');
-    await getIGName();  // 이 작업이 완료될 때까지 기다림
+    await getIGName(); // 이 작업이 완료될 때까지 기다림
   }
 
   Future<void> getIGName() async {
@@ -75,10 +76,10 @@ class _MyPageState extends State<MyPage> {
 
   Future<void> patchImg(String filePath) async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
     // 저장소에서 token과 placeId 읽기
-    String? accesstoken = await storage.read(key: 'token');
+    String? accesstoken = await storage.read(key: 'accessToken');
     String? placeId = await storage.read(key: 'placeId');
 
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
@@ -113,8 +114,8 @@ class _MyPageState extends State<MyPage> {
 
   getPlaceInfo() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
     placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
@@ -140,8 +141,8 @@ class _MyPageState extends State<MyPage> {
 
   deleteAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.45.77:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
 
     // 헤더 설정
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
@@ -152,7 +153,7 @@ class _MyPageState extends State<MyPage> {
       if (response.statusCode == 200) {
         //email = await storage.read(key: 'email');
         await storage.delete(key: email + 'First');
-        await storage.delete(key: 'token');
+        await storage.delete(key: 'accessToken');
         print('탈퇴 완료');
         return;
       } else {
@@ -493,31 +494,31 @@ class _MyPageState extends State<MyPage> {
                         child: Row(
                           children: [
                             Image.asset('assets/insta_black.png',
-                              width: 30,
-                              height: 30),
+                                width: 30, height: 30),
                             Padding(padding: EdgeInsets.only(right: 15)),
                             Expanded(
                               child: Container(
                                 alignment: Alignment.centerLeft,
                                 height: 55,
                                 child: TextButton(
-                                  onPressed: () async{
+                                  onPressed: () async {
                                     final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) => InstagramRegister()));
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                InstagramRegister()));
                                     if (result == true) {
                                       await getIGName();
                                       setState(() {});
                                     }
                                   },
                                   style: ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStateProperty.all(Color(0xff404040)),
-                                    shadowColor:
-                                        MaterialStateProperty.all(Colors.transparent),
-                                    overlayColor:
-                                        MaterialStateProperty.all(Colors.transparent),
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Color(0xff404040)),
+                                    shadowColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    overlayColor: MaterialStateProperty.all(
+                                        Colors.transparent),
                                     minimumSize: MaterialStateProperty.all(
                                         Size.fromHeight(70)),
                                     padding: MaterialStateProperty.all(
@@ -637,7 +638,7 @@ class _MyPageState extends State<MyPage> {
                                                   child: TextButton(
                                                       onPressed: () async {
                                                         await storage.delete(
-                                                            key: 'token');
+                                                            key: 'accessToken');
                                                         await storage.delete(
                                                             key: 'placeId');
                                                         print('로그아웃');
@@ -749,11 +750,11 @@ class _MyPageState extends State<MyPage> {
                                                   TextSpan(
                                                     text: '불가능',
                                                     style: TextStyle(
-                                                      color: Colors.red),
+                                                        color: Colors.red),
                                                   ),
                                                   TextSpan(
-                                                    text:
-                                                        '합니다.\n정말로 탈퇴하시겠어요?'),
+                                                      text:
+                                                          '합니다.\n정말로 탈퇴하시겠어요?'),
                                                 ],
                                               ),
                                             ),

@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_neighclova/mypage/mypage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class InstagramRegister extends StatefulWidget {
-	const InstagramRegister({Key? key}) : super(key: key);
+  const InstagramRegister({Key? key}) : super(key: key);
 
   @override
   State<InstagramRegister> createState() => _InstagramRegisterState();
 }
 
 class _InstagramRegisterState extends State<InstagramRegister> {
-  
   dynamic IGName = '';
   dynamic IGPassword = '';
   TextEditingController IGNameController = TextEditingController();
@@ -28,13 +25,14 @@ class _InstagramRegisterState extends State<InstagramRegister> {
 
     _initialize();
   }
+
   Future<void> _initialize() async {
-    await _getAllValues();  // 이 작업이 완료될 때까지 기다림
+    await _getAllValues(); // 이 작업이 완료될 때까지 기다림
     await getPlaceId();
     print('getName 실행');
-    await getIGName();  // 이 작업이 완료될 때까지 기다림
+    await getIGName(); // 이 작업이 완료될 때까지 기다림
     print('getPassword 실행');
-    await getIGPassword();  // 이 작업이 완료될 때까지 기다림
+    await getIGPassword(); // 이 작업이 완료될 때까지 기다림
 
     setState(() {
       IGNameController = TextEditingController(text: IGName);
@@ -49,6 +47,7 @@ class _InstagramRegisterState extends State<InstagramRegister> {
       _allValues = allValues;
     });
   }
+
   Future<void> getPlaceId() async {
     String? storedPlaceId = await storage.read(key: 'placeId');
     setState(() {
@@ -56,6 +55,7 @@ class _InstagramRegisterState extends State<InstagramRegister> {
     });
     print('placeID : $placeId');
   }
+
   Future<void> getIGName() async {
     print('IG 이름 얻기');
     String? storedIGName = await storage.read(key: placeId + 'IGName');
@@ -64,6 +64,7 @@ class _InstagramRegisterState extends State<InstagramRegister> {
     });
     print('IGName : $IGName');
   }
+
   Future<void> getIGPassword() async {
     print('IG비번 얻기');
     String? storedIGName = await storage.read(key: placeId + 'IGPassword');
@@ -98,10 +99,10 @@ class _InstagramRegisterState extends State<InstagramRegister> {
     );
     Navigator.pop(context, true);
   }
-  
+
   @override
-	Widget build(BuildContext context) {
-		return Scaffold(
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffFFFFFF),
         scrolledUnderElevation: 0,
@@ -161,129 +162,128 @@ class _InstagramRegisterState extends State<InstagramRegister> {
                   ),
                   Padding(padding: EdgeInsets.only(top: 50)),
                   Form(
-                    key: _formKey,
-                    child: Container(
-                      child: Builder(builder: (context) {
-                      return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '사용자 이름',
-                              style: TextStyle(
-                                color: Color(0xff717171),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                            ),
-                            Padding(padding: EdgeInsets.only(top: 5)),
-                            TextFormField(
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '유효한 사용자 이름을 입력해주세요.';
-                                }else {
-                                  return null;
-                                }
-                              },
-                              onSaved: (value) {
-                                IGName = value!;
-                              },
-                              controller: IGNameController,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(10),
-                                isDense: true,
-                                hintText: '사용자 이름 입력',
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                ),
+                      key: _formKey,
+                      child: Container(child: Builder(builder: (context) {
+                        return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '사용자 이름',
+                                style: TextStyle(
+                                    color: Color(0xff717171),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
                               ),
-                              keyboardType: TextInputType.emailAddress,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            Padding(padding: EdgeInsets.only(top: 30)),
-                            Text(
-                              '비밀번호',
-                              style: TextStyle(
-                                color: Color(0xff717171),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Padding(padding: EdgeInsets.only(top: 10)),
-                            TextFormField(
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '유효한 비밀번호를 입력해주세요.';
-                                } else {
-                                  return null;
-                                }
-                              },
-                              onSaved: (value) {
-                                IGPassword = value!;
-                              },
-                              controller: IGPasswordController,
-                              decoration: InputDecoration(
+                              Padding(padding: EdgeInsets.only(top: 5)),
+                              TextFormField(
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return '유효한 사용자 이름을 입력해주세요.';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onSaved: (value) {
+                                  IGName = value!;
+                                },
+                                controller: IGNameController,
+                                decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(10),
                                   isDense: true,
-                                  hintText: '비밀번호 입력',
+                                  hintText: '사용자 이름 입력',
                                   enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  )),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  )),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  )),
-                                  errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  )),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      passwordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                                    borderSide: BorderSide(
                                       color: Colors.grey,
+                                      width: 1.0,
                                     ),
-                                    onPressed: () {
-                                      passwordVisible = !passwordVisible;
-                                      print(passwordVisible);
-                                      setState(() {});
-                                    },
-                                  )),
-                              keyboardType: TextInputType.text,
-                              style: TextStyle(fontSize: 15),
-                              obscureText: passwordVisible ? false : true,
-                            ),
-                            Padding(padding: EdgeInsets.only(top: 30)),
-                          ]);
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              Padding(padding: EdgeInsets.only(top: 30)),
+                              Text(
+                                '비밀번호',
+                                style: TextStyle(
+                                  color: Color(0xff717171),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.only(top: 10)),
+                              TextFormField(
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return '유효한 비밀번호를 입력해주세요.';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onSaved: (value) {
+                                  IGPassword = value!;
+                                },
+                                controller: IGPasswordController,
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.all(10),
+                                    isDense: true,
+                                    hintText: '비밀번호 입력',
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    )),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    )),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    )),
+                                    errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    )),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        passwordVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.grey,
+                                      ),
+                                      onPressed: () {
+                                        passwordVisible = !passwordVisible;
+                                        print(passwordVisible);
+                                        setState(() {});
+                                      },
+                                    )),
+                                keyboardType: TextInputType.text,
+                                style: TextStyle(fontSize: 15),
+                                obscureText: passwordVisible ? false : true,
+                              ),
+                              Padding(padding: EdgeInsets.only(top: 30)),
+                            ]);
                       }))),
                   Padding(padding: EdgeInsets.only(top: 30)),
                 ],
@@ -291,5 +291,5 @@ class _InstagramRegisterState extends State<InstagramRegister> {
             ),
           )),
     );
-	}
+  }
 }
