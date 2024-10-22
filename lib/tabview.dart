@@ -3,7 +3,7 @@ import 'package:flutter_neighclova/introduction/introduction.dart';
 import 'package:flutter_neighclova/main_page.dart';
 import 'package:flutter_neighclova/mypage/mypage.dart';
 import 'package:flutter_neighclova/news/news.dart';
-import 'package:flutter_neighclova/review/review.dart';
+import 'package:flutter_neighclova/review/review_page.dart';
 
 class TabView extends StatefulWidget {
   const TabView({super.key});
@@ -90,7 +90,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
         controller: _tabController,
         children: const [
           MainPage(),
-          Review(),
+          ReviewPage(),
           Introduction(),
           NewsPage(),
           MyPage(),
