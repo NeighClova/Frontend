@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/mypage/change_password.dart';
+import 'package:flutter_neighclova/mypage/instagram_register.dart';
 import 'package:flutter_neighclova/place/edit_info.dart';
 import 'package:flutter_neighclova/mypage/license.dart';
 import 'package:flutter_neighclova/main.dart';
@@ -11,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -29,18 +31,41 @@ class _MyPageState extends State<MyPage> {
   dynamic placeId;
   dynamic place;
   dynamic email = '';
+  dynamic IGName = '';
 
   @override
   void initState() {
     super.initState();
     getPlaceInfo();
     getEmail();
+    _initialize();
   }
 
   Future<void> getEmail() async {
     String? storedEmail = await storage.read(key: 'email');
     setState(() {
-      email = storedEmail;
+      email = storedEmail ?? '';
+    });
+  }
+
+  Future<void> _initialize() async {
+    await getPlaceId();
+    print('getName 실행');
+    await getIGName(); // 이 작업이 완료될 때까지 기다림
+  }
+
+  Future<void> getIGName() async {
+    String? storedIGName = await storage.read(key: placeId + 'IGName');
+    setState(() {
+      IGName = storedIGName ?? '';
+    });
+    print('IGName : $IGName');
+  }
+
+  Future<void> getPlaceId() async {
+    String? storedPlaceId = await storage.read(key: 'placeId');
+    setState(() {
+      placeId = storedPlaceId ?? '';
     });
   }
 
@@ -51,10 +76,10 @@ class _MyPageState extends State<MyPage> {
 
   Future<void> patchImg(String filePath) async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
     // 저장소에서 token과 placeId 읽기
-    String? accesstoken = await storage.read(key: 'token');
+    String? accesstoken = await storage.read(key: 'accessToken');
     String? placeId = await storage.read(key: 'placeId');
 
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
@@ -89,8 +114,8 @@ class _MyPageState extends State<MyPage> {
 
   getPlaceInfo() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
     placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
@@ -116,8 +141,8 @@ class _MyPageState extends State<MyPage> {
 
   deleteAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
 
     // 헤더 설정
     dio.options.headers['Authorization'] = 'Bearer $accesstoken';
@@ -128,7 +153,7 @@ class _MyPageState extends State<MyPage> {
       if (response.statusCode == 200) {
         //email = await storage.read(key: 'email');
         await storage.delete(key: email + 'First');
-        await storage.delete(key: 'token');
+        await storage.delete(key: 'accessToken');
         print('탈퇴 완료');
         return;
       } else {
@@ -348,7 +373,7 @@ class _MyPageState extends State<MyPage> {
                 ),
               )),
           Container(
-            height: 250,
+            height: 300,
             width: double.infinity,
             decoration: BoxDecoration(
               border: Border(
@@ -456,6 +481,80 @@ class _MyPageState extends State<MyPage> {
                     thickness: 0.5,
                     height: 1,
                     color: Color(0xffBCBCBC),
+                  ),
+                  //인스타
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        height: 55,
+                        width: 200,
+                        child: Row(
+                          children: [
+                            Image.asset('assets/insta_black.png',
+                                width: 30, height: 30),
+                            Padding(padding: EdgeInsets.only(right: 15)),
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                height: 55,
+                                child: TextButton(
+                                  onPressed: () async {
+                                    final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                InstagramRegister()));
+                                    if (result == true) {
+                                      await getIGName();
+                                      setState(() {});
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Color(0xff404040)),
+                                    shadowColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    overlayColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    minimumSize: MaterialStateProperty.all(
+                                        Size.fromHeight(70)),
+                                    padding: MaterialStateProperty.all(
+                                        EdgeInsets.only(left: 0)),
+                                    alignment: Alignment.centerLeft,
+                                    textStyle: MaterialStateProperty.all(
+                                      TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text('인스타그램 계정 연결'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.centerRight,
+                        height: 55,
+                        child: Text(
+                          IGName,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xff949494),
+                          ),
+                        ),
+                      )),
+                    ],
+                  ),
+                  Divider(
+                    thickness: 0.5,
+                    height: 1,
+                    color: Color(0xffBCBCBC),
                   ), //로그아웃
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -483,14 +582,23 @@ class _MyPageState extends State<MyPage> {
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       backgroundColor: Colors.white,
+                                      elevation: 0,
                                       title: Text(
                                         '로그아웃',
                                         textAlign: TextAlign.center,
                                       ),
-                                      content: Text(
-                                        '로그아웃 하시겠어요?',
-                                        textAlign: TextAlign.center,
-                                      ),
+                                      contentPadding: EdgeInsets.zero,
+                                      actionsPadding: EdgeInsets.zero,
+                                      content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(height: 10),
+                                            Text(
+                                              '로그아웃 하시겠어요?',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            SizedBox(height: 20),
+                                          ]),
                                       actions: [
                                         Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -521,7 +629,7 @@ class _MyPageState extends State<MyPage> {
                                                       )),
                                                 )),
                                                 Container(
-                                                  height: 47,
+                                                  height: 48,
                                                   width: 1,
                                                   color: Colors.grey,
                                                 ),
@@ -530,7 +638,7 @@ class _MyPageState extends State<MyPage> {
                                                   child: TextButton(
                                                       onPressed: () async {
                                                         await storage.delete(
-                                                            key: 'token');
+                                                            key: 'accessToken');
                                                         await storage.delete(
                                                             key: 'placeId');
                                                         print('로그아웃');
@@ -620,13 +728,17 @@ class _MyPageState extends State<MyPage> {
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       backgroundColor: Colors.white,
+                                      elevation: 0,
                                       title: Text(
                                         '회원 탈퇴',
                                         textAlign: TextAlign.center,
                                       ),
+                                      contentPadding: EdgeInsets.zero,
+                                      actionsPadding: EdgeInsets.zero,
                                       content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
+                                            SizedBox(height: 10),
                                             RichText(
                                               textAlign: TextAlign.center,
                                               text: TextSpan(
@@ -646,6 +758,7 @@ class _MyPageState extends State<MyPage> {
                                                 ],
                                               ),
                                             ),
+                                            SizedBox(height: 20),
                                           ]),
                                       actions: [
                                         Column(
@@ -680,7 +793,7 @@ class _MyPageState extends State<MyPage> {
                                                     ),
                                                   ),
                                                   Container(
-                                                    height: 47, // 버튼 높이에 맞춰서 설정
+                                                    height: 48,
                                                     width: 1,
                                                     color: Colors.grey,
                                                   ),

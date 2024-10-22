@@ -1,20 +1,15 @@
-import 'dart:ui';
-
 import 'package:app_links/app_links.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/auth/email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
-import 'package:flutter_neighclova/main_page.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
-import 'package:flutter_neighclova/auth/model.dart';
 import 'package:flutter_neighclova/place/register_info.dart';
 import 'package:flutter_neighclova/tabview.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({Key? key}) : super(key: key);
@@ -52,7 +47,7 @@ class _JoinPageState extends State<JoinPage> {
     try {
       var dio = Dio();
       var param = {'email': email};
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
       Response response = await dio.post('/auth/email-check', data: param);
 
@@ -84,7 +79,7 @@ class _JoinPageState extends State<JoinPage> {
     try {
       var dio = Dio();
       var param = {'email': email};
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
       Response response =
           await dio.post('/auth/email-certification', data: param);
@@ -115,7 +110,7 @@ class _JoinPageState extends State<JoinPage> {
 
   void naverLogin() async {
     final Uri loginUrl =
-        Uri.parse('http://10.0.2.2:8080/oauth2/authorization/naver');
+        Uri.parse('${dotenv.env['BASE_URL']!}oauth2/authorization/naver');
     Navigator.push(
       context,
       MaterialPageRoute(

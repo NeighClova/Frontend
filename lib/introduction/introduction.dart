@@ -1,13 +1,15 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_neighclova/admob.dart';
 import 'package:flutter_neighclova/introduction/generate_introduction.dart';
 import 'package:flutter_neighclova/introduction/introduction_response.dart';
+import 'package:flutter_neighclova/mypage/instagram_register.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Introduction extends StatefulWidget {
   const Introduction({Key? key}) : super(key: key);
@@ -21,6 +23,7 @@ class _IntroductionState extends State<Introduction> {
   void initState() {
     super.initState();
     getIntroduceAction();
+    createInterstitialAd();
   }
 
   String? placeProfileImg = "";
@@ -33,13 +36,17 @@ class _IntroductionState extends State<Introduction> {
   static final storage = FlutterSecureStorage();
   dynamic accesstoken = '';
   dynamic placeId;
+  dynamic IGName;
+  dynamic IGPassword;
 
   bool _isLoading = false;
 
+  InterstitialAd? _interstitialAd;
+
   getIntroduceAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
     placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
@@ -85,6 +92,38 @@ class _IntroductionState extends State<Introduction> {
     });
     await Future.delayed(Duration(seconds: 1));
     getIntroduceAction();
+  }
+
+  void createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: admob.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) => _interstitialAd = ad,
+        onAdFailedToLoad: (error) => _interstitialAd = null,
+      ),
+    );
+  }
+
+  void showInterstitialAd() {
+    if (_interstitialAd != null) {
+      // 전체 화면 모드 설정
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          createInterstitialAd();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+      );
+      _interstitialAd!.show();
+      createInterstitialAd();
+    }
   }
 
   @override
@@ -222,7 +261,7 @@ class _IntroductionState extends State<Introduction> {
                                       child: Text(
                                         "아직 소개글을 생성하지 않으셨네요!\n인공지능을 통해 매장 소개글을 쉽고 빠르게 작성해보세요.",
                                         style: TextStyle(
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           color: Color(0xff404040),
                                         ),
                                         textAlign: TextAlign.center,
@@ -278,6 +317,134 @@ class _IntroductionState extends State<Introduction> {
                                 ),
                               )),
                           Positioned(
+                              bottom: 12,
+                              right: 40,
+                              child: Visibility(
+                                visible: introduceList != null &&
+                                    introduceList?.length != 0,
+                                child: InkWell(
+                                  onTap: () async {
+                                    IGName = await storage.read(
+                                        key: placeId + 'IGName');
+                                    IGPassword = await storage.read(
+                                        key: placeId + 'IGPassword');
+                                    if (IGName == null && IGPassword == null) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              InstagramRegister(),
+                                        ),
+                                      );
+                                    } else {
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              insetPadding: EdgeInsets.all(0),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              backgroundColor: Colors.white,
+                                              elevation: 0,
+                                              title: Text(
+                                                '인스타그램 업로드',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              contentPadding: EdgeInsets.zero,
+                                              actionsPadding: EdgeInsets.zero,
+                                              content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    SizedBox(height: 10),
+                                                    Text(
+                                                      '인스타그램에 게시물을 업로드 하시겠어요?',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    SizedBox(height: 20),
+                                                  ]),
+                                              actions: [
+                                                Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Container(
+                                                      width: double.infinity,
+                                                      child: Divider(
+                                                          height: 1,
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                            child: Center(
+                                                          child: TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              style: TextButton
+                                                                  .styleFrom(
+                                                                foregroundColor:
+                                                                    Color(
+                                                                        0xff404040),
+                                                              ),
+                                                              child: Text(
+                                                                '취소',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              )),
+                                                        )),
+                                                        Container(
+                                                          height: 48,
+                                                          width: 1,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        Expanded(
+                                                            child: Center(
+                                                          child: TextButton(
+                                                              onPressed:
+                                                                  () async {
+                                                                print(
+                                                                    '인스타 업로드');
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    true);
+                                                              },
+                                                              style: TextButton
+                                                                  .styleFrom(
+                                                                foregroundColor:
+                                                                    Color(
+                                                                        0xff03AA5A),
+                                                              ),
+                                                              child: Text(
+                                                                '업로드',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              )),
+                                                        ))
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    }
+                                  },
+                                  child: Image(
+                                    image: AssetImage('assets/IG.png'),
+                                    width: 25.0,
+                                  ),
+                                ),
+                              )),
+                          Positioned(
                             bottom: 0,
                             right: 0,
                             child: Visibility(
@@ -307,6 +474,7 @@ class _IntroductionState extends State<Introduction> {
                       Padding(padding: EdgeInsets.only(top: 20)),
                       ElevatedButton(
                         onPressed: () async {
+                          showInterstitialAd();
                           final result = await Navigator.push(
                               context,
                               MaterialPageRoute(

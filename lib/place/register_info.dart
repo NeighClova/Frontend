@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_neighclova/main_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_neighclova/tabview.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_neighclova/place/place_response.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class RegisterInfo extends StatefulWidget {
   const RegisterInfo({Key? key}) : super(key: key);
@@ -18,6 +18,9 @@ class _RegisterInfo extends State<RegisterInfo> {
   TextEditingController placeUrl = TextEditingController();
   List<String> selectedAges = [];
   List<String> selectedTargets = [];
+  String? placeNum = '';
+  bool isChecked = false;
+  bool isLoading = false;
 
   static final storage = FlutterSecureStorage();
   dynamic isFirst = '';
@@ -42,11 +45,11 @@ class _RegisterInfo extends State<RegisterInfo> {
   ];
 
   Future<String?> getToken() async {
-    return await storage.read(key: "token");
+    return await storage.read(key: "accessToken");
   }
 
-  Future<bool> savePlaceAction(
-      placeName, category, placeUrl, selectedAges, selectedTargets) async {
+  Future<bool> savePlaceAction(placeName, category, placeUrl, selectedAges,
+      selectedTargets, placeNum) async {
     try {
       var dio = Dio();
       var body = {
@@ -54,10 +57,11 @@ class _RegisterInfo extends State<RegisterInfo> {
         "category": category,
         "targetAge": selectedAges,
         "target": selectedTargets,
-        "placeUrl": placeUrl
+        "placeUrl": placeUrl,
+        "placeNum": placeNum
       };
 
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
       final accessToken = await getToken();
 
       dio.options.headers['Authorization'] = 'Bearer $accessToken';
@@ -85,6 +89,51 @@ class _RegisterInfo extends State<RegisterInfo> {
     } catch (e) {
       print('Exception: $e');
       return false;
+    }
+  }
+
+  searchPlaceUrl(placeUrl) async {
+    var dio = Dio();
+    dio.options.baseUrl = dotenv.env['BASE_URL_FAST']!;
+
+    setState(() {
+      isLoading = true; // 조회 시작, 로딩 상태로 변경
+    });
+
+    try {
+      var body = {"place_url": placeUrl};
+
+      Response response = await dio.post('/', data: body);
+
+      if (response.statusCode == 200) {
+        placeNum = PlaceNumResponse.fromJson(response.data).placeNum;
+
+        if (placeNum != null) {
+          showSnackBar(context, Text('인증되었습니다.'));
+          setState(() {
+            placeNum = PlaceNumResponse.fromJson(response.data).placeNum;
+            isChecked = true;
+            isLoading = false;
+          });
+        } else {
+          showSnackBar(context, Text('유효하지 않은 스마트 플레이스 주소입니다.'));
+          setState(() {
+            isLoading = false;
+          });
+        }
+      } else {
+        showSnackBar(context, Text('유효하지 않은 스마트 플레이스 주소입니다.'));
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      // 오류 발생 시 팝업 표시
+      showSnackBar(context, Text('오류가 발생했습니다.'));
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -117,6 +166,9 @@ class _RegisterInfo extends State<RegisterInfo> {
             onPressed: () async {
               if (placeUrl.text == '' || placeName.text == '') {
                 showSnackBar(context, Text('필수 정보를 입력해주세요.'));
+              } else if (!isChecked) {
+                showSnackBar(
+                    context, Text('스마트 플레이스 주소 조회가 되지 않았습니다. 다시 조회해주세요.'));
               } else {
                 //데이터 저장
                 Future<bool> result = savePlaceAction(
@@ -124,7 +176,8 @@ class _RegisterInfo extends State<RegisterInfo> {
                     category.text,
                     placeUrl.text,
                     selectedAges,
-                    selectedTargets);
+                    selectedTargets,
+                    placeNum);
                 if (await result) {
                   //등록 여부 저장
                   email = await storage.read(key: 'email');
@@ -294,39 +347,91 @@ class _RegisterInfo extends State<RegisterInfo> {
                     ),
                   ),
                 ),
-                //스마트 플레이스 주소
+                // 스마트 플레이스 주소와 조회하기 버튼
                 Container(
                   height: 110,
                   width: double.infinity,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center, // 추가됨
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '스마트 플레이스 주소 *',
-                          style:
-                              TextStyle(color: Color(0xff717171), fontSize: 16),
+                        Row(
+                          children: [
+                            Text(
+                              '스마트 플레이스 주소 *',
+                              style: TextStyle(
+                                  color: Color(0xff717171), fontSize: 16),
+                            ),
+                            SizedBox(width: 10),
+                            // 상태에 따른 이모티콘 표시
+                            // 로딩 중
+                            if (isLoading)
+                              SizedBox(
+                                width: 20, // 너비 조절
+                                height: 20, // 높이 조절
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0, // 원의 두께 조절
+                                ),
+                              )
+                            else if (isChecked == true)
+                              Icon(Icons.check_circle,
+                                  color: Colors.green) // 성공 시 초록색 체크
+                            else if (isChecked == false)
+                              Icon(Icons.error,
+                                  color: Colors.red), // 실패 시 빨간색 X
+                          ],
                         ),
-                        Padding(padding: EdgeInsets.only(top: 5)),
-                        TextField(
-                          controller: placeUrl,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(10),
-                            isDense: true,
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1.0,
-                            )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1.0,
-                            )),
-                          ),
-                        )
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            // URL 입력 필드
+                            Expanded(
+                              child: TextField(
+                                controller: placeUrl,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(10),
+                                  isDense: true,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  hintText: 'https://naver.',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey[400], // 더 연한 회색으로 설정
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            // 조회하기 버튼
+                            ElevatedButton(
+                              onPressed: () {
+                                searchPlaceUrl(placeUrl.text);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xff03AA5A),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 14, horizontal: 18),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  )),
+                              child: Text(
+                                '조회하기',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

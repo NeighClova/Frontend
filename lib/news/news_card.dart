@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_neighclova/mypage/instagram_register.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:ui';
 
 class NewsCard extends StatefulWidget {
   final int number;
@@ -30,6 +31,11 @@ class _NewsCardState extends State<NewsCard> {
 
   final GlobalKey _contentKey = GlobalKey();
   double _contentHeight = 0;
+
+  static final storage = FlutterSecureStorage();
+  dynamic IGName;
+  dynamic IGPassword;
+  dynamic placeId;
 
   //bool isProfileImg = false;
 
@@ -63,6 +69,28 @@ class _NewsCardState extends State<NewsCard> {
       _updateTitleHeight();
       _updateContentHeight();
     });
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await getPlaceId();
+    print('getName 실행');
+    await getIGName();
+  }
+
+  Future<void> getIGName() async {
+    String? storedIGName = await storage.read(key: placeId + 'IGName');
+    setState(() {
+      IGName = storedIGName ?? '';
+    });
+    print('IGName : $IGName');
+  }
+
+  Future<void> getPlaceId() async {
+    String? storedPlaceId = await storage.read(key: 'placeId');
+    setState(() {
+      placeId = storedPlaceId ?? '';
+    });
   }
 
   @override
@@ -94,17 +122,16 @@ class _NewsCardState extends State<NewsCard> {
                 Padding(padding: EdgeInsets.only(left: 20)),
                 ClipOval(
                   child: Container(
-                    width: 40,
-                    height: 40,
-                    color: Color.fromRGBO(161, 182, 233, 1),
-                    child: widget.profileImg != ''
-                      ? Image.network('${widget.profileImg}',
-                          fit: BoxFit.cover)
-                      : Icon(
-                          Icons.person,
-                          color: Colors.white,
-                        )
-                  ),
+                      width: 40,
+                      height: 40,
+                      color: Color.fromRGBO(161, 182, 233, 1),
+                      child: widget.profileImg != ''
+                          ? Image.network('${widget.profileImg}',
+                              fit: BoxFit.cover)
+                          : Icon(
+                              Icons.person,
+                              color: Colors.white,
+                            )),
                 ),
                 Padding(padding: EdgeInsets.only(left: 10)),
                 Expanded(
@@ -132,6 +159,107 @@ class _NewsCardState extends State<NewsCard> {
                         ),
                       ],
                     ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () async {
+                    IGName = await storage.read(key: placeId + 'IGName');
+                    IGPassword =
+                        await storage.read(key: placeId + 'IGPassword');
+                    if (IGName == null && IGPassword == null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              InstagramRegister(),
+                        ),
+                      );
+                    } else {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              insetPadding: EdgeInsets.all(0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              backgroundColor: Colors.white,
+                              elevation: 0,
+                              title: Text(
+                                '인스타그램 업로드',
+                                textAlign: TextAlign.center,
+                              ),
+                              contentPadding: EdgeInsets.zero,
+                              actionsPadding: EdgeInsets.zero,
+                              content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(height: 10),
+                                    Text(
+                                      '인스타그램에 게시물을 업로드 하시겠어요?',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(height: 20),
+                                  ]),
+                              actions: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      child: Divider(
+                                          height: 1, color: Colors.grey),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            child: Center(
+                                          child: TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              style: TextButton.styleFrom(
+                                                foregroundColor:
+                                                    Color(0xff404040),
+                                              ),
+                                              child: Text(
+                                                '취소',
+                                                textAlign: TextAlign.center,
+                                              )),
+                                        )),
+                                        Container(
+                                          height: 48,
+                                          width: 1,
+                                          color: Colors.grey,
+                                        ),
+                                        Expanded(
+                                            child: Center(
+                                          child: TextButton(
+                                              onPressed: () async {
+                                                print('인스타 업로드');
+                                                Navigator.pop(context, true);
+                                              },
+                                              style: TextButton.styleFrom(
+                                                foregroundColor:
+                                                    Color(0xff03AA5A),
+                                              ),
+                                              child: Text(
+                                                '업로드',
+                                                textAlign: TextAlign.center,
+                                              )),
+                                        ))
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ],
+                            );
+                          });
+                    }
+                  },
+                  child: Image(
+                    image: AssetImage('assets/IG.png'),
+                    width: 25.0,
                   ),
                 ),
                 SizedBox(

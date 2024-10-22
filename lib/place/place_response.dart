@@ -51,3 +51,23 @@ class PlaceResponse {
     );
   }
 }
+
+class PlaceNumResponse {
+  final String? code;
+  final String? message;
+  final String? placeNum;
+
+  PlaceNumResponse({
+    this.code,
+    this.message,
+    this.placeNum,
+  });
+
+  factory PlaceNumResponse.fromJson(Map<String, dynamic> json) {
+    return PlaceNumResponse(
+      code: json['code'],
+      message: json['message'],
+      placeNum: json['place_num'],
+    );
+  }
+}

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_neighclova/news/generate_news.dart';
 import 'package:flutter_neighclova/news/news_card.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'news_response.dart';
+import 'package:flutter_neighclova/admob.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);
@@ -18,16 +22,19 @@ class _NewsPageState extends State<NewsPage> {
   dynamic placeId;
   List<News>? newsList = [];
 
+  InterstitialAd? _interstitialAd;
+
   @override
   void initState() {
     super.initState();
     getAllNewsAction();
+    createInterstitialAd();
   }
 
   Future<List<News>?> getAllNewsAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accesstoken = await storage.read(key: 'accessToken');
     placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
@@ -51,6 +58,38 @@ class _NewsPageState extends State<NewsPage> {
     } catch (e) {
       print('Error: $e');
       return newsList;
+    }
+  }
+
+  void createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: admob.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) => _interstitialAd = ad,
+        onAdFailedToLoad: (error) => _interstitialAd = null,
+      ),
+    );
+  }
+
+  void showInterstitialAd() {
+    if (_interstitialAd != null) {
+      // 전체 화면 모드 설정
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          createInterstitialAd();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+      );
+      _interstitialAd!.show();
+      createInterstitialAd();
     }
   }
 
@@ -127,6 +166,7 @@ class _NewsPageState extends State<NewsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          showInterstitialAd();
           final result = await Navigator.push(
               context,
               MaterialPageRoute(

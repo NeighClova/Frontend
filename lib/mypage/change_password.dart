@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/main.dart';
-import 'package:flutter_neighclova/mypage/mypage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({Key? key}) : super(key: key);
@@ -74,8 +73,8 @@ class _ChangePasswordState extends State<ChangePassword> {
         'oldPassword': oldPassword,
         'newPassword': newPassword,
       };
-      dio.options.baseUrl = 'http://10.0.2.2:8080';
-      accesstoken = await storage.read(key: 'token');
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+      accesstoken = await storage.read(key: 'accessToken');
       dio.options.headers['Authorization'] = 'Bearer $accesstoken';
 
       Response response = await dio.patch('/auth/patch-password', data: param);

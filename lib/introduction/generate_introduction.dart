@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_neighclova/introduction/introduction.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_neighclova/admob.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_neighclova/tabview.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Debouncer {
   final int milliseconds;
@@ -30,15 +31,23 @@ class GenerateIntroduction extends StatefulWidget {
 }
 
 class _GenerateIntroductionState extends State<GenerateIntroduction> {
+  @override
+  void initState() {
+    super.initState();
+    createInterstitialAd();
+  }
+
   final _debouncer = Debouncer(milliseconds: 500);
 
   List<String> selectedPurpose = [];
   List<String> selectedService = [];
   List<String> selectedMood = [];
   static final storage = FlutterSecureStorage();
-  dynamic accesstoken = '';
+  dynamic accessToken = '';
   String resContent = '';
   bool isLoading = false;
+
+  InterstitialAd? _interstitialAd;
 
   TextEditingController emphasizeContent = TextEditingController();
   final List<Map<String, dynamic>> purpose = [
@@ -76,7 +85,7 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
 
   makeIntroduceAction() async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://192.168.35.197:8080';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
     var placeId = await storage.read(key: 'placeId');
 
     // 파라미터 설정
@@ -109,12 +118,12 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
 
   saveIntroduceAction(resContent) async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8080';
-    accesstoken = await storage.read(key: 'token');
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    accessToken = await storage.read(key: 'accessToken');
     var placeId = await storage.read(key: 'placeId');
 
     // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+    dio.options.headers['Authorization'] = 'Bearer $accessToken';
 
     var body = {'placeId': placeId, 'content': resContent};
 
@@ -134,10 +143,44 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
     }
   }
 
+  void createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: admob.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) => _interstitialAd = ad,
+        onAdFailedToLoad: (error) => _interstitialAd = null,
+      ),
+    );
+  }
+
+  void showInterstitialAd() {
+    if (_interstitialAd != null) {
+      // 전체 화면 모드 설정
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          createInterstitialAd();
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+      );
+      _interstitialAd!.show();
+      createInterstitialAd();
+    }
+  }
+
   void _handleButtonPressed() {
     setState(() {
       isLoading = true;
     });
+
+    showInterstitialAd();
 
     makeIntroduceAction().then((_) {
       setState(() {
