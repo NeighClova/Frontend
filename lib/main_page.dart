@@ -18,6 +18,7 @@ class _MainPageState extends State<MainPage> {
 //가게들 넘겨받기
   List<Place>? placeList = [];
   String? placeName;
+  String? viewDate;
 
   final GlobalKey _containerKey = GlobalKey();
   double _containerHeight = 0;
@@ -156,6 +157,7 @@ class _MainPageState extends State<MainPage> {
           keyword = response.data['keyword'];
           nbody = response.data['nbody'];
           pbody = response.data['pbody'];
+          viewDate = response.data['viewDate'];
           if (elapsedTime != null) {
             days = extractDays(elapsedTime);
           }
@@ -528,16 +530,38 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ),
                         Padding(padding: EdgeInsets.only(top: 22)),
-                        Wrap(
-                          key: _wrapKey,
-                          spacing: 34.0,
-                          runSpacing: 5.0,
-                          alignment: WrapAlignment.center,
-                          children:
-                              List.generate(keyword?.length ?? 0, (index) {
-                            return buildKeywordsChips(index);
-                          }),
-                        ),
+                        (keyword == null || keyword!.isEmpty)
+                            ? RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                  children: [
+                                    TextSpan(text: '리뷰 분석이 아직 되지 않았네요!\n'),
+                                    TextSpan(
+                                      text: '$viewDate',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Color(0xff03AA5A),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                        text: '에 리뷰를 분석하고\n매장 키워드를 보여드릴게요✏️'),
+                                  ],
+                                ),
+                              )
+                            : Wrap(
+                                key: _wrapKey,
+                                spacing: 34.0,
+                                runSpacing: 5.0,
+                                alignment: WrapAlignment.center,
+                                children: List.generate(keyword?.length ?? 0,
+                                    (index) {
+                                  return buildKeywordsChips(index);
+                                }),
+                              ),
                         Padding(padding: EdgeInsets.only(top: 22)),
                       ],
                     ),
@@ -592,7 +616,7 @@ class _MainPageState extends State<MainPage> {
                           child: Text(
                             pbody != null
                                 ? '😊 ${pbody}'
-                                : '😊 음식이 맛있고 사장님이 친절해요.',
+                                : '😊 피드백이 생성되면 이곳에 긍정 리뷰에 대한 피드백을 제공해요!',
                             key: _goodFeedbackKey,
                             style: TextStyle(
                               fontSize: 14,
@@ -605,7 +629,7 @@ class _MainPageState extends State<MainPage> {
                           child: Text(
                             nbody != null
                                 ? '☹ ${nbody}'
-                                : '☹ 음식에 먼지가 나왔어요. 위생에 유의해 주세요.',
+                                : '☹ 피드백이 생성되면 이곳에 부정 리뷰에 대한 피드백을 제공해요!',
                             key: _badFeedbackKey,
                             style: TextStyle(
                               fontSize: 14,
