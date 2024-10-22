@@ -110,7 +110,7 @@ class _JoinPageState extends State<JoinPage> {
 
   void naverLogin() async {
     final Uri loginUrl =
-        Uri.parse('${dotenv.env['BASE_URL']!}oauth2/authorization/naver');
+        Uri.parse('${dotenv.env['BASE_URL']!}/oauth2/authorization/naver');
     Navigator.push(
       context,
       MaterialPageRoute(

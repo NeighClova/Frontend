@@ -110,7 +110,7 @@ class _LoginState extends State<Login> {
 
   void naverLogin() async {
     final Uri loginUrl =
-        Uri.parse('http://192.168.219.105:8080/oauth2/authorization/naver');
+        Uri.parse('${dotenv.env['BASE_URL']!}/oauth2/authorization/naver');
     Navigator.push(
       context,
       MaterialPageRoute(
