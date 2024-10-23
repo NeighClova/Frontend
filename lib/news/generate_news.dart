@@ -411,11 +411,14 @@ class _GenerateNewsState extends State<GenerateNews> {
                           ],
                         ),
                         Padding(padding: EdgeInsets.only(top: 10)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(keyword.length, (index) {
-                            return buildKeyword(index);
-                          }),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(keyword.length, (index) {
+                              return buildKeyword(index);
+                            }),
+                          ),
                         ),
                         Padding(padding: EdgeInsets.only(top: 30)),
                         Align(
@@ -440,11 +443,14 @@ class _GenerateNewsState extends State<GenerateNews> {
                           ),
                         ),
                         Padding(padding: EdgeInsets.only(top: 10)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(type.length, (index) {
-                            return buildType(index);
-                          }),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(type.length, (index) {
+                              return buildType(index);
+                            }),
+                          ),
                         ),
                         Padding(padding: EdgeInsets.only(top: 10)),
                         TextFormField(
