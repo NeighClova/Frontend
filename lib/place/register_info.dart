@@ -158,52 +158,54 @@ class _RegisterInfo extends State<RegisterInfo> {
             )),
         centerTitle: true,
       ),
-      bottomNavigationBar: Container(
-        height: 60,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-          child: ElevatedButton(
-            onPressed: () async {
-              if (placeUrl.text == '' || placeName.text == '') {
-                showSnackBar(context, Text('필수 정보를 입력해주세요.'));
-              } else if (!isChecked) {
-                showSnackBar(
-                    context, Text('스마트 플레이스 주소 조회가 되지 않았습니다. 다시 조회해주세요.'));
-              } else {
-                //데이터 저장
-                Future<bool> result = savePlaceAction(
-                    placeName.text,
-                    category.text,
-                    placeUrl.text,
-                    selectedAges,
-                    selectedTargets,
-                    placeNum);
-                if (await result) {
-                  //등록 여부 저장
-                  email = await storage.read(key: 'email');
-                  await storage.write(
-                    key: email + 'First',
-                    value: 'false',
-                  );
-                  // 메인 페이지로 이동
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => TabView(),
-                      ),
-                      (route) => false);
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          height: 60,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+            child: ElevatedButton(
+              onPressed: () async {
+                if (placeUrl.text == '' || placeName.text == '') {
+                  showSnackBar(context, Text('필수 정보를 입력해주세요.'));
+                } else if (!isChecked) {
+                  showSnackBar(
+                      context, Text('스마트 플레이스 주소 조회가 되지 않았습니다. 다시 조회해주세요.'));
+                } else {
+                  //데이터 저장
+                  Future<bool> result = savePlaceAction(
+                      placeName.text,
+                      category.text,
+                      placeUrl.text,
+                      selectedAges,
+                      selectedTargets,
+                      placeNum);
+                  if (await result) {
+                    //등록 여부 저장
+                    email = await storage.read(key: 'email');
+                    await storage.write(
+                      key: email + 'First',
+                      value: 'false',
+                    );
+                    // 메인 페이지로 이동
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => TabView(),
+                        ),
+                        (route) => false);
+                  }
                 }
-              }
-            },
-            child: Text(
-              '저장',
-              style: TextStyle(fontSize: 17, color: Colors.white),
+              },
+              child: Text(
+                '저장',
+                style: TextStyle(fontSize: 17, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xff03AA5A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  )),
             ),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xff03AA5A),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                )),
           ),
         ),
       ),

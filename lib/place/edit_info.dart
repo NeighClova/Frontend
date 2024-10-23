@@ -161,28 +161,30 @@ class _EditInfoState extends State<EditInfo> {
             )),
         centerTitle: true,
       ),
-      bottomNavigationBar: Container(
-        height: 60,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-          child: ElevatedButton(
-            onPressed: () {
-              if (placeUrlText.text == '' || placeNameText.text == '') {
-                showSnackBar(context, Text('필수 정보를 입력해주세요.'));
-              } else {
-                patchPlaceAction(selectedAges, selectedTargets);
-                Navigator.pop(context, true);
-              }
-            },
-            child: Text(
-              '저장',
-              style: TextStyle(fontSize: 17, color: Colors.white),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          height: 60,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+            child: ElevatedButton(
+              onPressed: () {
+                if (placeUrlText.text == '' || placeNameText.text == '') {
+                  showSnackBar(context, Text('필수 정보를 입력해주세요.'));
+                } else {
+                  patchPlaceAction(selectedAges, selectedTargets);
+                  Navigator.pop(context, true);
+                }
+              },
+              child: Text(
+                '저장',
+                style: TextStyle(fontSize: 17, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xff03AA5A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  )),
             ),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xff03AA5A),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                )),
           ),
         ),
       ),

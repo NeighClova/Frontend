@@ -333,20 +333,22 @@ class _GenerateNewsState extends State<GenerateNews> {
               )),
           centerTitle: true,
         ),
-        bottomNavigationBar: Container(
-          height: 60,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-            child: ElevatedButton(
-              onPressed: _handleButtonPressed,
-              child: Text(
-                '키워드 기반 맞춤 소식 글 생성하기',
-                style: TextStyle(fontSize: 17, color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xff03AA5A),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            height: 60,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: ElevatedButton(
+                onPressed: _handleButtonPressed,
+                child: Text(
+                  '키워드 기반 맞춤 소식 글 생성하기',
+                  style: TextStyle(fontSize: 17, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xff03AA5A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
