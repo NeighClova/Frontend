@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class Debouncer {
   final int milliseconds;
@@ -43,7 +44,6 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
   List<String> selectedService = [];
   List<String> selectedMood = [];
   static final storage = FlutterSecureStorage();
-  dynamic accessToken = '';
   String resContent = '';
   bool isLoading = false;
 
@@ -116,14 +116,10 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
     }
   }
 
-  saveIntroduceAction(resContent) async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accessToken = await storage.read(key: 'accessToken');
+  saveIntroduceAction(String resContent) async {
+    var dio = await authDio(context);
+    final storage = FlutterSecureStorage();
     var placeId = await storage.read(key: 'placeId');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accessToken';
 
     var body = {'placeId': placeId, 'content': resContent};
 
@@ -138,7 +134,7 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
         return false;
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error in saveIntroduceAction: $e');
       return false;
     }
   }

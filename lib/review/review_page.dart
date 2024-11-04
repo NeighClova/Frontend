@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 import 'package:flutter_neighclova/review/review_response.dart';
 import 'loading_state_widget.dart';
@@ -17,19 +17,13 @@ class ReviewPage extends StatefulWidget {
 class _ReviewPageState extends State<ReviewPage> {
   static final storage = FlutterSecureStorage();
   dynamic review;
-  dynamic accesstoken;
   dynamic placeId;
 
   bool isAnalyzed = false;
 
   getReview() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
     placeId = await storage.read(key: 'placeId');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
     Map<String, dynamic> queryParams = {
       'placeId': placeId,
     };

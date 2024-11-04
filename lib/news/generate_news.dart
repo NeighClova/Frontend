@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class GenerateNews extends StatefulWidget {
   const GenerateNews({Key? key}) : super(key: key);
@@ -28,7 +29,6 @@ class _GenerateNewsState extends State<GenerateNews> {
   bool isLoading = false;
 
   static final storage = FlutterSecureStorage();
-  dynamic accesstoken = '';
 
   bool showPeriod = false;
 
@@ -113,13 +113,8 @@ class _GenerateNewsState extends State<GenerateNews> {
   }
 
   saveNewsAction() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
     var placeId = await storage.read(key: 'placeId');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
 
     var body = {
       'placeId': placeId,

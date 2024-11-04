@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/place/place_response.dart';
 import 'package:flutter_neighclova/place/register_info.dart';
+import 'auth_dio.dart';
 
 import 'package:flutter_neighclova/tabview.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -44,7 +44,6 @@ class _MainPageState extends State<MainPage> {
 
   static final storage = FlutterSecureStorage();
 
-  dynamic accesstoken = '';
   dynamic placeId;
 
   String? extractDays(String? elapsedTime) {
@@ -101,12 +100,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   getAllPlaces() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+    var dio = await authDio(context);
+    final storage = FlutterSecureStorage();
 
     try {
       Response response = await dio.get('/place/all');
@@ -118,11 +113,9 @@ class _MainPageState extends State<MainPage> {
         });
 
         return placeList;
-      } else {
-        print('Error: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error in getAllPlaces: $e');
     }
   }
 
@@ -130,23 +123,16 @@ class _MainPageState extends State<MainPage> {
     placeId = await storage.read(key: 'placeId');
     var places = await getAllPlaces();
 
-    if (placeId == null) {
+    if (placeId == null && places != null && places.isNotEmpty) {
       placeId = places[0].placeId;
       await storage.write(key: 'placeId', value: places[0].placeId.toString());
-    } else {
+    } else if (places == null || places.isEmpty) {
       print('No places found');
+      return null;
     }
 
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
-
-    Map<String, dynamic> queryParams = {
-      'placeId': placeId,
-    };
+    var dio = await authDio(context);
+    Map<String, dynamic> queryParams = {'placeId': placeId};
 
     try {
       Response response = await dio.get('/', queryParameters: queryParams);
@@ -162,15 +148,10 @@ class _MainPageState extends State<MainPage> {
             days = extractDays(elapsedTime);
           }
         });
-
-        return placeList;
-      } else {
-        print('Error: ${response.statusCode}');
         return placeList;
       }
     } catch (e) {
-      print('Error: $e');
-      return placeList;
+      print('Error in getMain: $e');
     }
   }
 

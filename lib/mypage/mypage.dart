@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -75,14 +75,9 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future<void> patchImg(String filePath) async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    var dio = await authDio(context);
 
-    // 저장소에서 token과 placeId 읽기
-    String? accesstoken = await storage.read(key: 'accessToken');
     String? placeId = await storage.read(key: 'placeId');
-
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
     MultipartFile img = await MultipartFile.fromFile(filePath);
 
     // FormData 생성
@@ -113,13 +108,9 @@ class _MyPageState extends State<MyPage> {
   }
 
   getPlaceInfo() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
     placeId = await storage.read(key: 'placeId');
 
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
     Map<String, dynamic> queryParams = {
       'placeId': placeId,
     };
@@ -140,12 +131,7 @@ class _MyPageState extends State<MyPage> {
   }
 
   deleteAction() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
+    var dio = await authDio(context);
 
     try {
       Response response = await dio.patch('/auth/delete');

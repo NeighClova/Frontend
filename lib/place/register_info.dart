@@ -4,6 +4,7 @@ import 'package:flutter_neighclova/tabview.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_neighclova/place/place_response.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class RegisterInfo extends StatefulWidget {
   const RegisterInfo({Key? key}) : super(key: key);
@@ -44,14 +45,11 @@ class _RegisterInfo extends State<RegisterInfo> {
     {'target': '남성', 'isSelected': false},
   ];
 
-  Future<String?> getToken() async {
-    return await storage.read(key: "accessToken");
-  }
-
   Future<bool> savePlaceAction(placeName, category, placeUrl, selectedAges,
       selectedTargets, placeNum) async {
     try {
-      var dio = Dio();
+      var dio = await authDio(context);
+
       var body = {
         "placeName": placeName,
         "category": category,
@@ -60,12 +58,6 @@ class _RegisterInfo extends State<RegisterInfo> {
         "placeUrl": placeUrl,
         "placeNum": placeNum
       };
-
-      dio.options.baseUrl = dotenv.env['BASE_URL']!;
-      final accessToken = await getToken();
-
-      dio.options.headers['Authorization'] = 'Bearer $accessToken';
-
       Response response = await dio.post('/place', data: body);
 
       if (response.statusCode == 200) {

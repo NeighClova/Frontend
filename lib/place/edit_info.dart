@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_neighclova/place/place_response.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class EditInfo extends StatefulWidget {
   const EditInfo({Key? key}) : super(key: key);
@@ -14,7 +15,6 @@ class EditInfo extends StatefulWidget {
 class _EditInfoState extends State<EditInfo> {
   static final storage = FlutterSecureStorage();
   dynamic place;
-  dynamic accesstoken;
   dynamic placeId;
 
   bool isChecked = false;
@@ -46,13 +46,9 @@ class _EditInfoState extends State<EditInfo> {
   ];
 
   getPlaceInfo() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
     placeId = await storage.read(key: 'placeId');
 
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
     Map<String, dynamic> queryParams = {
       'placeId': placeId,
     };
@@ -99,7 +95,6 @@ class _EditInfoState extends State<EditInfo> {
     print(selectedAges);
     print(selectedTargets);
     try {
-      var dio = Dio();
       var body = {
         "placeName": placeNameText.text,
         "category": categoryText.text,
@@ -109,10 +104,7 @@ class _EditInfoState extends State<EditInfo> {
         "placeNum": placeNum
       };
 
-      dio.options.baseUrl = dotenv.env['BASE_URL']!;
-      final accessToken = await storage.read(key: "accessToken");
-
-      dio.options.headers['Authorization'] = 'Bearer $accessToken';
+      var dio = await authDio(context);
       Map<String, dynamic> queryParams = {
         'placeId': placeId,
       };
