@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class GenerateNews extends StatefulWidget {
   const GenerateNews({Key? key}) : super(key: key);
@@ -28,7 +29,6 @@ class _GenerateNewsState extends State<GenerateNews> {
   bool isLoading = false;
 
   static final storage = FlutterSecureStorage();
-  dynamic accesstoken = '';
 
   bool showPeriod = false;
 
@@ -113,13 +113,8 @@ class _GenerateNewsState extends State<GenerateNews> {
   }
 
   saveNewsAction() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
     var placeId = await storage.read(key: 'placeId');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
 
     var body = {
       'placeId': placeId,
@@ -333,20 +328,22 @@ class _GenerateNewsState extends State<GenerateNews> {
               )),
           centerTitle: true,
         ),
-        bottomNavigationBar: Container(
-          height: 60,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-            child: ElevatedButton(
-              onPressed: _handleButtonPressed,
-              child: Text(
-                '키워드 기반 맞춤 소식 글 생성하기',
-                style: TextStyle(fontSize: 17, color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xff03AA5A),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            height: 60,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: ElevatedButton(
+                onPressed: _handleButtonPressed,
+                child: Text(
+                  '키워드 기반 맞춤 소식 글 생성하기',
+                  style: TextStyle(fontSize: 17, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xff03AA5A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -411,11 +408,14 @@ class _GenerateNewsState extends State<GenerateNews> {
                           ],
                         ),
                         Padding(padding: EdgeInsets.only(top: 10)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(keyword.length, (index) {
-                            return buildKeyword(index);
-                          }),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(keyword.length, (index) {
+                              return buildKeyword(index);
+                            }),
+                          ),
                         ),
                         Padding(padding: EdgeInsets.only(top: 30)),
                         Align(
@@ -440,11 +440,14 @@ class _GenerateNewsState extends State<GenerateNews> {
                           ),
                         ),
                         Padding(padding: EdgeInsets.only(top: 10)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(type.length, (index) {
-                            return buildType(index);
-                          }),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(type.length, (index) {
+                              return buildType(index);
+                            }),
+                          ),
                         ),
                         Padding(padding: EdgeInsets.only(top: 10)),
                         TextFormField(

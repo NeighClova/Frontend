@@ -103,7 +103,7 @@ class _ReviewState extends State<LoadingStateWidget> {
                             ),
                             children: <TextSpan>[
                           TextSpan(
-                            text: widget.review.viewDate ?? '월요일',
+                            text: widget.review?.viewDate ?? '월요일',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

@@ -7,7 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'news_response.dart';
 import 'package:flutter_neighclova/admob.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);
@@ -18,7 +18,6 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   static final storage = FlutterSecureStorage();
-  dynamic accesstoken = '';
   dynamic placeId;
   List<News>? newsList = [];
 
@@ -32,17 +31,12 @@ class _NewsPageState extends State<NewsPage> {
   }
 
   Future<List<News>?> getAllNewsAction() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
     placeId = await storage.read(key: 'placeId');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
-    // 파라미터 설정
     Map<String, dynamic> queryParams = {
       'placeId': placeId,
     };
+
     try {
       Response response =
           await dio.get('/news/all', queryParameters: queryParams);

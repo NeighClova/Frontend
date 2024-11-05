@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class Debouncer {
   final int milliseconds;
@@ -43,7 +44,6 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
   List<String> selectedService = [];
   List<String> selectedMood = [];
   static final storage = FlutterSecureStorage();
-  dynamic accessToken = '';
   String resContent = '';
   bool isLoading = false;
 
@@ -116,14 +116,10 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
     }
   }
 
-  saveIntroduceAction(resContent) async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accessToken = await storage.read(key: 'accessToken');
+  saveIntroduceAction(String resContent) async {
+    var dio = await authDio(context);
+    final storage = FlutterSecureStorage();
     var placeId = await storage.read(key: 'placeId');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accessToken';
 
     var body = {'placeId': placeId, 'content': resContent};
 
@@ -138,7 +134,7 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
         return false;
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error in saveIntroduceAction: $e');
       return false;
     }
   }
@@ -427,20 +423,22 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
               ),
             ),
           ),
-          bottomNavigationBar: Container(
-            height: 60,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-              child: ElevatedButton(
-                onPressed: _handleButtonPressed,
-                child: Text(
-                  '키워드 기반 맞춤 소개 글 생성하기',
-                  style: TextStyle(fontSize: 17, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xff03AA5A),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+          bottomNavigationBar: SafeArea(
+            child: Container(
+              height: 60,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: ElevatedButton(
+                  onPressed: _handleButtonPressed,
+                  child: Text(
+                    '키워드 기반 맞춤 소개 글 생성하기',
+                    style: TextStyle(fontSize: 17, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff03AA5A),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),

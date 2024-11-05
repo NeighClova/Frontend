@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
-import 'package:flutter_neighclova/main_page.dart';
+
 import 'package:flutter_neighclova/place/register_info.dart';
 import 'package:flutter_neighclova/tabview.dart';
 import 'package:dio/dio.dart';
@@ -161,8 +161,6 @@ class _LoginState extends State<Login> {
 
       Response response = await dio.post('/auth/sign-in', data: param);
 
-      print("***************************");
-      print(response.data['accessToken']);
       if (response.statusCode == 200) {
         await storage.write(
           key: 'accessToken',

@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_neighclova/place/place_response.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class EditInfo extends StatefulWidget {
   const EditInfo({Key? key}) : super(key: key);
@@ -14,8 +15,11 @@ class EditInfo extends StatefulWidget {
 class _EditInfoState extends State<EditInfo> {
   static final storage = FlutterSecureStorage();
   dynamic place;
-  dynamic accesstoken;
   dynamic placeId;
+
+  bool isChecked = false;
+  bool isLoading = false;
+  String? placeNum = '';
 
   TextEditingController placeNameText = TextEditingController();
   TextEditingController categoryText = TextEditingController();
@@ -42,13 +46,9 @@ class _EditInfoState extends State<EditInfo> {
   ];
 
   getPlaceInfo() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
     placeId = await storage.read(key: 'placeId');
 
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
     Map<String, dynamic> queryParams = {
       'placeId': placeId,
     };
@@ -91,23 +91,20 @@ class _EditInfoState extends State<EditInfo> {
     }
   }
 
-  patchPlaceAction(selectedAges, selectedTargets) async {
+  patchPlaceAction(selectedAges, selectedTargets, placeNum) async {
     print(selectedAges);
     print(selectedTargets);
     try {
-      var dio = Dio();
       var body = {
         "placeName": placeNameText.text,
         "category": categoryText.text,
         "targetAge": selectedAges,
         "target": selectedTargets,
-        "placeUrl": placeUrlText.text
+        "placeUrl": placeUrlText.text,
+        "placeNum": placeNum
       };
 
-      dio.options.baseUrl = dotenv.env['BASE_URL']!;
-      final accessToken = await storage.read(key: "accessToken");
-
-      dio.options.headers['Authorization'] = 'Bearer $accessToken';
+      var dio = await authDio(context);
       Map<String, dynamic> queryParams = {
         'placeId': placeId,
       };
@@ -131,6 +128,51 @@ class _EditInfoState extends State<EditInfo> {
     } catch (e) {
       print('Exception: $e');
       return false;
+    }
+  }
+
+  searchPlaceUrl(placeUrl) async {
+    var dio = Dio();
+    dio.options.baseUrl = dotenv.env['BASE_URL_FAST']!;
+
+    setState(() {
+      isLoading = true; // 조회 시작, 로딩 상태로 변경
+    });
+
+    try {
+      var body = {"place_url": placeUrl};
+
+      Response response = await dio.post('/', data: body);
+
+      if (response.statusCode == 200) {
+        placeNum = PlaceNumResponse.fromJson(response.data).placeNum;
+
+        if (placeNum != null) {
+          showSnackBar(context, Text('인증되었습니다.'));
+          setState(() {
+            placeNum = PlaceNumResponse.fromJson(response.data).placeNum;
+            isChecked = true;
+            isLoading = false;
+          });
+        } else {
+          showSnackBar(context, Text('유효하지 않은 스마트 플레이스 주소입니다.'));
+          setState(() {
+            isLoading = false;
+          });
+        }
+      } else {
+        showSnackBar(context, Text('유효하지 않은 스마트 플레이스 주소입니다.'));
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      // 오류 발생 시 팝업 표시
+      showSnackBar(context, Text('오류가 발생했습니다.'));
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -161,28 +203,33 @@ class _EditInfoState extends State<EditInfo> {
             )),
         centerTitle: true,
       ),
-      bottomNavigationBar: Container(
-        height: 60,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-          child: ElevatedButton(
-            onPressed: () {
-              if (placeUrlText.text == '' || placeNameText.text == '') {
-                showSnackBar(context, Text('필수 정보를 입력해주세요.'));
-              } else {
-                patchPlaceAction(selectedAges, selectedTargets);
-                Navigator.pop(context, true);
-              }
-            },
-            child: Text(
-              '저장',
-              style: TextStyle(fontSize: 17, color: Colors.white),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          height: 60,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+            child: ElevatedButton(
+              onPressed: () {
+                if (placeUrlText.text == '' || placeNameText.text == '') {
+                  showSnackBar(context, Text('필수 정보를 입력해주세요.'));
+                } else if (!isChecked) {
+                  showSnackBar(
+                      context, Text('스마트 플레이스 주소 조회가 되지 않았습니다. 다시 조회해주세요.'));
+                } else {
+                  patchPlaceAction(selectedAges, selectedTargets, placeNum);
+                  Navigator.pop(context, true);
+                }
+              },
+              child: Text(
+                '저장',
+                style: TextStyle(fontSize: 17, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xff03AA5A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  )),
             ),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xff03AA5A),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                )),
           ),
         ),
       ),
@@ -335,29 +382,81 @@ class _EditInfoState extends State<EditInfo> {
                       mainAxisAlignment: MainAxisAlignment.center, // 추가됨
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '스마트 플레이스 주소 *',
-                          style:
-                              TextStyle(color: Color(0xff717171), fontSize: 16),
+                        Row(
+                          children: [
+                            Text(
+                              '스마트 플레이스 주소 *',
+                              style: TextStyle(
+                                  color: Color(0xff717171), fontSize: 16),
+                            ),
+                            SizedBox(width: 10),
+                            // 상태에 따른 이모티콘 표시
+                            // 로딩 중
+                            if (isLoading)
+                              SizedBox(
+                                width: 20, // 너비 조절
+                                height: 20, // 높이 조절
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0, // 원의 두께 조절
+                                ),
+                              )
+                            else if (isChecked == true)
+                              Icon(Icons.check_circle,
+                                  color: Colors.green) // 성공 시 초록색 체크
+                            else if (isChecked == false)
+                              Icon(Icons.error,
+                                  color: Colors.red), // 실패 시 빨간색 X
+                          ],
                         ),
-                        Padding(padding: EdgeInsets.only(top: 5)),
-                        TextField(
-                          controller: placeUrlText,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(10),
-                            isDense: true,
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1.0,
-                            )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1.0,
-                            )),
-                          ),
-                        )
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            // URL 입력 필드
+                            Expanded(
+                              child: TextField(
+                                controller: placeUrlText,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(10),
+                                  isDense: true,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  hintText: 'https://naver.',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey[400], // 더 연한 회색으로 설정
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            // 조회하기 버튼
+                            ElevatedButton(
+                              onPressed: () {
+                                searchPlaceUrl(placeUrlText.text);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xff03AA5A),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 14, horizontal: 18),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  )),
+                              child: Text(
+                                '조회하기',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class Introduction extends StatefulWidget {
   const Introduction({Key? key}) : super(key: key);
@@ -34,7 +34,6 @@ class _IntroductionState extends State<Introduction> {
   List<Introduces>? introduceList = [];
 
   static final storage = FlutterSecureStorage();
-  dynamic accesstoken = '';
   dynamic placeId;
   dynamic IGName;
   dynamic IGPassword;
@@ -44,13 +43,8 @@ class _IntroductionState extends State<Introduction> {
   InterstitialAd? _interstitialAd;
 
   getIntroduceAction() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
-    accesstoken = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
     placeId = await storage.read(key: 'placeId');
-
-    // 헤더 설정
-    dio.options.headers['Authorization'] = 'Bearer $accesstoken';
 
     // 파라미터 설정
     Map<String, dynamic> queryParams = {
@@ -259,7 +253,7 @@ class _IntroductionState extends State<Introduction> {
                                       introduceList?.length == 0
                                   ? Center(
                                       child: Text(
-                                        "아직 소개글을 생성하지 않으셨네요!\n인공지능을 통해 매장 소개글을 쉽고 빠르게 작성해보세요.",
+                                        "아직 소개글을 생성하지 않으셨네요!\n인공지능을 통해 매장 소개글을\n쉽고 빠르게 작성해보세요.",
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Color(0xff404040),
