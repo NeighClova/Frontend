@@ -151,6 +151,8 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       onChanged: (text) {
                                         if (text.isNotEmpty) {
                                           FocusScope.of(context).nextFocus();
+                                        } else {
+                                          FocusScope.of(context).previousFocus();
                                         }
                                       },
                                       decoration: InputDecoration(
@@ -176,6 +178,8 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       onChanged: (text) {
                                         if (text.isNotEmpty) {
                                           FocusScope.of(context).nextFocus();
+                                        } else {
+                                          FocusScope.of(context).previousFocus();
                                         }
                                       },
                                       decoration: InputDecoration(
@@ -201,6 +205,8 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       onChanged: (text) {
                                         if (text.isNotEmpty) {
                                           FocusScope.of(context).nextFocus();
+                                        } else {
+                                          FocusScope.of(context).previousFocus();
                                         }
                                       },
                                       decoration: InputDecoration(
@@ -226,6 +232,8 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       onChanged: (text) {
                                         if (text.isNotEmpty) {
                                           FocusScope.of(context).nextFocus();
+                                        } else {
+                                          FocusScope.of(context).previousFocus();
                                         }
                                       },
                                       decoration: InputDecoration(
@@ -251,6 +259,8 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       onChanged: (text) {
                                         if (text.isNotEmpty) {
                                           FocusScope.of(context).nextFocus();
+                                        } else {
+                                          FocusScope.of(context).previousFocus();
                                         }
                                       },
                                       decoration: InputDecoration(
@@ -276,6 +286,8 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                       onChanged: (text) {
                                         if (text.isNotEmpty) {
                                           FocusScope.of(context).nextFocus();
+                                        } else {
+                                          FocusScope.of(context).previousFocus();
                                         }
                                       },
                                       decoration: InputDecoration(
