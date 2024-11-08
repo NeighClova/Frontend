@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/auth/password_email_auth_page%20copy.dart';
 import 'package:flutter_neighclova/main.dart';
 
-class PasswordPage extends StatefulWidget {
-  const PasswordPage({Key? key}) : super(key: key);
+class IdPage extends StatefulWidget {
+  const IdPage({Key? key}) : super(key: key);
 
   @override
-  State<PasswordPage> createState() => _PasswordPageState();
+  State<IdPage> createState() => _IdPageState();
 }
 
-class _PasswordPageState extends State<PasswordPage> {
+class _IdPageState extends State<IdPage> {
   TextEditingController controller = TextEditingController();
 
   void _handleButtonPressed() {
@@ -20,7 +19,7 @@ class _PasswordPageState extends State<PasswordPage> {
         context,
         MaterialPageRoute(
           builder: (BuildContext context) =>
-              PasswordEmailAuthPage(email: email),
+              SendMailPage(email: email),
         ));
     } else {
       showSnackBar(context, Text('가입되지 않은 아이디입니다.'));
@@ -31,23 +30,29 @@ class _PasswordPageState extends State<PasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Color(0xffFFFFFF),
-            scrolledUnderElevation: 0,
-            elevation: 0,
-            shape: Border(
-              bottom: BorderSide(
-                color: Colors.grey.withOpacity(0.1),
-                width: 3,
-              ),
+          backgroundColor: Colors.white,
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          shape: Border(
+            bottom: BorderSide(
+              color: Colors.grey.withOpacity(0.1),
+              width: 3,
             ),
-            title: Text('비밀번호 찾기',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xff404040),
-                  fontSize: 20,
-                )),
-            centerTitle: true,
           ),
+          title: Text('비밀번호 찾기',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xff404040),
+              fontSize: 20,
+            )),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
         body: GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
@@ -219,23 +224,22 @@ class SendMailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Color(0xffFFFFFF),
+          scrolledUnderElevation: 0,
+          elevation: 0,
           shape: Border(
-              bottom: BorderSide(
-            color: Colors.grey,
-            width: 1,
-          )),
-          title: Image(
-            image: AssetImage('assets/logo.png'),
-            width: 130.0,
+            bottom: BorderSide(
+              color: Colors.grey.withOpacity(0.1),
+              width: 3,
+            ),
           ),
+          title: Text('아이디 찾기',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff404040),
+                fontSize: 20,
+              )),
           centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
         ),
         body: Column(children: [
           Padding(padding: EdgeInsets.only(top: 50)),
