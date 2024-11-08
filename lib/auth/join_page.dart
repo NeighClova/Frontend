@@ -19,12 +19,14 @@ class JoinPage extends StatefulWidget {
 }
 
 class _JoinPageState extends State<JoinPage> {
-  TextEditingController username = TextEditingController(); // 이메일
+  TextEditingController email = TextEditingController(); // 이메일
   TextEditingController password = TextEditingController(); // 비밀번호
+  TextEditingController id = TextEditingController();
   bool passwordVisible = false;
   final _formKey = GlobalKey<FormState>();
   String userEmail = '';
   String userPassword = '';
+  String userId = '';
 
   //네이버 로그인
   late AppLinks _appLinks;
@@ -133,7 +135,7 @@ class _JoinPageState extends State<JoinPage> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  Padding(padding: EdgeInsets.only(top: 180)),
+                  Padding(padding: EdgeInsets.only(top: 130)),
                   Center(
                     child: Image(
                       image: AssetImage('assets/logo.png'),
@@ -152,30 +154,27 @@ class _JoinPageState extends State<JoinPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '이메일',
+                                'ID',
                                 style: TextStyle(
-                                    color: Color(0xff717171), fontSize: 16),
+                                    color: Color(0xff717171), fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               Padding(padding: EdgeInsets.only(top: 5)),
                               TextFormField(
                                 validator: (value) {
-                                  if (value!.isEmpty || !value.contains('@')) {
-                                    return '유효한 이메일을 입력해주세요.';
-                                  } else if (emailCheckAction(username.text) ==
-                                      false) {
-                                    return '이미 사용중인 이메일입니다.';
+                                  if (value == null || value.isEmpty || value.length < 5 || value.length > 15) {
+                                    return '영문 5~15자로 입력해주세요.';
                                   } else {
                                     return null;
                                   }
                                 },
                                 onSaved: (value) {
-                                  userEmail = value!;
+                                  userId = value!;
                                 },
-                                controller: username,
+                                controller: id,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(10),
                                   isDense: true,
-                                  hintText: 'example@company.com',
+                                  hintText: '아이디',
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Colors.grey,
@@ -208,7 +207,7 @@ class _JoinPageState extends State<JoinPage> {
                               Text(
                                 '비밀번호',
                                 style: TextStyle(
-                                    color: Color(0xff717171), fontSize: 16),
+                                    color: Color(0xff717171), fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               TextFormField(
                                 validator: (value) {
@@ -220,7 +219,7 @@ class _JoinPageState extends State<JoinPage> {
                                   String pwPattern3 = r'[0-9]';
                                   RegExp regExp3 = RegExp(pwPattern3);
 
-                                  if (value!.length < 8 || value.length > 15) {
+                                  if (value!.length < 8 || value!.length > 15) {
                                     return '8자 이상 15자 이내로 입력하세요.';
                                   } else if (!regExp2.hasMatch(value)) {
                                     return '영문을 포함해야 합니다.';
@@ -278,15 +277,69 @@ class _JoinPageState extends State<JoinPage> {
                                 style: TextStyle(fontSize: 15),
                                 obscureText: !passwordVisible,
                               ),
-                              SizedBox(height: 30.0),
+                              Padding(padding: EdgeInsets.only(top: 22)),
+                              Text(
+                                '이메일',
+                                style: TextStyle(
+                                    color: Color(0xff717171), fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              Padding(padding: EdgeInsets.only(top: 5)),
+                              TextFormField(
+                                validator: (value) {
+                                  if (value!.isEmpty || !value.contains('@')) {
+                                    return '유효한 이메일을 입력해주세요.';
+                                  } else if (emailCheckAction(email.text) ==
+                                      false) {
+                                    return '이미 사용중인 이메일입니다.';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onSaved: (value) {
+                                  userEmail = value!;
+                                },
+                                controller: email,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(10),
+                                  isDense: true,
+                                  hintText: 'example@company.com',
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              SizedBox(height: 60.0),
                               ElevatedButton(
                                 onPressed: () async {
                                   _tryValidation();
                                   if (_formKey.currentState!.validate()) {
                                     // 이메일 인증 코드 보내기
-                                    emailCertificationAction(username.text);
+                                    emailCertificationAction(email.text);
                                     final userdata =
-                                        Userdata(userEmail, userPassword);
+                                        Userdata(userEmail, userPassword, userId);
                                     final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -417,7 +470,8 @@ void showSnackBar(BuildContext context, Text text) {
 class Userdata {
   String email;
   String password;
-  Userdata(this.email, this.password);
+  String id;
+  Userdata(this.email, this.password, this.id);
 }
 
 class WebViewContainer extends StatefulWidget {
