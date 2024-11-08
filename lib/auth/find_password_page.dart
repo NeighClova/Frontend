@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neighclova/auth/find_id_page.dart';
 import 'package:flutter_neighclova/auth/password_email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 
@@ -126,7 +127,11 @@ class _PasswordPageState extends State<PasswordPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          // 아이디찾기 페이지로 이동
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    IdPage()));
                         },
                         child: Text(
                           '아이디를 잊으셨나요?',
