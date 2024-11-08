@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neighclova/auth/change_password_page.dart';
+import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class PasswordEmailAuthPage extends StatefulWidget {
-  final String email;
-  const PasswordEmailAuthPage({Key? key, required this.email}) : super(key: key);
+  final PasswordUserdata userdata;
+  const PasswordEmailAuthPage({Key? key, required this.userdata}) : super(key: key);
 
   @override
-  State<PasswordEmailAuthPage> createState() => _PasswordEmailAuthPageState(email: email);
+  State<PasswordEmailAuthPage> createState() => _PasswordEmailAuthPageState(userdata: userdata);
 }
 
 class _PasswordEmailAuthPageState extends State<PasswordEmailAuthPage> {
-  final String email;
-  _PasswordEmailAuthPageState({required this.email});
+  final PasswordUserdata userdata;
+  _PasswordEmailAuthPageState({required this.userdata});
 
   TextEditingController controller = TextEditingController();
   TextEditingController controller2 = TextEditingController();
@@ -112,7 +114,7 @@ class _PasswordEmailAuthPageState extends State<PasswordEmailAuthPage> {
               Padding(padding: EdgeInsets.only(top: 25)),
               Center(
                 child: Text(
-                  email,
+                  userdata.email,
                   style: TextStyle(
                     color: Color(0xff03C75A),
                     fontSize: 15,
@@ -317,12 +319,12 @@ class _PasswordEmailAuthPageState extends State<PasswordEmailAuthPage> {
                                     print(code);
                                     //Future<bool> result = signInAction(code);
                                     if (/*await result*/code == '123456') {
-                                      Navigator.pushAndRemoveUntil(
+                                      final id = userdata.id;
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (BuildContext context) => Login(),
-                                        ),
-                                        (route) => false);
+                                            builder: (BuildContext context) =>
+                                                ChangePasswordPage(id: id)));
                                     } else {
                                       showSnackBar(
                                           context, Text('코드가 일치하지 않습니다.'));

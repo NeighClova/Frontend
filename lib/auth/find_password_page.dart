@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/auth/password_email_auth_page%20copy.dart';
+import 'package:flutter_neighclova/auth/password_email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 
 class PasswordPage extends StatefulWidget {
@@ -13,14 +13,14 @@ class _PasswordPageState extends State<PasswordPage> {
   TextEditingController controller = TextEditingController();
 
   void _handleButtonPressed() {
-    /////////////////가입된 이메일인지 확인
     if (controller.text == 'testid') {
       final email = 'sojin49@naver.com';
+      final userdata = PasswordUserdata(controller.text, email);
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (BuildContext context) =>
-              PasswordEmailAuthPage(email: email),
+              PasswordEmailAuthPage(userdata: userdata),
         ));
     } else {
       showSnackBar(context, Text('가입되지 않은 아이디입니다.'));
@@ -126,7 +126,7 @@ class _PasswordPageState extends State<PasswordPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          // 버튼이 눌렸을 때 실행될 코드
+                          // 아이디찾기 페이지로 이동
                         },
                         child: Text(
                           '아이디를 잊으셨나요?',
@@ -143,38 +143,6 @@ class _PasswordPageState extends State<PasswordPage> {
                 ),
               ),
               Padding(padding: EdgeInsets.only(top: 50)),
-              // Center(
-              //   child: Container(
-              //     padding: EdgeInsets.all(40.0),
-              //     child: ButtonTheme(
-              //         height: 50.0,
-              //         child: ElevatedButton(
-              //           onPressed: () async {
-              //             /////////////////가입된 이메일인지 확인
-              //             if (controller.text == 'testid') {
-              //               final email = 'sojin49@naver.com';
-              //               final result = await Navigator.push(
-              //                   context,
-              //                   MaterialPageRoute(
-              //                     builder: (BuildContext context) =>
-              //                         SendMailPage(email: email),
-              //                   ));
-              //             } else {
-              //               showSnackBar(context, Text('가입되지 않은 이메일입니다.'));
-              //             }
-              //           },
-              //           child: Text('비밀번호 재설정하기',
-              //               style: TextStyle(color: Colors.white)),
-              //           style: ElevatedButton.styleFrom(
-              //             backgroundColor: Color(0xff03C75A),
-              //             shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(5.0),
-              //             ),
-              //             minimumSize: Size.fromHeight(50),
-              //           ),
-              //         )),
-              //   ),
-              // ),
             ]))),
             bottomNavigationBar: SafeArea(
                 child: Container(
@@ -210,92 +178,8 @@ void showSnackBar(BuildContext context, Text text) {
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
-//메일 발송 페이지
-class SendMailPage extends StatelessWidget {
-  final String email;
-  const SendMailPage({Key? key, required this.email}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          shape: Border(
-              bottom: BorderSide(
-            color: Colors.grey,
-            width: 1,
-          )),
-          title: Image(
-            image: AssetImage('assets/logo.png'),
-            width: 130.0,
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        body: Column(children: [
-          Padding(padding: EdgeInsets.only(top: 50)),
-          Align(
-              //crossAxisAlignment: CrossAxisAlignment.start,
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 40),
-                child: Text('비밀번호 찾기',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff404040),
-                      fontSize: 25,
-                    )),
-              )),
-          Center(
-              child: Column(
-            children: [
-              Image(
-                image: AssetImage('assets/email.png'),
-                width: 250.0,
-              ),
-              Padding(padding: EdgeInsets.only(top: 25)),
-              Text(email,
-                  style: TextStyle(
-                    color: Color(0xff03C75A),
-                    fontSize: 15,
-                  )),
-              Padding(padding: EdgeInsets.only(top: 10)),
-              Text('코드를 보내드렸습니다.',
-                  style: TextStyle(
-                    color: Color(0xff404040),
-                    fontSize: 17,
-                  )),
-              Padding(padding: EdgeInsets.only(top: 25)),
-              Container(
-                padding: EdgeInsets.all(40.0),
-                child: ButtonTheme(
-                    height: 50.0,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => Login(),
-                            ),
-                            (route) => false);
-                      },
-                      child: Text('확인', style: TextStyle(color: Colors.white)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff03C75A),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        minimumSize: Size.fromHeight(50),
-                      ),
-                    )),
-              ),
-            ],
-          )),
-        ]));
-  }
+class PasswordUserdata {
+  String id;
+  String email;
+  PasswordUserdata(this.id, this.email);
 }
