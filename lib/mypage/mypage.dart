@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/mypage/change_password.dart';
+import 'package:flutter_neighclova/auth/change_password_page.dart';
+import 'package:flutter_neighclova/auth/check_password_page.dart';
 import 'package:flutter_neighclova/mypage/instagram_register.dart';
 import 'package:flutter_neighclova/place/edit_info.dart';
 import 'package:flutter_neighclova/mypage/license.dart';
@@ -32,6 +33,7 @@ class _MyPageState extends State<MyPage> {
   dynamic place;
   dynamic email = '';
   dynamic IGName = '';
+  String id = '';
 
   @override
   void initState() {
@@ -437,7 +439,7 @@ class _MyPageState extends State<MyPage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          ChangePassword()));
+                                          CheckPasswordPage()));
                             },
                             style: ButtonStyle(
                               foregroundColor:
