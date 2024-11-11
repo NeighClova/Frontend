@@ -71,7 +71,7 @@ class _LoginState extends State<Login> {
 
   static final storage = FlutterSecureStorage();
   dynamic isFirst = ''; //storage 내의 유저 정보 저장
-  dynamic email = '';
+  dynamic id = '';
   dynamic userInfo = '';
 
   //네이버 로그인
@@ -123,8 +123,9 @@ class _LoginState extends State<Login> {
 
   routeway() async {
     // 데이터 없으면 null
-    email = await storage.read(key: 'email');
-    isFirst = await storage.read(key: email + 'First');
+    id = await storage.read(key: 'id');
+    //업체 첫 등록 확인
+    //isFirst = await storage.read(key: email + 'First');
 
     if (isFirst != null) {
       /*Navigator.push(
@@ -154,10 +155,10 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future<bool> loginAction(email, password) async {
+  Future<bool> loginAction(id, password) async {
     try {
       var dio = Dio();
-      var param = {'email': email, 'password': password};
+      var param = {'uid': id, 'password': password};
       dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
       Response response = await dio.post('/auth/sign-in', data: param);
@@ -176,8 +177,8 @@ class _LoginState extends State<Login> {
           value: password,
         );
         await storage.write(
-          key: 'email',
-          value: email,
+          key: 'id',
+          value: id,
         );
         print('로그인 정보 일치');
         return true;
@@ -241,7 +242,7 @@ class _LoginState extends State<Login> {
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.all(10),
                                 isDense: true,
-                                hintText: '이메일 입력',
+                                hintText: '아이디 입력',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -304,7 +305,7 @@ class _LoginState extends State<Login> {
                                   routeway();
                                 } else {
                                   showSnackBar(
-                                      context, Text('이메일이나 비밀번호가 옳지 않습니다.'));
+                                      context, Text('아이디나 비밀번호가 옳지 않습니다.'));
                                 }
                               },
                               child: Text('로그인',

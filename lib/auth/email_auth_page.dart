@@ -38,9 +38,9 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
     try {
       var dio = Dio();
       var param = {
+        'uid': userdata.id,
         'email': userdata.email,
         'password': userdata.password,
-        'id': userdata.id,
         'certificationNumber': code
       };
       print(userdata.email);
