@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/auth/find_id_page.dart';
 import 'package:flutter_neighclova/auth/password_email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class PasswordPage extends StatefulWidget {
   const PasswordPage({Key? key}) : super(key: key);
@@ -13,19 +17,50 @@ class PasswordPage extends StatefulWidget {
 class _PasswordPageState extends State<PasswordPage> {
   TextEditingController controller = TextEditingController();
 
-  void _handleButtonPressed() {
-    if (controller.text == 'testid') {
-      final email = 'sojin49@naver.com';
-      final userdata = PasswordUserdata(controller.text, email);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              PasswordEmailAuthPage(userdata: userdata),
-        ));
-    } else {
-      showSnackBar(context, Text('가입되지 않은 아이디입니다.'));
+  sendMail(id) async {
+    try {
+      var dio = Dio();
+      var param = {'uid': id};
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+
+      Response response = await dio.post('/auth/uid-certification', data: param);
+
+      if (response.statusCode == 200) {
+        print('메일 전송');
+        String email = response.data['email'];
+        final userdata = PasswordUserdata(id, email);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  PasswordEmailAuthPage(userdata: userdata),
+            ));
+        return true;
+      } else if (response.statusCode == 400) {
+        print('존재하지 않는 사용자');
+        showSnackBar(context, Text('가입되지 않은 아이디입니다.'));
+        return false;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
     }
+  }
+
+  void _handleButtonPressed() {
+    sendMail(controller.text);
   }
 
   @override
