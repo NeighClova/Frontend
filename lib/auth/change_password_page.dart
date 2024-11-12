@@ -3,6 +3,8 @@ import 'package:flutter_neighclova/auth/password_email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_neighclova/auth_dio.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   final String email;
@@ -28,6 +30,39 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     final isValid = _formKey.currentState!.validate();
     if (isValid) {
       _formKey.currentState!.save();
+    }
+  }
+
+  Future<bool> patchPassword(password) async {
+    try {
+      var dio = Dio();
+      var param = {
+        'email': email,
+        'newPassword': password
+      };
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+
+      Response response = await dio.patch('/auth/no-auth/patch-password', data: param);
+
+      if (response.statusCode == 200) {
+        print('비밀번호 변경 성공');
+        return true;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
     }
   }
 
@@ -254,18 +289,19 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         _tryValidation();
                         if (_formKey.currentState!.validate()) {
                           //바뀐 비밀번호 저장
-
-
-                          print(userPassword);
-                          final result = await Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => Login(),
-                            ),
-                            (route) => false);
-                        } else {
-                          showSnackBar(context, Text('비밀번호를 다시 확인해주세요.'));
-                        }
+                          Future<bool> result = patchPassword(userPassword);
+                          if (await result) {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => Login(),
+                              ),
+                              (route) => false);
+                          }
+                          else {
+                            showSnackBar(context, Text('비밀번호를 다시 확인해주세요.'));
+                          }
+                        };
                       },
                       child: Text(
                         '비밀번호 변경',

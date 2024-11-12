@@ -38,41 +38,6 @@ class _PasswordEmailAuthPageState extends State<PasswordEmailAuthPage> {
     super.dispose();
   }
 
-  // Future<bool> validateAction(code) async {
-  //   try {
-  //     var dio = Dio();
-  //     var param = {
-  //       'email': email,
-  //       'certificationNumber': code
-  //     };
-  //     dio.options.baseUrl = dotenv.env['BASE_URL']!;
-
-  //     Response response = await dio.post('/auth/', data: param);
-
-  //     if (response.statusCode == 200) {
-  //       print('이메일 인증 코드 일치');
-  //       return true;
-  //     } else if (response.statusCode == 401) {
-  //       print('이메일 인증 코드 불일치');
-  //       return false;
-  //     } else {
-  //       print('error: ${response.statusCode}');
-  //       return false;
-  //     }
-  //   } on DioError catch (e) {
-  //     if (e.response != null) {
-  //       print('HTTP error: ${e.response?.statusCode}');
-  //       print('Response data: ${e.response?.data}');
-  //     } else {
-  //       print('Exception: $e');
-  //     }
-  //     return false;
-  //   } catch (e) {
-  //     print('Exception: $e');
-  //     return false;
-  //   }
-  // }
-
   Future<bool> validateAction(code) async {
     String email = userdata.email;
     try {
