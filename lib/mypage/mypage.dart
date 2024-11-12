@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/auth/change_password_page.dart';
-import 'package:flutter_neighclova/auth/check_password_page.dart';
+import 'package:flutter_neighclova/auth/no_auth_change_password_page.dart';
+import 'package:flutter_neighclova/mypage/check_password_page.dart';
 import 'package:flutter_neighclova/mypage/instagram_register.dart';
 import 'package:flutter_neighclova/place/edit_info.dart';
 import 'package:flutter_neighclova/mypage/license.dart';

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/auth/change_password_page.dart';
+import 'package:flutter_neighclova/auth/no_auth_change_password_page.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
 import 'package:flutter_neighclova/main.dart';
@@ -327,7 +327,7 @@ class _PasswordEmailAuthPageState extends State<PasswordEmailAuthPage> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (BuildContext context) =>
-                                              ChangePasswordPage(email: userdata.email),
+                                              NoAuthChangePasswordPage(email: userdata.email),
                                         ));
                                     }
                                   },
