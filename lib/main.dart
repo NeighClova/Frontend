@@ -70,8 +70,8 @@ class _LoginState extends State<Login> {
   bool passwordVisible = false;
 
   static final storage = FlutterSecureStorage();
-  dynamic isFirst = ''; //storage 내의 유저 정보 저장
-  dynamic id = '';
+  bool isFirst = true;
+  dynamic email = '';
   dynamic userInfo = '';
 
   //네이버 로그인
@@ -121,30 +121,42 @@ class _LoginState extends State<Login> {
     );
   }
 
+  getAllPlace() async {
+    var dio = Dio();
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+
+    try {
+      Response response =
+          await dio.post('/place/all');
+
+      if (response.statusCode == 200) {
+        List<dynamic> placeList = response.data['placeList']; 
+        if (placeList.isEmpty)
+          isFirst = true;
+        else
+          isFirst = false;
+        return;
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   routeway() async {
     // 데이터 없으면 null
-    id = await storage.read(key: 'id');
+    email = await storage.read(key: 'email');
     //업체 첫 등록 확인
-    //isFirst = await storage.read(key: email + 'First');
+    getAllPlace();
 
-    if (isFirst != null) {
-      /*Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => TabView(),
-        ),
-      );*/
+    if (!isFirst) {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (BuildContext context) => TabView(),
           ),
           (route) => false);
-
-      /*await storage.write(
-        key: 'isFirst',
-        value: 'false',
-      );*/
     } else {
       Navigator.pushAndRemoveUntil(
           context,
@@ -164,6 +176,7 @@ class _LoginState extends State<Login> {
       Response response = await dio.post('/auth/sign-in', data: param);
 
       if (response.statusCode == 200) {
+        email = response.data['email'];
         await storage.write(
           key: 'accessToken',
           value: response.data['accessToken'],
@@ -175,6 +188,10 @@ class _LoginState extends State<Login> {
         await storage.write(
           key: 'password',
           value: password,
+        );
+        await storage.write(
+          key: 'email',
+          value: email,
         );
         await storage.write(
           key: 'id',

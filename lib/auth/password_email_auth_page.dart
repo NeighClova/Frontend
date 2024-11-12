@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/auth/change_password_page.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
@@ -70,6 +72,43 @@ class _PasswordEmailAuthPageState extends State<PasswordEmailAuthPage> {
   //     return false;
   //   }
   // }
+
+  Future<bool> validateAction(code) async {
+    String email = userdata.email;
+    try {
+      var dio = Dio();
+      var param = {
+        'email': email,
+        'certificationNumber': code
+      };
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+
+      Response response = await dio.post('/auth/check-certification', data: param);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 401) {
+        print('존재하지 않는 사용자');
+        showSnackBar(context, Text('코드가 일치하지 않습니다.'));
+        return false;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -317,17 +356,14 @@ class _PasswordEmailAuthPageState extends State<PasswordEmailAuthPage> {
                                         controller5.text +
                                         controller6.text;
                                     print(code);
-                                    //Future<bool> result = signInAction(code);
-                                    if (/*await result*/code == '123456') {
-                                      final id = userdata.id;
+                                    Future<bool> result = validateAction(code);
+                                    if (await result) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                ChangePasswordPage(id: id)));
-                                    } else {
-                                      showSnackBar(
-                                          context, Text('코드가 일치하지 않습니다.'));
+                                          builder: (BuildContext context) =>
+                                              ChangePasswordPage(email: userdata.email),
+                                        ));
                                     }
                                   },
                                   child: Text('확인',

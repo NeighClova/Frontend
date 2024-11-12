@@ -14,7 +14,7 @@ class CheckPasswordPage extends StatefulWidget {
 
 class _CheckPasswordPageState extends State<CheckPasswordPage> {
   TextEditingController controller = TextEditingController();
-  String id = '';
+  String email= '';
 
   void _handleButtonPressed() {
     if (controller.text == 'password') {
@@ -23,7 +23,7 @@ class _CheckPasswordPageState extends State<CheckPasswordPage> {
         context,
         MaterialPageRoute(
           builder: (BuildContext context) =>
-              ChangePasswordPage(id: id),
+              ChangePasswordPage(email: email),
         ));
     } else {
       showSnackBar(context, Text('비밀번호가 옳지 않습니다.'));

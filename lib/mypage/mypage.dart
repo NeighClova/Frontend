@@ -139,9 +139,12 @@ class _MyPageState extends State<MyPage> {
       Response response = await dio.patch('/auth/delete');
 
       if (response.statusCode == 200) {
-        //email = await storage.read(key: 'email');
-        await storage.delete(key: email + 'First');
         await storage.delete(key: 'accessToken');
+        await storage.delete(key: 'refreshToken');
+        await storage.delete(key: 'password');
+        await storage.delete(key: 'id');
+        await storage.delete(key: 'email');
+        await storage.delete(key: 'placeId');
         print('탈퇴 완료');
         return;
       } else {
@@ -626,9 +629,17 @@ class _MyPageState extends State<MyPage> {
                                                   child: TextButton(
                                                       onPressed: () async {
                                                         await storage.delete(
-                                                            key: 'accessToken');
+                                                          key: 'accessToken');
                                                         await storage.delete(
-                                                            key: 'placeId');
+                                                          key: 'placeId');
+                                                        await storage.delete(
+                                                          key: 'refreshToken');
+                                                        await storage.delete(
+                                                          key: 'password');
+                                                        await storage.delete(
+                                                          key: 'id');
+                                                        await storage.delete(
+                                                          key: 'email');
                                                         print('로그아웃');
                                                         Navigator
                                                             .pushAndRemoveUntil(

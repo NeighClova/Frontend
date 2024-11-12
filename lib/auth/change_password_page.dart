@@ -5,16 +5,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_neighclova/auth_dio.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  final String id;
-  const ChangePasswordPage({Key? key, required this.id}) : super(key: key);
+  final String email;
+  const ChangePasswordPage({Key? key, required this.email}) : super(key: key);
 
   @override
-  State<ChangePasswordPage> createState() => _ChangePasswordPageState(id: id);
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState(email: email);
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final String id;
-  _ChangePasswordPageState({required this.id});
+  final String email;
+  _ChangePasswordPageState({required this.email});
 
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController checkPasswordController = TextEditingController();
