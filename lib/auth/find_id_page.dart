@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neighclova/main.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class IdPage extends StatefulWidget {
   const IdPage({Key? key}) : super(key: key);
@@ -23,6 +25,41 @@ class _IdPageState extends State<IdPage> {
         ));
     } else {
       showSnackBar(context, Text('가입되지 않은 이메일입니다.'));
+    }
+  }
+
+  Future<bool> findId(email) async {
+    try {
+      var dio = Dio();
+      var param = {
+        'email': email,
+      };
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+
+      Response response = await dio.post('/auth/send-uid', data: param);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 400) {
+        print('존재하지 않는 아이디');
+        showSnackBar(context, Text('존재하지 않는 아이디입니다.'));
+        return false;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
     }
   }
 
@@ -134,7 +171,17 @@ class _IdPageState extends State<IdPage> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: ElevatedButton(
-                      onPressed: _handleButtonPressed,
+                      onPressed: () async {
+                        Future<bool> result = findId(controller.text);
+                        if (await result) {
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                SendMailPage(email: controller.text),
+                          ));
+                        }
+                      },
                       child: Text(
                         '완료',
                         style: TextStyle(fontSize: 17, color: Colors.white),
