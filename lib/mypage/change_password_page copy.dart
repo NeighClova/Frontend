@@ -4,19 +4,16 @@ import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_neighclova/auth_dio.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  final String email;
-  const ChangePasswordPage({Key? key, required this.email}) : super(key: key);
+  const ChangePasswordPage({Key? key}) : super(key: key);
 
   @override
-  State<ChangePasswordPage> createState() => _ChangePasswordPageState(email: email);
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final String email;
-  _ChangePasswordPageState({required this.email});
+  _ChangePasswordPageState();
 
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController checkPasswordController = TextEditingController();
@@ -37,7 +34,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     try {
       var dio = Dio();
       var param = {
-        'email': email,
         'newPassword': password
       };
       dio.options.baseUrl = dotenv.env['BASE_URL']!;

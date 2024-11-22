@@ -5,6 +5,8 @@ import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/password_email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/mypage/change_password_page%20copy.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CheckPasswordPage extends StatefulWidget {
   const CheckPasswordPage({Key? key}) : super(key: key);
@@ -15,7 +17,6 @@ class CheckPasswordPage extends StatefulWidget {
 
 class _CheckPasswordPageState extends State<CheckPasswordPage> {
   TextEditingController controller = TextEditingController();
-  String email= '';
 
   void _handleButtonPressed() {
     if (controller.text == 'password') {
@@ -24,10 +25,46 @@ class _CheckPasswordPageState extends State<CheckPasswordPage> {
         context,
         MaterialPageRoute(
           builder: (BuildContext context) =>
-              ChangePasswordPage(email: email),
+              ChangePasswordPage(),
         ));
     } else {
       showSnackBar(context, Text('비밀번호가 옳지 않습니다.'));
+    }
+  }
+
+  Future<bool> checkPassword(password) async {
+    try {
+      var dio = Dio();
+      var param = {
+        'password': password
+      };
+      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+
+      Response response = await dio.post('/auth/check-password', data: param);
+
+      if (response.statusCode == 200) {
+        print('비밀번호 확인 성공');
+        return true;
+      } else if (response.statusCode == 403) {
+        print('비밀번호 일치하지 않음');
+        showSnackBar(context, Text('비밀번호가 일치하지 않습니다.'));
+        return false;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
     }
   }
 
@@ -44,7 +81,7 @@ class _CheckPasswordPageState extends State<CheckPasswordPage> {
                 width: 3,
               ),
             ),
-            title: Text('비밀번호 찾기',
+            title: Text('비밀번호 변경',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color(0xff404040),
@@ -167,7 +204,17 @@ class _CheckPasswordPageState extends State<CheckPasswordPage> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: ElevatedButton(
-                      onPressed: _handleButtonPressed,
+                      onPressed: () async {
+                        Future<bool> result = checkPassword(controller.text);
+                        if (await result) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ChangePasswordPage(),
+                            ));
+                        }
+                      },
                       child: Text(
                         '완료',
                         style: TextStyle(fontSize: 17, color: Colors.white),

@@ -92,18 +92,14 @@ class _LoginState extends State<Login> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _asyncMethod();
     });
+
   }
 
   _asyncMethod() async {
     userInfo = await storage.read(key: 'accessToken');
 
     if (userInfo != null) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => TabView(),
-          ),
-          (route) => false);
+      routeway();
     } else {
       print('로그인이 필요합니다');
     }
@@ -127,7 +123,7 @@ class _LoginState extends State<Login> {
 
     try {
       Response response =
-          await dio.post('/place/all');
+          await dio.get('/place/all');
 
       if (response.statusCode == 200) {
         List<dynamic> placeList = response.data['placeList']; 
@@ -148,8 +144,8 @@ class _LoginState extends State<Login> {
     // 데이터 없으면 null
     email = await storage.read(key: 'email');
     //업체 첫 등록 확인
-    getAllPlace();
-
+    await getAllPlace();
+    print("isFirst : " + '$isFirst');
     if (!isFirst) {
       Navigator.pushAndRemoveUntil(
           context,
