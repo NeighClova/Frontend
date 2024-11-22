@@ -228,9 +228,7 @@ class _MainPageState extends State<MainPage> {
                             builder: (BuildContext context) {
                               return StatefulBuilder(
                                 builder: (BuildContext context, StateSetter bottomState) {
-                                  // 화면 높이의 90% 제한
                                   final double maxHeight = MediaQuery.of(context).size.height * 0.9;
-                                  // 동적으로 계산된 높이
                                   final double dynamicHeight = 130 + 64.0 * ((placeList?.length ?? 0));
 
                                   Future<void> onButtonPressed(int index) async {
@@ -266,7 +264,6 @@ class _MainPageState extends State<MainPage> {
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          // 드래그 핸들
                                           Container(
                                             height: 5,
                                             width: 50,
@@ -276,7 +273,6 @@ class _MainPageState extends State<MainPage> {
                                             ),
                                           ),
                                           SizedBox(height: 17),
-                                          // 리스트뷰 (동적 높이에 따라 크기 조정)
                                           Container(
                                             key: _containerKey,
                                             height: 64.0 * ((placeList?.length ?? 0)),

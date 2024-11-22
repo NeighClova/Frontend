@@ -17,6 +17,7 @@ class CheckPasswordPage extends StatefulWidget {
 
 class _CheckPasswordPageState extends State<CheckPasswordPage> {
   TextEditingController controller = TextEditingController();
+  bool passwordVisible = false;
 
   void _handleButtonPressed() {
     if (controller.text == 'password') {
@@ -170,9 +171,23 @@ class _CheckPasswordPageState extends State<CheckPasswordPage> {
                             color: Colors.grey,
                             width: 1.0,
                           )),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
+                          ),
                         ),
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.text,
                         style: TextStyle(fontSize: 15),
+                        obscureText: !passwordVisible,
                       ),
                       TextButton(
                         onPressed: () {
