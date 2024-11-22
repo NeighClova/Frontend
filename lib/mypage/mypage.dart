@@ -161,7 +161,7 @@ class _MyPageState extends State<MyPage> {
       var dio = Dio();
       dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
-      Response response = await dio.patch('/auth/check-social');
+      Response response = await dio.get('/auth/check-social');
 
       if (response.statusCode == 200) {
         print('비밀번호 변경 성공');
