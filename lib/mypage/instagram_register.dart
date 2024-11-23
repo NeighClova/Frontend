@@ -27,12 +27,12 @@ class _InstagramRegisterState extends State<InstagramRegister> {
   }
 
   Future<void> _initialize() async {
-    await _getAllValues(); // 이 작업이 완료될 때까지 기다림
+    await _getAllValues();
     await getPlaceId();
     print('getName 실행');
-    await getIGName(); // 이 작업이 완료될 때까지 기다림
+    await getIGName();
     print('getPassword 실행');
-    await getIGPassword(); // 이 작업이 완료될 때까지 기다림
+    await getIGPassword();
 
     setState(() {
       IGNameController = TextEditingController(text: IGName);

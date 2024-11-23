@@ -337,16 +337,18 @@ class _JoinPageState extends State<JoinPage> {
                                   _tryValidation();
                                   if (_formKey.currentState!.validate()) {
                                     // 이메일 인증 코드 보내기
-                                    emailCertificationAction(email.text);
+                                    final result = await emailCertificationAction(email.text);
                                     final userdata =
                                         Userdata(userEmail, userPassword, userId);
-                                    final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            EmailAuthPage(userdata: userdata),
-                                      ),
-                                    );
+                                    if (result) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              EmailAuthPage(userdata: userdata),
+                                        ),
+                                      );
+                                    }
                                   }
                                 },
                                 child: Text('회원가입',

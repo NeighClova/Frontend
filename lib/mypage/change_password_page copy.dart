@@ -32,11 +32,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   Future<bool> patchPassword(password) async {
     try {
-      var dio = Dio();
+      var dio = await authDio(context);
       var param = {
         'newPassword': password
       };
-      dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
       Response response = await dio.patch('/auth/no-auth/patch-password', data: param);
 

@@ -140,12 +140,7 @@ class _MyPageState extends State<MyPage> {
       Response response = await dio.patch('/auth/delete');
 
       if (response.statusCode == 200) {
-        await storage.delete(key: 'accessToken');
-        await storage.delete(key: 'refreshToken');
-        await storage.delete(key: 'password');
-        await storage.delete(key: 'id');
-        await storage.delete(key: 'email');
-        await storage.delete(key: 'placeId');
+        await storage.deleteAll();
         print('탈퇴 완료');
         return;
       } else {
@@ -158,8 +153,7 @@ class _MyPageState extends State<MyPage> {
 
   Future<bool> checkSocial() async {
     try {
-      var dio = Dio();
-      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+      var dio = await authDio(context);
 
       Response response = await dio.get('/auth/check-social');
 

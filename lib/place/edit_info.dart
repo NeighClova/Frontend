@@ -132,7 +132,7 @@ class _EditInfoState extends State<EditInfo> {
   }
 
   searchPlaceUrl(placeUrl) async {
-    var dio = Dio();
+    var dio = await authDio(context);
     dio.options.baseUrl = dotenv.env['BASE_URL_FAST']!;
 
     setState(() {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 import 'package:flutter_neighclova/mypage/check_password_page.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
@@ -118,7 +119,7 @@ class _LoginState extends State<Login> {
   }
 
   getAllPlace() async {
-    var dio = Dio();
+    var dio = await authDio(context);
     dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
     try {

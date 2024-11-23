@@ -3,6 +3,7 @@ import 'package:flutter_neighclova/auth/no_auth_change_password_page.dart';
 import 'package:flutter_neighclova/auth/find_id_page.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/password_email_auth_page.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:flutter_neighclova/mypage/change_password_page%20copy.dart';
 import 'package:dio/dio.dart';
@@ -35,11 +36,10 @@ class _CheckPasswordPageState extends State<CheckPasswordPage> {
 
   Future<bool> checkPassword(password) async {
     try {
-      var dio = Dio();
+      var dio = await authDio(context);
       var param = {
         'password': password
       };
-      dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
       Response response = await dio.post('/auth/check-password', data: param);
 
