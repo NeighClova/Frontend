@@ -26,7 +26,7 @@ class _IntroductionState extends State<Introduction> {
   void initState() {
     super.initState();
     getIntroduceAction();
-    createInterstitialAd();
+    //createInterstitialAd();
   }
 
   String? placeProfileImg = "";
@@ -43,7 +43,7 @@ class _IntroductionState extends State<Introduction> {
 
   bool _isLoading = false;
 
-  InterstitialAd? _interstitialAd;
+  //InterstitialAd? _interstitialAd;
 
   final picker = ImagePicker();
   dynamic sendData;
@@ -172,7 +172,7 @@ class _IntroductionState extends State<Introduction> {
     getIntroduceAction();
   }
 
-  void createInterstitialAd() {
+  /*void createInterstitialAd() {
     InterstitialAd.load(
       adUnitId: admob.interstitialAdUnitId!,
       request: const AdRequest(),
@@ -202,7 +202,7 @@ class _IntroductionState extends State<Introduction> {
       _interstitialAd!.show();
       createInterstitialAd();
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -556,7 +556,7 @@ class _IntroductionState extends State<Introduction> {
                       Padding(padding: EdgeInsets.only(top: 20)),
                       ElevatedButton(
                         onPressed: () async {
-                          showInterstitialAd();
+                          //showInterstitialAd();
                           final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
