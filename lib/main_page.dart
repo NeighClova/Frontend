@@ -229,7 +229,7 @@ class _MainPageState extends State<MainPage> {
                               return StatefulBuilder(
                                 builder: (BuildContext context, StateSetter bottomState) {
                                   final double maxHeight = MediaQuery.of(context).size.height * 0.9;
-                                  final double dynamicHeight = 130 + 64.0 * ((placeList?.length ?? 0));
+                                  final double dynamicHeight = 130 + 64.0 * ((placeList?.length ?? 0) + 1);
 
                                   Future<void> onButtonPressed(int index) async {
                                     await storage.write(
@@ -275,13 +275,14 @@ class _MainPageState extends State<MainPage> {
                                           SizedBox(height: 17),
                                           Container(
                                             key: _containerKey,
-                                            height: 64.0 * ((placeList?.length ?? 0)),
+                                            height: 64.0 * ((placeList?.length ?? 0) + 1),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius: BorderRadius.circular(12),
                                             ),
                                             child: ListView.builder(
-                                              physics: NeverScrollableScrollPhysics(),
+                                              physics: AlwaysScrollableScrollPhysics(),
+                                              shrinkWrap: true,
                                               itemCount: (placeList?.length ?? 0) + 1,
                                               itemBuilder: (context, index) {
                                                 if (index == (placeList?.length ?? 0)) {
