@@ -229,7 +229,7 @@ class _MainPageState extends State<MainPage> {
                               return StatefulBuilder(
                                 builder: (BuildContext context, StateSetter bottomState) {
                                   final double maxHeight = MediaQuery.of(context).size.height * 0.9;
-                                  final double dynamicHeight = 130 + 64.0 * ((placeList?.length ?? 0) + 1);
+                                  final double dynamicHeight = 150 + 64.0 * ((placeList?.length ?? 0) + 1);
 
                                   Future<void> onButtonPressed(int index) async {
                                     await storage.write(
@@ -375,6 +375,7 @@ class _MainPageState extends State<MainPage> {
                                               ),
                                             ),
                                           ),
+                                          SizedBox(height: 20),
                                         ],
                                       ),
                                     ),
