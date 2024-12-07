@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 
 class InstagramRegister extends StatefulWidget {
   const InstagramRegister({Key? key}) : super(key: key);
@@ -18,6 +21,7 @@ class _InstagramRegisterState extends State<InstagramRegister> {
   static final storage = FlutterSecureStorage();
   dynamic placeId;
   Map<String, String> _allValues = {};
+  bool isFirst = true;
 
   @override
   void initState() {
@@ -27,24 +31,13 @@ class _InstagramRegisterState extends State<InstagramRegister> {
   }
 
   Future<void> _initialize() async {
-    await _getAllValues(); // 이 작업이 완료될 때까지 기다림
     await getPlaceId();
-    print('getName 실행');
-    await getIGName(); // 이 작업이 완료될 때까지 기다림
-    print('getPassword 실행');
-    await getIGPassword(); // 이 작업이 완료될 때까지 기다림
+    await getInstagram();
 
+    print('인스타 아이디: $IGName');
     setState(() {
       IGNameController = TextEditingController(text: IGName);
       IGPasswordController = TextEditingController(text: IGPassword);
-    });
-  }
-
-  Future<void> _getAllValues() async {
-    final allValues = await storage.readAll();
-    print("Secure Storage 모든 값: $allValues");
-    setState(() {
-      _allValues = allValues;
     });
   }
 
@@ -56,48 +49,128 @@ class _InstagramRegisterState extends State<InstagramRegister> {
     print('placeID : $placeId');
   }
 
-  Future<void> getIGName() async {
-    print('IG 이름 얻기');
-    String? storedIGName = await storage.read(key: placeId + 'IGName');
-    setState(() {
-      IGName = storedIGName;
-    });
-    print('IGName : $IGName');
+  Future<bool> saveInstagram() async {
+    try {
+      var dio = await authDio(context);
+      var param = {
+        'placeId': placeId,
+        'id': IGNameController.text,
+        'password': IGPasswordController.text
+      };
+
+      Response response = await dio.post('/place/instagram', data: param);
+
+      if (response.statusCode == 200) {
+        print('인스타그램 계정 저장 성공');
+
+        return true;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
   }
 
-  Future<void> getIGPassword() async {
-    print('IG비번 얻기');
-    String? storedIGName = await storage.read(key: placeId + 'IGPassword');
-    setState(() {
-      IGPassword = storedIGName;
-    });
-    print('IGPassword : $IGPassword');
+  Future<bool> patchInstagram() async {
+    try {
+      var dio = await authDio(context);
+      var param = {
+        'placeId': placeId,
+        'id': IGNameController.text,
+        'password': IGPasswordController.text
+      };
+
+      Response response = await dio.patch('/place/instagram', data: param);
+
+      if (response.statusCode == 200) {
+        print('인스타그램 계정 수정 성공');
+
+        return true;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
+  }
+
+  Future<bool> getInstagram() async {
+    try {
+      var dio = await authDio(context);
+      var param = {
+        'placeId': placeId,
+      };
+
+      Response response = await dio.get('/place/instagram', queryParameters: param);
+
+      if (response.statusCode == 200) {
+        print('인스타그램 계정 조회 성공');
+        var data = response.data;
+        String instagramId = data['instagramId'];
+        String instagramPw = data['instagramPw'];
+
+        if (instagramId == null && instagramPw == null)
+          isFirst = true;
+        else
+          isFirst = false;
+
+        IGName = instagramId;
+        IGPassword = instagramPw;
+
+        return true;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
   }
 
   Future<void> _handleRegisterIG() async {
-    //백엔드
-    // if (_formKey.currentState!.validate()) {
-    //   //Future<bool> result = patchPasswordAction(userPassword, newPassword);
-    //   if (await result) {
-    //     Navigator.pushAndRemoveUntil(
-    //         context,
-    //         MaterialPageRoute(
-    //           builder: (BuildContext context) => MyApp(),
-    //         ),
-    //         (route) => false);
-    //   }
-    // }
-    //등록 여부 저장, 백엔드 코드 안에 넣기
-    placeId = await storage.read(key: 'placeId');
-    await storage.write(
-      key: placeId + 'IGName',
-      value: IGNameController.text,
-    );
-    await storage.write(
-      key: placeId + 'IGPassword',
-      value: IGPasswordController.text,
-    );
-    Navigator.pop(context, true);
+    if (_formKey.currentState!.validate()) {
+      if (isFirst) {
+        await saveInstagram();
+        Navigator.pop(context, true);
+      } else {
+        await patchInstagram();
+        Navigator.pop(context, true);
+      }
+    }
+
   }
 
   @override
@@ -294,4 +367,13 @@ class _InstagramRegisterState extends State<InstagramRegister> {
           )),
     );
   }
+}
+
+void showSnackBar(BuildContext context, Text text) {
+  final snackBar = SnackBar(
+    content: text,
+    backgroundColor: Color(0xff03C75A),
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }

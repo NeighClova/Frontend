@@ -1,44 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/auth/find_id_page.dart';
-import 'package:flutter_neighclova/auth/password_email_auth_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-class PasswordPage extends StatefulWidget {
-  const PasswordPage({Key? key}) : super(key: key);
+class IdPage extends StatefulWidget {
+  const IdPage({Key? key}) : super(key: key);
 
   @override
-  State<PasswordPage> createState() => _PasswordPageState();
+  State<IdPage> createState() => _IdPageState();
 }
 
-class _PasswordPageState extends State<PasswordPage> {
+class _IdPageState extends State<IdPage> {
   TextEditingController controller = TextEditingController();
 
-  sendMail(id) async {
+  void _handleButtonPressed() {
+    /////////////////가입된 이메일인지 확인
+    if (controller.text == 'sojin49@naver.com') {
+      final email = 'sojin49@naver.com';
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>
+              SendMailPage(email: email),
+        ));
+    } else {
+      showSnackBar(context, Text('가입되지 않은 이메일입니다.'));
+    }
+  }
+
+  Future<bool> findId(email) async {
     try {
       var dio = Dio();
-      var param = {'uid': id};
+      var param = {
+        'email': email,
+      };
       dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
-      Response response = await dio.post('/auth/uid-certification', data: param);
+      Response response = await dio.post('/auth/send-uid', data: param);
 
       if (response.statusCode == 200) {
-        print('메일 전송');
-        String email = response.data['email'];
-        final userdata = PasswordUserdata(id, email);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  PasswordEmailAuthPage(userdata: userdata),
-            ));
         return true;
       } else if (response.statusCode == 400) {
-        print('존재하지 않는 사용자');
-        showSnackBar(context, Text('가입되지 않은 아이디입니다.'));
+        print('존재하지 않는 아이디');
+        showSnackBar(context, Text('존재하지 않는 아이디입니다.'));
         return false;
       } else {
         print('error: ${response.statusCode}');
@@ -59,10 +63,6 @@ class _PasswordPageState extends State<PasswordPage> {
     }
   }
 
-  void _handleButtonPressed() {
-    sendMail(controller.text);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +76,7 @@ class _PasswordPageState extends State<PasswordPage> {
                 width: 3,
               ),
             ),
-            title: Text('비밀번호 찾기',
+            title: Text('아이디 찾기',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color(0xff404040),
@@ -125,7 +125,7 @@ class _PasswordPageState extends State<PasswordPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                       Text(
-                        'ID',
+                        '이메일',
                         style: TextStyle(
                             color: Color(0xff717171), fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -135,7 +135,7 @@ class _PasswordPageState extends State<PasswordPage> {
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.all(10),
                           isDense: true,
-                          hintText: '아이디',
+                          hintText: 'example@company.com',
                           enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                             color: Colors.grey,
@@ -160,29 +160,10 @@ class _PasswordPageState extends State<PasswordPage> {
                         keyboardType: TextInputType.emailAddress,
                         style: TextStyle(fontSize: 15),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    IdPage()));
-                        },
-                        child: Text(
-                          '아이디를 잊으셨나요?',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            decorationColor: Color(0xff949494),
-                            fontSize: 13,
-                            color: Color(0xff949494),
-                          ),
-                        ),
-                      ),
                     ]);
                   }))),
                 ),
               ),
-              Padding(padding: EdgeInsets.only(top: 50)),
             ]))),
             bottomNavigationBar: SafeArea(
                 child: Container(
@@ -190,7 +171,17 @@ class _PasswordPageState extends State<PasswordPage> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: ElevatedButton(
-                      onPressed: _handleButtonPressed,
+                      onPressed: () async {
+                        Future<bool> result = findId(controller.text);
+                        if (await result) {
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                SendMailPage(email: controller.text),
+                          ));
+                        }
+                      },
                       child: Text(
                         '완료',
                         style: TextStyle(fontSize: 17, color: Colors.white),
@@ -218,8 +209,96 @@ void showSnackBar(BuildContext context, Text text) {
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
-class PasswordUserdata {
-  String id;
-  String email;
-  PasswordUserdata(this.id, this.email);
+//메일 발송 페이지
+class SendMailPage extends StatelessWidget {
+  final String email;
+  const SendMailPage({Key? key, required this.email}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          shape: Border(
+            bottom: BorderSide(
+              color: Colors.grey.withOpacity(0.1),
+              width: 3,
+            ),
+          ),
+          title: Image(
+            image: AssetImage('assets/logo.png'),
+            width: 130.0,
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: Column(children: [
+          Padding(padding: EdgeInsets.only(top: 50)),
+          Align(
+              //crossAxisAlignment: CrossAxisAlignment.start,
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 30),
+                child: Text('아이디 찾기',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff404040),
+                      fontSize: 20,
+                    )),
+              )),
+          Center(
+              child: Column(
+            children: [
+              Image(
+                image: AssetImage('assets/email.png'),
+                width: 250.0,
+              ),
+              Padding(padding: EdgeInsets.only(top: 25)),
+              Text(email,
+                  style: TextStyle(
+                    color: Color(0xff03C75A),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  )),
+              Padding(padding: EdgeInsets.only(top: 10)),
+              Text('회원님의 아이디가 메일로 발송되었습니다.',
+                  style: TextStyle(
+                    color: Color(0xff404040),
+                    fontSize: 16,
+                  )),
+              Padding(padding: EdgeInsets.only(top: 25)),
+              Container(
+                padding: EdgeInsets.all(40.0),
+                child: ButtonTheme(
+                    height: 50.0,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => Login(),
+                            ),
+                            (route) => false);
+                      },
+                      child: Text('확인', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xff03C75A),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        minimumSize: Size.fromHeight(50),
+                      ),
+                    )),
+              ),
+            ],
+          )),
+        ]));
+  }
 }

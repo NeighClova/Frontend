@@ -1,20 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_neighclova/auth/no_auth_change_password_page.dart';
+import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
 import 'package:flutter_neighclova/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class EmailAuthPage extends StatefulWidget {
-  final Userdata userdata;
-  const EmailAuthPage({Key? key, required this.userdata}) : super(key: key);
+class PasswordEmailAuthPage extends StatefulWidget {
+  final PasswordUserdata userdata;
+  const PasswordEmailAuthPage({Key? key, required this.userdata}) : super(key: key);
 
   @override
-  State<EmailAuthPage> createState() => _EmailAuthPageState(userdata: userdata);
+  State<PasswordEmailAuthPage> createState() => _PasswordEmailAuthPageState(userdata: userdata);
 }
 
-class _EmailAuthPageState extends State<EmailAuthPage> {
-  final Userdata userdata;
-  _EmailAuthPageState({required this.userdata});
+class _PasswordEmailAuthPageState extends State<PasswordEmailAuthPage> {
+  final PasswordUserdata userdata;
+  _PasswordEmailAuthPageState({required this.userdata});
 
   TextEditingController controller = TextEditingController();
   TextEditingController controller2 = TextEditingController();
@@ -34,29 +38,27 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
     super.dispose();
   }
 
-  Future<bool> signInAction(code) async {
+  Future<bool> validateAction(code) async {
+    String email = userdata.email;
     try {
       var dio = Dio();
       var param = {
-        'uid': userdata.id,
-        'email': userdata.email,
-        'password': userdata.password,
+        'email': email,
         'certificationNumber': code
       };
-      print(userdata.email);
-      print(userdata.password);
       dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
-      Response response = await dio.post('/auth/sign-up', data: param);
+      Response response = await dio.post('/auth/check-certification', data: param);
 
       if (response.statusCode == 200) {
-        print('이메일 인증 코드 일치');
         return true;
       } else if (response.statusCode == 401) {
-        print('이메일 인증 코드 불일치');
+        print('존재하지 않는 사용자');
+        showSnackBar(context, Text('코드가 일치하지 않습니다.'));
         return false;
       } else {
         print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
         return false;
       }
     } on DioError catch (e) {
@@ -319,18 +321,14 @@ class _EmailAuthPageState extends State<EmailAuthPage> {
                                         controller5.text +
                                         controller6.text;
                                     print(code);
-                                    Future<bool> result = signInAction(code);
+                                    Future<bool> result = validateAction(code);
                                     if (await result) {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                MyApp(),
-                                          ),
-                                          (route) => false);
-                                    } else {
-                                      showSnackBar(
-                                          context, Text('코드가 일치하지 않습니다.'));
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              NoAuthChangePasswordPage(email: userdata.email),
+                                        ));
                                     }
                                   },
                                   child: Text('확인',

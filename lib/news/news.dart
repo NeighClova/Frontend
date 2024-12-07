@@ -21,13 +21,13 @@ class _NewsPageState extends State<NewsPage> {
   dynamic placeId;
   List<News>? newsList = [];
 
-  InterstitialAd? _interstitialAd;
+  //InterstitialAd? _interstitialAd;
 
   @override
   void initState() {
     super.initState();
     getAllNewsAction();
-    createInterstitialAd();
+    //createInterstitialAd();
   }
 
   Future<List<News>?> getAllNewsAction() async {
@@ -55,7 +55,7 @@ class _NewsPageState extends State<NewsPage> {
     }
   }
 
-  void createInterstitialAd() {
+  /*void createInterstitialAd() {
     InterstitialAd.load(
       adUnitId: admob.interstitialAdUnitId!,
       request: const AdRequest(),
@@ -85,7 +85,7 @@ class _NewsPageState extends State<NewsPage> {
       _interstitialAd!.show();
       createInterstitialAd();
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -137,30 +137,34 @@ class _NewsPageState extends State<NewsPage> {
                 ),
               );
             }
-            return ListView.separated(
-              itemCount: newsList?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                var news = newsList?[index];
-                return NewsCard(
-                    number: index + 1,
-                    title: news?.title ?? '',
-                    content: news?.content ?? '',
-                    placeName: news?.placeName ?? '',
-                    createdAt: news?.createdAt ?? '',
-                    profileImg: news?.profileImg ?? '');
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return SizedBox(
-                  height: 20,
-                );
-              },
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: ListView.separated(
+                itemCount: newsList?.length ?? 0,
+                itemBuilder: (BuildContext context, int index) {
+                  var news = newsList?[index];
+                  return NewsCard(
+                      number: index + 1,
+                      title: news?.title ?? '',
+                      content: news?.content ?? '',
+                      placeName: news?.placeName ?? '',
+                      createdAt: news?.createdAt ?? '',
+                      profileImg: news?.profileImg ?? '');
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return SizedBox(
+                    height: 20,
+                  );
+                },
+              )
+
             );
           }
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          showInterstitialAd();
+          //showInterstitialAd();
           final result = await Navigator.push(
               context,
               MaterialPageRoute(

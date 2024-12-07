@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
+import 'package:flutter_neighclova/mypage/check_password_page.dart';
 import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/join_page.dart';
 
@@ -69,7 +71,7 @@ class _LoginState extends State<Login> {
   bool passwordVisible = false;
 
   static final storage = FlutterSecureStorage();
-  dynamic isFirst = ''; //storage 내의 유저 정보 저장
+  bool isFirst = true;
   dynamic email = '';
   dynamic userInfo = '';
 
@@ -91,18 +93,14 @@ class _LoginState extends State<Login> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _asyncMethod();
     });
+
   }
 
   _asyncMethod() async {
     userInfo = await storage.read(key: 'accessToken');
 
     if (userInfo != null) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => TabView(),
-          ),
-          (route) => false);
+      routeway();
     } else {
       print('로그인이 필요합니다');
     }
@@ -120,29 +118,42 @@ class _LoginState extends State<Login> {
     );
   }
 
+  getAllPlace() async {
+    var dio = await authDio(context);
+    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+
+    try {
+      Response response =
+          await dio.get('/place/all');
+
+      if (response.statusCode == 200) {
+        List<dynamic> placeList = response.data['placeList']; 
+        if (placeList.isEmpty)
+          isFirst = true;
+        else
+          isFirst = false;
+        return;
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   routeway() async {
     // 데이터 없으면 null
     email = await storage.read(key: 'email');
-    isFirst = await storage.read(key: email + 'First');
-
-    if (isFirst != null) {
-      /*Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => TabView(),
-        ),
-      );*/
+    //업체 첫 등록 확인
+    await getAllPlace();
+    print("isFirst : " + '$isFirst');
+    if (!isFirst) {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (BuildContext context) => TabView(),
           ),
           (route) => false);
-
-      /*await storage.write(
-        key: 'isFirst',
-        value: 'false',
-      );*/
     } else {
       Navigator.pushAndRemoveUntil(
           context,
@@ -153,15 +164,16 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future<bool> loginAction(email, password) async {
+  Future<bool> loginAction(id, password) async {
     try {
       var dio = Dio();
-      var param = {'email': email, 'password': password};
+      var param = {'uid': id, 'password': password};
       dio.options.baseUrl = dotenv.env['BASE_URL']!;
 
       Response response = await dio.post('/auth/sign-in', data: param);
 
       if (response.statusCode == 200) {
+        email = response.data['email'];
         await storage.write(
           key: 'accessToken',
           value: response.data['accessToken'],
@@ -177,6 +189,10 @@ class _LoginState extends State<Login> {
         await storage.write(
           key: 'email',
           value: email,
+        );
+        await storage.write(
+          key: 'id',
+          value: id,
         );
         print('로그인 정보 일치');
         return true;
@@ -240,7 +256,7 @@ class _LoginState extends State<Login> {
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.all(10),
                                 isDense: true,
-                                hintText: '이메일 입력',
+                                hintText: '아이디 입력',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -303,7 +319,7 @@ class _LoginState extends State<Login> {
                                   routeway();
                                 } else {
                                   showSnackBar(
-                                      context, Text('이메일이나 비밀번호가 옳지 않습니다.'));
+                                      context, Text('아이디나 비밀번호가 옳지 않습니다.'));
                                 }
                               },
                               child: Text('로그인',

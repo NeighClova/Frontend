@@ -1,44 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neighclova/auth/no_auth_change_password_page.dart';
 import 'package:flutter_neighclova/auth/find_id_page.dart';
+import 'package:flutter_neighclova/auth/find_password_page.dart';
 import 'package:flutter_neighclova/auth/password_email_auth_page.dart';
+import 'package:flutter_neighclova/auth_dio.dart';
 import 'package:flutter_neighclova/main.dart';
+import 'package:flutter_neighclova/mypage/change_password_page%20copy.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-class PasswordPage extends StatefulWidget {
-  const PasswordPage({Key? key}) : super(key: key);
+class CheckPasswordPage extends StatefulWidget {
+  const CheckPasswordPage({Key? key}) : super(key: key);
 
   @override
-  State<PasswordPage> createState() => _PasswordPageState();
+  State<CheckPasswordPage> createState() => _CheckPasswordPageState();
 }
 
-class _PasswordPageState extends State<PasswordPage> {
+class _CheckPasswordPageState extends State<CheckPasswordPage> {
   TextEditingController controller = TextEditingController();
+  bool passwordVisible = false;
 
-  sendMail(id) async {
+  void _handleButtonPressed() {
+    if (controller.text == 'password') {
+      final id = 'testid';
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>
+              ChangePasswordPage(),
+        ));
+    } else {
+      showSnackBar(context, Text('비밀번호가 옳지 않습니다.'));
+    }
+  }
+
+  Future<bool> checkPassword(password) async {
     try {
-      var dio = Dio();
-      var param = {'uid': id};
-      dio.options.baseUrl = dotenv.env['BASE_URL']!;
+      var dio = await authDio(context);
+      var param = {
+        'password': password
+      };
 
-      Response response = await dio.post('/auth/uid-certification', data: param);
+      Response response = await dio.post('/auth/check-password', data: param);
 
       if (response.statusCode == 200) {
-        print('메일 전송');
-        String email = response.data['email'];
-        final userdata = PasswordUserdata(id, email);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  PasswordEmailAuthPage(userdata: userdata),
-            ));
+        print('비밀번호 확인 성공');
         return true;
-      } else if (response.statusCode == 400) {
-        print('존재하지 않는 사용자');
-        showSnackBar(context, Text('가입되지 않은 아이디입니다.'));
+      } else if (response.statusCode == 403) {
+        print('비밀번호 일치하지 않음');
+        showSnackBar(context, Text('비밀번호가 일치하지 않습니다.'));
         return false;
       } else {
         print('error: ${response.statusCode}');
@@ -59,10 +69,6 @@ class _PasswordPageState extends State<PasswordPage> {
     }
   }
 
-  void _handleButtonPressed() {
-    sendMail(controller.text);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +82,7 @@ class _PasswordPageState extends State<PasswordPage> {
                 width: 3,
               ),
             ),
-            title: Text('비밀번호 찾기',
+            title: Text('비밀번호 변경',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color(0xff404040),
@@ -99,17 +105,26 @@ class _PasswordPageState extends State<PasswordPage> {
                       children: [
                         Padding(padding: EdgeInsets.only(top: 25)),
                         Text(
-                          '• 회원님의 아이디를 입력해주세요.',
+                          '비밀번호 확인',
                           style: TextStyle(
                             color: Color(0xff404040),
-                            fontSize: 13,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 10)),
+                        Text(
+                          '회원님의 정보 보호를 위해,',
+                          style: TextStyle(
+                            color: Color(0xff404040),
+                            fontSize: 14,
                           ),
                         ),
                         Text(
-                          '• 회원가입 시 입력했던 이메일로 인증 코드를 전송해드립니다.',
+                          '현재 사용중인 비밀번호를 확인해주세요.',
                           style: TextStyle(
                             color: Color(0xff404040),
-                            fontSize: 13,
+                            fontSize: 14,
                           ),
                         ),
                       ]),
@@ -125,7 +140,7 @@ class _PasswordPageState extends State<PasswordPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                       Text(
-                        'ID',
+                        '비밀번호',
                         style: TextStyle(
                             color: Color(0xff717171), fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -135,7 +150,7 @@ class _PasswordPageState extends State<PasswordPage> {
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.all(10),
                           isDense: true,
-                          hintText: '아이디',
+                          hintText: '비밀번호 입력',
                           enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                             color: Colors.grey,
@@ -156,9 +171,23 @@ class _PasswordPageState extends State<PasswordPage> {
                             color: Colors.grey,
                             width: 1.0,
                           )),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
+                          ),
                         ),
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.text,
                         style: TextStyle(fontSize: 15),
+                        obscureText: !passwordVisible,
                       ),
                       TextButton(
                         onPressed: () {
@@ -166,10 +195,10 @@ class _PasswordPageState extends State<PasswordPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    IdPage()));
+                                    PasswordPage()));
                         },
                         child: Text(
-                          '아이디를 잊으셨나요?',
+                          '비밀번호를 잊으셨나요?',
                           style: TextStyle(
                             decoration: TextDecoration.underline,
                             decorationColor: Color(0xff949494),
@@ -190,7 +219,17 @@ class _PasswordPageState extends State<PasswordPage> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: ElevatedButton(
-                      onPressed: _handleButtonPressed,
+                      onPressed: () async {
+                        Future<bool> result = checkPassword(controller.text);
+                        if (await result) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ChangePasswordPage(),
+                            ));
+                        }
+                      },
                       child: Text(
                         '완료',
                         style: TextStyle(fontSize: 17, color: Colors.white),

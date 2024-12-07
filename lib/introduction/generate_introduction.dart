@@ -84,8 +84,7 @@ class _GenerateIntroductionState extends State<GenerateIntroduction> {
   ];
 
   makeIntroduceAction() async {
-    var dio = Dio();
-    dio.options.baseUrl = dotenv.env['BASE_URL']!;
+    var dio = await authDio(context);
     var placeId = await storage.read(key: 'placeId');
 
     // 파라미터 설정

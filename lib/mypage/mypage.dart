@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_neighclova/mypage/change_password.dart';
+import 'package:flutter_neighclova/auth/no_auth_change_password_page.dart';
+import 'package:flutter_neighclova/mypage/check_password_page.dart';
 import 'package:flutter_neighclova/mypage/instagram_register.dart';
 import 'package:flutter_neighclova/place/edit_info.dart';
 import 'package:flutter_neighclova/mypage/license.dart';
@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_neighclova/auth_dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -32,6 +33,7 @@ class _MyPageState extends State<MyPage> {
   dynamic place;
   dynamic email = '';
   dynamic IGName = '';
+  String id = '';
 
   @override
   void initState() {
@@ -137,9 +139,7 @@ class _MyPageState extends State<MyPage> {
       Response response = await dio.patch('/auth/delete');
 
       if (response.statusCode == 200) {
-        //email = await storage.read(key: 'email');
-        await storage.delete(key: email + 'First');
-        await storage.delete(key: 'accessToken');
+        await storage.deleteAll();
         print('탈퇴 완료');
         return;
       } else {
@@ -147,6 +147,38 @@ class _MyPageState extends State<MyPage> {
       }
     } catch (e) {
       print('Error: $e');
+    }
+  }
+
+  Future<bool> checkSocial() async {
+    try {
+      var dio = await authDio(context);
+
+      Response response = await dio.get('/auth/check-social');
+
+      if (response.statusCode == 200) {
+        print('비밀번호 변경 성공');
+        return true;
+      } else if (response.statusCode == 403) {
+        print('소셜 회원');
+        showSnackBar(context, Text('소셜 로그인 회원은 비밀번호 변경이 불가합니다.'));
+        return false;
+      } else {
+        print('error: ${response.statusCode}');
+        showSnackBar(context, Text('오류가 발생했습니다.'));
+        return false;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('HTTP error: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Exception: $e');
+      }
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
     }
   }
 
@@ -389,7 +421,7 @@ class _MyPageState extends State<MyPage> {
                             ),
                             Padding(padding: EdgeInsets.only(right: 15)),
                             Text(
-                              '아이디',
+                              '이메일',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -432,12 +464,21 @@ class _MyPageState extends State<MyPage> {
                           alignment: Alignment.centerLeft,
                           height: 55,
                           child: TextButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              Future<bool> result = checkSocial();
+                              if (await result) {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) => CheckPasswordPage(),
+                                  ),
+                                  (route) => false);
+                              }
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          ChangePassword()));
+                                          CheckPasswordPage()));
                             },
                             style: ButtonStyle(
                               foregroundColor:
@@ -624,9 +665,17 @@ class _MyPageState extends State<MyPage> {
                                                   child: TextButton(
                                                       onPressed: () async {
                                                         await storage.delete(
-                                                            key: 'accessToken');
+                                                          key: 'accessToken');
                                                         await storage.delete(
-                                                            key: 'placeId');
+                                                          key: 'placeId');
+                                                        await storage.delete(
+                                                          key: 'refreshToken');
+                                                        await storage.delete(
+                                                          key: 'password');
+                                                        await storage.delete(
+                                                          key: 'id');
+                                                        await storage.delete(
+                                                          key: 'email');
                                                         print('로그아웃');
                                                         Navigator
                                                             .pushAndRemoveUntil(
@@ -1060,4 +1109,13 @@ class _MyPageState extends State<MyPage> {
       }
     }
   }
+}
+
+void showSnackBar(BuildContext context, Text text) {
+  final snackBar = SnackBar(
+    content: text,
+    backgroundColor: Color(0xff03C75A),
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }

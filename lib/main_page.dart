@@ -223,47 +223,44 @@ class _MainPageState extends State<MainPage> {
                       TextButton(
                         onPressed: () {
                           showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return StatefulBuilder(builder:
-                                    (BuildContext context,
-                                        StateSetter bottomState) {
-                                  WidgetsBinding.instance.addPostFrameCallback(
-                                      (_) =>
-                                          _updateContainerHeight(bottomState));
-                                  Future<void> onButtonPressed(
-                                      int index) async {
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              return StatefulBuilder(
+                                builder: (BuildContext context, StateSetter bottomState) {
+                                  final double maxHeight = MediaQuery.of(context).size.height * 0.9;
+                                  final double dynamicHeight = 150 + 64.0 * ((placeList?.length ?? 0) + 1);
+
+                                  Future<void> onButtonPressed(int index) async {
                                     await storage.write(
-                                        key: 'placeId',
-                                        value: placeList?[index]
-                                            .placeId
-                                            .toString());
+                                        key: 'placeId', value: placeList?[index].placeId.toString());
                                     await getMain();
                                     Navigator.pop(context);
-                                    (context as Element).reassemble();
                                   }
 
                                   return Container(
-                                    height: 130 +
-                                        64.0 * ((placeList?.length ?? 0) + 1),
+                                    constraints: BoxConstraints(
+                                      maxHeight: dynamicHeight > maxHeight ? maxHeight : dynamicHeight,
+                                    ),
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xffF9FFE1),
-                                            Color(0xffFFEDED),
-                                            Color(0xffFDF6FF),
-                                            Color(0xffFCFFE9),
-                                            Color(0xffEAFFF5),
-                                            Color(0xffF0FBFF),
-                                          ]),
-                                      borderRadius: BorderRadius.circular(13),
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Color(0xffF9FFE1),
+                                          Color(0xffFFEDED),
+                                          Color(0xffFDF6FF),
+                                          Color(0xffFCFFE9),
+                                          Color(0xffEAFFF5),
+                                          Color(0xffF0FBFF),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20),
+                                      ),
                                     ),
                                     child: Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(20, 10, 20, 23),
+                                      padding: EdgeInsets.fromLTRB(20, 10, 20, 23),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -272,148 +269,99 @@ class _MainPageState extends State<MainPage> {
                                             width: 50,
                                             decoration: BoxDecoration(
                                               color: Colors.grey[400],
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                              borderRadius: BorderRadius.circular(10),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 17),
-                                          ),
+                                          SizedBox(height: 17),
                                           Container(
                                             key: _containerKey,
+                                            height: 64.0 * ((placeList?.length ?? 0) + 1),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
+                                              borderRadius: BorderRadius.circular(12),
                                             ),
-                                            child: Flexible(
-                                              child: ListView.builder(
-                                                shrinkWrap: true,
-                                                itemCount:
-                                                    (placeList?.length ?? 0) +
-                                                        1,
-                                                itemBuilder: (context, index) {
-                                                  if (index ==
-                                                      (placeList?.length ??
-                                                          0)) {
-                                                    return ListTile(
-                                                      leading: CircleAvatar(
-                                                        backgroundColor:
-                                                            Color(0xffF2F2F2),
-                                                        child: ClipOval(
-                                                          child: Icon(Icons.add,
-                                                              color: Color(
-                                                                  0xff656565)),
-                                                        ),
-                                                      ),
-                                                      title: TextButton(
-                                                        onPressed: () {
-                                                          Navigator
-                                                              .pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        RegisterInfo()),
-                                                          );
-                                                        },
-                                                        child: Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: Text(
-                                                            '내 업체 추가',
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                            ),
+                                            child: ListView.builder(
+                                              physics: AlwaysScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: (placeList?.length ?? 0) + 1,
+                                              itemBuilder: (context, index) {
+                                                if (index == (placeList?.length ?? 0)) {
+                                                  return ListTile(
+                                                    leading: CircleAvatar(
+                                                      backgroundColor: Color(0xffF2F2F2),
+                                                      child: Icon(Icons.add, color: Color(0xff656565)),
+                                                    ),
+                                                    title: TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pushReplacement(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => RegisterInfo(),
                                                           ),
+                                                        );
+                                                      },
+                                                      child: Align(
+                                                        alignment: Alignment.centerLeft,
+                                                        child: Text(
+                                                          '내 업체 추가',
+                                                          style: TextStyle(fontSize: 16),
                                                         ),
                                                       ),
-                                                      trailing: null,
-                                                    );
-                                                  } else {
-                                                    return ListTile(
-                                                      leading: CircleAvatar(
-                                                        backgroundColor:
-                                                            Colors.grey[400],
-                                                        child: ClipOval(
-                                                            child: placeList?[index]
-                                                                        .profileImg !=
-                                                                    null
-                                                                ? Image.network(
-                                                                    '${placeList![index].profileImg}',
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    width: double
-                                                                        .infinity,
-                                                                    height: double
-                                                                        .infinity)
-                                                                : Icon(
-                                                                    Icons
-                                                                        .person,
-                                                                    color: Colors
-                                                                        .white,
-                                                                  )),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return ListTile(
+                                                    leading: CircleAvatar(
+                                                      backgroundColor: Colors.grey[400],
+                                                      child: ClipOval(
+                                                        child: placeList?[index].profileImg != null
+                                                            ? Image.network(
+                                                                '${placeList![index].profileImg}',
+                                                                fit: BoxFit.cover,
+                                                                width: double.infinity,
+                                                                height: double.infinity,
+                                                              )
+                                                            : Icon(Icons.person, color: Colors.white),
                                                       ),
-                                                      title: TextButton(
-                                                          onPressed: () =>
-                                                              onButtonPressed(
-                                                                  index),
-                                                          child: Align(
-                                                            alignment: Alignment
-                                                                .centerLeft,
-                                                            child: Text(
-                                                              placeList?[index]
-                                                                      .placeName ??
-                                                                  '',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .left,
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                              ),
-                                                            ),
-                                                          )),
-                                                      trailing: placeId ==
-                                                              placeList![index]
-                                                                  .placeId
-                                                                  .toString()
-                                                          ? Icon(
-                                                              Icons
-                                                                  .check_circle,
-                                                              color: Color(
-                                                                  0xff468F4F))
-                                                          : null,
-                                                    );
-                                                  }
-                                                },
-                                              ),
+                                                    ),
+                                                    title: TextButton(
+                                                      onPressed: () => onButtonPressed(index),
+                                                      child: Align(
+                                                        alignment: Alignment.centerLeft,
+                                                        child: Text(
+                                                          placeList?[index].placeName ?? '',
+                                                          style: TextStyle(fontSize: 16),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    trailing: placeId ==
+                                                            placeList![index].placeId.toString()
+                                                        ? Icon(Icons.check_circle,
+                                                            color: Color(0xff468F4F))
+                                                        : null,
+                                                  );
+                                                }
+                                              },
                                             ),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 11),
-                                          ),
+                                          SizedBox(height: 11),
+                                          // 하단 버튼
                                           SizedBox(
                                             width: double.infinity,
                                             child: ElevatedButton(
                                               onPressed: () {
                                                 Navigator.pop(context, true);
-                                                final tabViewState =
-                                                    TabView.of(newContext);
+                                                final tabViewState = TabView.of(newContext);
                                                 if (tabViewState != null) {
-                                                  tabViewState
-                                                      .navigateToMyPage();
+                                                  tabViewState.navigateToMyPage();
                                                 } else {
                                                   print('탭바 오류');
                                                 }
                                               },
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.transparent,
+                                                backgroundColor: Colors.transparent,
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
+                                                  borderRadius: BorderRadius.circular(20),
                                                 ),
                                                 side: BorderSide(
                                                   color: Color(0xff878787),
@@ -423,18 +371,19 @@ class _MainPageState extends State<MainPage> {
                                               ),
                                               child: Text(
                                                 '내 업체 정보 페이지로 이동',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                ),
+                                                style: TextStyle(fontSize: 14),
                                               ),
                                             ),
-                                          )
+                                          ),
+                                          SizedBox(height: 20),
                                         ],
                                       ),
                                     ),
                                   );
-                                });
-                              });
+                                },
+                              );
+                            },
+                          );
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
